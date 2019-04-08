@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybtis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.stackoverflow.blog.dao.UserRoleDao">
+
+    <resultMap id="userRoleMap" type="userRole">
+        <id property="id" column="id"></id>
+        <result property="userId" column="userid"></result>
+        <result property="roleId" column="roleid"></result>
+    </resultMap>
+
+    <select id="selectByPage" resultMap="userRoleMap" resultType="userRole">
+        select * from user_role
+        <where>
+            <if test="searchMap != null">
+                <if test="searchMap.userId != null">
+                    userid = #{searchMap.userId}
+                </if>
+                <if test="searchMap.roleId != null">
+                    and roleid = #{searchMap.roleId}
+                </if>
+            </if>
+        </where>
+        limit #{start},#{limit}
+    </select>
+
+    <select id="selectByCondition" resultMap="userRoleMap" resultType="userRole">
+        select * from user_role
+        <where>
+            <if test="userId != null">
+                userid = #{userId}
+            </if>
+            <if test="roleId != null">
+                and roleid = #{roleId}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectById" resultMap="userRoleMap" resultType="userRole">
+        select * from user_role where id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="userRole" useGeneratedKeys="true" keyProperty="id">
+        <selectKey keyProperty="id" resultType="string" order="BEFORE">
+            select uuid()
+        </selectKey>
+        insert into user_role (id,userid,roleid)
+        values (#{id},#{userId},#{roleId})
+    </insert>
+
+    <insert id="batchInsert" parameterType="list">
+        insert into user_role (id,userid,roleid)
+        values
+        <foreach collection="list" item="item" separator=",">
+            ((select uuid()),#{item.userId},#{item.roleId})
+        </foreach>
+    </insert>
+
+    <delete id="deleteById" parameterType="string">
+        delete from user_role where id = #{id}
+    </delete>
+
+    <delete id="batchDeleteById" parameterType="list">
+        delete from user_role where id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="update" parameterType="userRole">
+        update user_role
+        <set>
+            <if test="userId!=null">
+                userid=#{userId},
+            </if>
+            <if test="roleId!=null">
+                roleid=#{roleId},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="batchUpdate" parameterType="list">
+        <foreach collection="list" item="item" open="" close="" separator=";">
+            update user_role
+            <set>
+                <if test="item.userId!=null">
+                    userid=#{item.userId},
+                </if>
+                <if test="item.roleId!=null">
+                    roleid=#{item.roleId},
+                </if>
+            </set>
+            where id = #{item.id}
+        </foreach>
+    </update>
+
+</mapper>

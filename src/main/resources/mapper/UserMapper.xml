@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybtis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.stackoverflow.blog.dao.UserDao">
+
+    <resultMap id="baseMap" type="user">
+        <id property="id" column="id"/>
+        <result property="email" column="email"/>
+        <result property="name" column="name"/>
+        <result property="password" column="password"/>
+        <result property="salt" column="salt"/>
+    </resultMap>
+
+    <select id="selectByPage" resultMap="baseMap" resultType="user">
+        select * from user
+        <where>
+            <if test="searchMap != null">
+                <if test="searchMap.name != null">
+                    name = #{searchMap.name}
+                </if>
+                <if test="searchMap.email != null">
+                    and email = #{searchMap.email}
+                </if>
+            </if>
+        </where>
+        limit #{start},#{limit}
+    </select>
+
+    <select id="selectByCondition" resultMap="baseMap" resultType="user">
+        select * from user
+        <where>
+            <if test="name != null">
+                name = #{name}
+            </if>
+            <if test="email != null">
+                and email = #{email}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectById" resultMap="baseMap" resultType="user">
+        select * from user where id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="user" useGeneratedKeys="true" keyProperty="id">
+        <selectKey keyProperty="id" resultType="string" order="BEFORE">
+            select uuid()
+        </selectKey>
+        insert into user (id,name,email,password,salt)
+        values (#{id},#{name},#{email},#{password},#{salt})
+    </insert>
+
+    <insert id="batchInsert" parameterType="list">
+        insert into user (id,name,email,password,salt)
+        values
+        <foreach collection="list" item="item" separator=",">
+            ((select uuid()),#{item.name},#{item.email},#{item.password},#{item.salt})
+        </foreach>
+    </insert>
+
+    <delete id="deleteById" parameterType="string">
+        delete from user where id = #{id}
+    </delete>
+
+    <delete id="batchDeleteById" parameterType="list">
+        delete from user where id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="update" parameterType="user">
+        update user
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="email != null">
+                email = #{email},
+            </if>
+            <if test="password != null">
+                password = #{password},
+            </if>
+            <if test="salt != null">
+                salt = #{salt},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="batchUpdate" parameterType="list">
+        <foreach collection="list" item="item" open="" close="" separator=";">
+            update user
+            <set>
+                <if test="item.name != null">
+                    name = #{item.name},
+                </if>
+                <if test="item.email != null">
+                    email = #{item.email},
+                </if>
+                <if test="item.password != null">
+                    password = #{item.password},
+                </if>
+                <if test="item.salt != null">
+                    salt = #{item.salt},
+                </if>
+            </set>
+            where id = #{item.id}
+        </foreach>
+    </update>
+
+</mapper>

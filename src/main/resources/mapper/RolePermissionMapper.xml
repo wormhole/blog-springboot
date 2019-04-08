@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybtis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.stackoverflow.blog.dao.RolePermissionDao">
+
+    <resultMap id="rolePermissionMap" type="rolePermission">
+        <id property="id" column="id"></id>
+        <result property="roleId" column="roleid"></result>
+        <result property="permissionId" column="permissionid"></result>
+    </resultMap>
+
+    <select id="selectByPage" resultMap="rolePermissionMap" resultType="rolePermission">
+        select * from role_permission
+        <where>
+            <if test="searchMap != null">
+                <if test="searchMap.roleId != null">
+                    roleid = #{searchMap.roleId}
+                </if>
+                <if test="searchMap.permissionId != null">
+                    and permissionid = #{searchMap.permissionId}
+                </if>
+            </if>
+        </where>
+        limit #{start},#{limit}
+    </select>
+
+    <select id="selectByCondition" resultMap="rolePermissionMap" resultType="rolePermission">
+        select * from role_permission
+        <where>
+            <if test="roleId != null">
+                roleid = #{roleId}
+            </if>
+            <if test="permissionId != null">
+                and permissionid = #{permissionId}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectById" resultMap="rolePermissionMap" resultType="rolePermission">
+        select * from role_permission where id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="rolePermission" useGeneratedKeys="true" keyProperty="id">
+        <selectKey keyProperty="id" resultType="string" order="BEFORE">
+            select uuid()
+        </selectKey>
+        insert into role_permission (id,roleid,permissionid)
+        values (#{id},#{roleId},#{permissionId})
+    </insert>
+
+    <insert id="batchInsert" parameterType="list">
+        insert into role_permission (id,roleid,permissionid)
+        values
+        <foreach collection="list" item="item" separator=",">
+            ((select uuid()),#{item.roleId},#{item.permissionId})
+        </foreach>
+    </insert>
+
+    <delete id="deleteById" parameterType="string">
+        delete from role_permission where id = #{id}
+    </delete>
+
+    <delete id="batchDeleteById" parameterType="list">
+        delete from role_permission where id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="update" parameterType="rolePermission">
+        update role_permission
+        <set>
+            <if test="roleId != null">
+                roleid = #{roleId},
+            </if>
+            <if test="permissionId != null">
+                permissionid = #{permissionId},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="batchUpdate" parameterType="list">
+        <foreach collection="list" item="item" open="" close="" separator=";">
+            update role_permission
+            <set>
+                <if test="item.roleId != null">
+                    roleid = #{item.roleId},
+                </if>
+                <if test="item.permissionId != null">
+                    permissionid = #{item.permissionId},
+                </if>
+            </set>
+            where id = #{item.id}
+        </foreach>
+    </update>
+
+</mapper>
