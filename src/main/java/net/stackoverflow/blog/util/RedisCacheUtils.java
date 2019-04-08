@@ -15,10 +15,14 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class RedisCacheUtils {
 
-    private static final RedisTemplate redisTemplate;
+    private RedisTemplate redisTemplate;
 
-    static {
-        redisTemplate = new RedisTemplate();
+    public RedisTemplate getRedisTemplate() {
+        return redisTemplate;
+    }
+
+    public void setRedisTemplate(RedisTemplate redisTemplate) {
+        this.redisTemplate = redisTemplate;
     }
 
     /**
