@@ -1,8 +1,6 @@
 package net.stackoverflow.blog.config;
 
 import net.stackoverflow.blog.shiro.cache.ShiroRedisCacheManager;
-import net.stackoverflow.blog.shiro.filter.AjaxFormAuthenticationFilter;
-import net.stackoverflow.blog.shiro.filter.AjaxUserFilter;
 import net.stackoverflow.blog.shiro.realm.JdbcRealm;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
@@ -19,6 +17,8 @@ import org.apache.shiro.session.mgt.eis.SessionIdGenerator;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
+import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
+import org.apache.shiro.web.filter.authc.UserFilter;
 import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
@@ -130,7 +130,7 @@ public class ShiroConfiguration {
      * 会话管理器
      *
      * @param sessionDAO 会话持久化DAO
-     * @param cookie 会话cookie模板
+     * @param cookie     会话cookie模板
      * @return sessionManager
      */
     @Bean(name = "sessionManager")
@@ -182,9 +182,9 @@ public class ShiroConfiguration {
     /**
      * 安全管理器
      *
-     * @param jdbcRealm 自定义JdbcRealm
-     * @param cacheManager 缓存管理器
-     * @param sessionManager 会话管理器
+     * @param jdbcRealm         自定义JdbcRealm
+     * @param cacheManager      缓存管理器
+     * @param sessionManager    会话管理器
      * @param rememberMeManager 记住我管理器
      * @return securityManager
      */
@@ -212,7 +212,7 @@ public class ShiroConfiguration {
         shiroFilter.setSuccessUrl("/");
         shiroFilter.setUnauthorizedUrl("/unauthorized");
 
-        AjaxFormAuthenticationFilter formAuthenticationFilter = new AjaxFormAuthenticationFilter();
+        FormAuthenticationFilter formAuthenticationFilter = new FormAuthenticationFilter();
         formAuthenticationFilter.setUsernameParam("email");
         formAuthenticationFilter.setPasswordParam("password");
         formAuthenticationFilter.setLoginUrl("/login");
@@ -220,7 +220,7 @@ public class ShiroConfiguration {
         formAuthenticationFilter.setFailureKeyAttribute("shiroLoginFailure");
         formAuthenticationFilter.setRememberMeParam("rememberMe");
 
-        AjaxUserFilter userFilter = new AjaxUserFilter();
+        UserFilter userFilter = new UserFilter();
         userFilter.setLoginUrl("/login");
 
         Map<String, Filter> filterMap = new HashMap<>();
@@ -233,6 +233,7 @@ public class ShiroConfiguration {
         filterChainMap.put("/login", "anon");
         filterChainMap.put("/actuator/**", "anon");
         filterChainMap.put("/favicon.ico", "anon");
+        filterChainMap.put("/robots.txt", "anon");
         filterChainMap.put("/**", "user");
         shiroFilter.setFilterChainDefinitionMap(filterChainMap);
 
