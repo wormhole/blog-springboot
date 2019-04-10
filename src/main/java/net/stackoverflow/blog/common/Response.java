@@ -1,5 +1,10 @@
 package net.stackoverflow.blog.common;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.io.Serializable;
 
 /**
@@ -7,46 +12,17 @@ import java.io.Serializable;
  *
  * @author 凉衫薄
  */
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Response implements Serializable {
 
-    public static final boolean SUCCESS = true;
-    public static final boolean FAILURE = false;
+    public final static Integer SUCCESS = 0;
+    public final static Integer FAILURE = 1;
+    public final static Integer SERVER_ERROR = -1;
 
-    private boolean status;
+    private Integer status;
     private String message;
     private Object data;
-
-    public Response() {
-
-    }
-
-    public Response(boolean status, String message, Object data) {
-        this.status = status;
-        this.message = message;
-        this.data = data;
-    }
-
-    public boolean getStatus() {
-        return status;
-    }
-
-    public void setStatus(boolean status) {
-        this.status = status;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public Object getData() {
-        return data;
-    }
-
-    public void setData(Object data) {
-        this.data = data;
-    }
 }

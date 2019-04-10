@@ -8,16 +8,16 @@ import java.util.Map;
  *
  * @author 凉衫薄
  */
-public class CommonDTO implements Serializable {
+public class BaseDTO implements Serializable {
 
     private Page page;
 
     private Map<String, Map<String, Object>[]> data;
 
-    public CommonDTO() {
+    public BaseDTO() {
     }
 
-    public CommonDTO(Page page, Map<String, Map<String, Object>[]> data) {
+    public BaseDTO(Page page, Map<String, Map<String, Object>[]> data) {
         this.page = page;
         this.data = data;
     }

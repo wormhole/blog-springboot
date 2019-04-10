@@ -7,16 +7,22 @@ import lombok.Setter;
 
 import java.io.Serializable;
 
-@Getter
+/**
+ * 用户实体类
+ *
+ * @author 凉衫薄
+ */
 @Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class User implements Serializable {
 
     private String id;
-    private String name;
     private String email;
     private String password;
+    private String nickname;
     private String salt;
+    private Integer deleteAble;
 
 }

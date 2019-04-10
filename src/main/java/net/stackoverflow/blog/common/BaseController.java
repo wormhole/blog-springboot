@@ -20,7 +20,7 @@ public class BaseController {
      * @param dto
      * @return
      */
-    protected Map<String, List<Object>> dto2vo(Map<String, Class> clazzMap, CommonDTO dto) {
+    protected Map<String, List<Object>> getDTO(Map<String, Class> clazzMap, BaseDTO dto) {
 
         Map<String, List<Object>> map = new HashMap<>();
         Set<String> key = clazzMap.keySet();
@@ -63,11 +63,11 @@ public class BaseController {
      * @param dto
      * @return
      */
-    protected List<Object> dto2vo(String name, Class clazz, CommonDTO dto) {
+    protected List<Object> getDTO(String name, Class clazz, BaseDTO dto) {
         Map<String, Class> classMap = new HashMap<String, Class>() {{
             put(name, clazz);
         }};
-        Map<String, List<Object>> voMap = dto2vo(classMap, dto);
+        Map<String, List<Object>> voMap = getDTO(classMap, dto);
         return voMap.get(name);
     }
 }
