@@ -1,0 +1,66 @@
+html {
+    height: 100%;
+}
+
+body {
+    background-image: url("/static/image/weather.png");
+    height: 100%;
+}
+
+.login {
+    width: 380px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -65%);
+}
+
+.login h3 {
+    color: #fff;
+    text-align: center;
+    height: 60px;
+    font-size: 30px;
+}
+
+.login .copyright {
+    text-align: center;
+    color: #999;
+    padding-top: 10px;
+}
+
+.login-wrap {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.login-wrap .layui-input {
+    height: 40px;
+}
+
+.login-wrap .verify-img {
+    width: 110px;
+    height: 35px;
+}
+
+.login-wrap #login-btn {
+    width: 100%;
+}
+
+.login a {
+    text-decoration: underline;
+}
+
+footer {
+    height: 30px;
+    font-size: 16px;
+}
+
+footer a {
+    font-size: 17px;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}

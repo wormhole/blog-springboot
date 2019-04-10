@@ -236,7 +236,7 @@ public class ShiroConfiguration {
         filterChainMap.put("/upload/**", "anon");
         filterChainMap.put("/favicon.ico", "anon");
         filterChainMap.put("/robots.txt", "anon");
-        filterChainMap.put("/**", "user");
+        filterChainMap.put("/admin/**", "user");
         shiroFilter.setFilterChainDefinitionMap(filterChainMap);
 
         return shiroFilter;

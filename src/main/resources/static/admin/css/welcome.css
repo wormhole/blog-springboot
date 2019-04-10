@@ -1,0 +1,22 @@
+body {
+    overflow-x: hidden;
+    background-color: #F2F2F2;
+    padding: 20px;
+}
+
+.layui-card-header {
+    font-size: 20px;
+}
+
+.layui-card {
+    margin-bottom: 20px;
+}
+
+#flow {
+    width: 100%;
+    height: 400px;
+}
+
+.layui-table {
+    width: 350px;
+}

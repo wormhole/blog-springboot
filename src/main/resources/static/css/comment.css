@@ -1,0 +1,93 @@
+.comment {
+    margin: 0 20px;
+}
+
+.comment .comment-title {
+    font-size: 25px;
+    color: #666;
+    margin: 0 0 10px 0;
+}
+
+.comment .comment-list {
+    margin-bottom: 20px;
+    padding-left: 0;
+}
+
+.comment .comment-list > hr {
+    margin: 3px 0;
+}
+
+.comment .comment-list .comment-item {
+    margin: 0 0 30px 0;
+}
+
+.comment .comment-list .comment-item .comment-item-left {
+    float: left;
+    width: 8%;
+    text-align: center;
+}
+
+.comment .comment-list .comment-item .comment-item-right {
+    float: right;
+    padding-left: 10px;
+    width: 92%;
+}
+
+.comment .comment-list .comment-item .comment-item-left img {
+    width: 45px;
+}
+
+.comment .comment-list .comment-item .comment-item-right hr {
+    margin: 3px;
+}
+
+.comment .comment-list .comment-item .comment-item-right .comment-item-info {
+    font-size: 15px;
+    position: relative;
+}
+
+.comment .comment-list .comment-item .comment-item-right .comment-item-info span {
+    margin-right: 10px;
+}
+
+.comment .comment-list .comment-item .comment-item-right .comment-item-info span:last-child {
+    position: absolute;
+    right: 10px;
+}
+
+.comment .comment-list .comment-item .comment-item-right .comment-item-info .time {
+    color: #666;
+}
+
+.comment .comment-list .comment-item .comment-item-right .comment-content {
+    color: rgba(0, 0, 0, 0.5);
+    font-size: 17px;
+}
+
+.comment .comment-list .comment-item .comment-item-right .comment-content a {
+    margin-right: 5px;
+}
+
+.comment .comment-reply {
+    margin-bottom: 5px;
+    position: relative;
+    font-size: 18px;
+}
+
+.comment .comment-reply span:last-child {
+    position: absolute;
+    right: 0px;
+}
+
+.comment .comment-input {
+    margin: 0 0 10px 0;
+}
+
+.comment .comment-info {
+    text-align: center;
+    margin: 0 0 10px 0;
+}
+
+.comment .comment-info input {
+    width: 100%;
+}

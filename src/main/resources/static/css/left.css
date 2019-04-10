@@ -1,0 +1,66 @@
+.left {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.8);
+    margin: 5px;
+    text-align: center;
+}
+
+.left img {
+    width: 60%;
+    margin: 25px 0 10px 0;
+}
+
+.left .nickname {
+    font-size: 25px;
+}
+
+.left hr {
+    width: 80%;
+    margin: 3px auto;
+    border: none;
+    height: 1px;
+    border-top: 1px solid #000000;
+}
+
+.left .signature {
+    font-size: 14px;
+    padding: 0 10px;
+}
+
+.left .menu {
+    margin-top: 10px;
+}
+
+.left .menu .select {
+    background-color: rgb(70, 205, 245);
+}
+
+.left .menu .item {
+    color: black;
+    display: block;
+    height: 50px;
+    font-size: 16px;
+    padding-top: 15px;
+    border-top: 1px solid #E8E8E8;
+}
+
+.left .menu .btn-item {
+    color: black;
+    display: block;
+    height: 35px;
+    font-size: 15px;
+    padding-top: 6px;
+    border-top: 1px solid #E8E8E8;
+    border-bottom: 1px solid #E8E8E8;
+}
+
+.left .menu .item:hover {
+    background-color: rgb(70, 205, 245);
+}
+
+@media (max-width: 990px) {
+    .hidden {
+        display: none;
+    }
+}

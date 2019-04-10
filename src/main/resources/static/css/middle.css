@@ -1,0 +1,20 @@
+.middle {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.8);
+    margin: 5px;
+    padding-bottom: 15px;
+}
+
+.middle .header {
+    background-image: linear-gradient(rgba(200, 200, 200, 0), rgba(200, 200, 200, 0.12));
+    border: 1px solid rgb(238, 238, 238);
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 2px 5px -1px;
+    height: 55px;
+    border-radius: 20px 20px 0 0;
+    padding: 15px 0 10px 25px;
+}
+
+.middle .body {
+    padding: 0 25px;
+}

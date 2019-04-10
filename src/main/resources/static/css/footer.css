@@ -1,0 +1,19 @@
+footer {
+    height: 40px;
+    width: 100%;
+    background-color: #F0F0F0;
+    position: fixed;
+    bottom: 0;
+    text-align: center;
+    padding-top: 10px;
+    z-index: 1;
+    color: black;
+}
+
+footer a {
+    color: black;
+}
+
+footer a:hover {
+    color: black;
+}

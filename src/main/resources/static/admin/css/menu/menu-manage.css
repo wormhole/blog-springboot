@@ -1,0 +1,13 @@
+body {
+    overflow-x: hidden;
+    background-color: #F2F2F2;
+    padding: 20px;
+}
+
+.layui-card-header {
+    font-size: 20px;
+}
+
+.layui-card {
+    margin-bottom: 20px;
+}

@@ -1,0 +1,48 @@
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    padding-top: 60px;
+    background-image: url("/static/image/weather.png");
+}
+
+.container {
+    height: 100%;
+}
+
+.category {
+    display: inline-block;
+    padding: 20px 10px 0 10px;
+}
+
+.padding {
+    height: 60px;
+}
+
+@media (max-width: 990px) {
+    footer {
+        display: none;
+    }
+
+    body {
+        padding-top: 2px;
+    }
+
+    .col-lg-3 {
+        padding: 0 5px;
+    }
+
+    .col-lg-9 {
+        padding: 0 5px;
+    }
+}
+
+.middle {
+    padding-bottom: 25px;
+}
+
+.middle .body {
+    min-height: 400px;
+}

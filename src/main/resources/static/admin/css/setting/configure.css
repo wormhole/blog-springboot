@@ -1,0 +1,28 @@
+body {
+    overflow-x: hidden;
+    background-color: #F2F2F2;
+    padding: 20px;
+}
+
+.layui-card-header {
+    font-size: 20px;
+}
+
+.layui-card {
+    margin-bottom: 20px;
+}
+
+img {
+    width: 120px;
+    height: 120px;
+    margin: 10px 0 20px 0;
+}
+
+.hidden {
+    display: none;
+}
+
+#head-setting .layui-card-body {
+    padding-left: 110px;
+    padding-bottom: 20px;
+}

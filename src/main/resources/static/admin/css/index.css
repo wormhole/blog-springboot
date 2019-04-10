@@ -1,0 +1,38 @@
+.iframe {
+    border: 0;
+}
+
+.layui-layout-admin .layui-logo {
+    color: #666666;
+    font-size: 25px;
+}
+
+.layui-body {
+    overflow: hidden;
+}
+
+.layui-tab {
+    margin: 0;
+    height: 100%;
+}
+
+.layui-tab-title {
+    height: 40px;
+}
+
+.layui-tab-content {
+    padding: 0;
+    height: 95%;
+}
+
+.layui-tab-item {
+    height: 100%;
+}
+
+.layui-nav a {
+    text-decoration: none;
+}
+
+ul.layui-tab-title li:first-child i {
+    display: none;
+}
