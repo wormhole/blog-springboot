@@ -12,6 +12,7 @@ import net.stackoverflow.blog.util.DateUtils;
 import net.stackoverflow.blog.util.TransferUtils;
 import net.stackoverflow.blog.validator.SettingValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -37,6 +38,8 @@ public class SettingController extends BaseController {
     private SettingService settingService;
     @Autowired
     private SettingValidator settingValidator;
+    @Value("${server.upload.path}")
+    private String path;
 
     /**
      * 更改基础设置
@@ -95,8 +98,8 @@ public class SettingController extends BaseController {
         MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
         MultipartFile file = multiRequest.getFile("headImg");
         String fileName = file.getOriginalFilename();
-        String uploadDir = "/upload" + DateUtils.getDatePath();
-        String destDir = request.getServletContext().getRealPath(uploadDir);
+        String dataPath = DateUtils.getDatePath();
+        String destDir = path + dataPath;
 
         File destDirFile = new File(destDir);
         if (!destDirFile.exists()) {
@@ -106,7 +109,7 @@ public class SettingController extends BaseController {
         File destFile = new File(destDirFile, fileName);
         try {
             file.transferTo(destFile);
-            String url = uploadDir + fileName;
+            String url = "/upload" + dataPath + fileName;
             Setting setting = new Setting();
             setting.setName("head");
             setting.setValue(url);

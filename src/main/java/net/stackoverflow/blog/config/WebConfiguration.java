@@ -3,6 +3,7 @@ package net.stackoverflow.blog.config;
 import net.stackoverflow.blog.web.interceptor.VisitInterceptor;
 import net.stackoverflow.blog.web.listener.InitListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +19,8 @@ public class WebConfiguration implements WebMvcConfigurer {
 
     @Autowired
     private VisitInterceptor visitInterceptor;
+    @Value("${server.upload.path}")
+    private String path;
 
     /**
      * 静态文件路径映射
@@ -28,6 +31,9 @@ public class WebConfiguration implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         if (!registry.hasMappingForPattern("/static/**")) {
             registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
+        }
+        if (!registry.hasMappingForPattern("/upload/**")) {
+            registry.addResourceHandler("/upload/**").addResourceLocations(path);
         }
     }
 

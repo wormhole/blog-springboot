@@ -17,6 +17,7 @@ import net.stackoverflow.blog.util.DateUtils;
 import net.stackoverflow.blog.util.TransferUtils;
 import net.stackoverflow.blog.util.ValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,6 +55,8 @@ public class ArticleController extends BaseController {
     private CommentService commentService;
     @Autowired
     private ValidatorFactory validatorFactory;
+    @Value("${server.upload.path}")
+    private String path;
 
     /**
      * 通过文章url获取code
@@ -184,8 +187,8 @@ public class ArticleController extends BaseController {
         Map<String, Object> result = new HashMap<>();
 
         String fileName = multipartFile.getOriginalFilename();
-        String uploadDir = "/upload" + DateUtils.getDatePath();
-        String destDir = request.getServletContext().getRealPath(uploadDir);
+        String dataPath = DateUtils.getDatePath();
+        String destDir = path + dataPath;
 
         File destDirFile = new File(destDir);
         if (!destDirFile.exists()) {
@@ -202,7 +205,7 @@ public class ArticleController extends BaseController {
             return result;
         }
 
-        String url = uploadDir + fileName;
+        String url = "/upload" + dataPath + fileName;
         result.put("success", 1);
         result.put("message", "上传成功");
         result.put("url", url);
