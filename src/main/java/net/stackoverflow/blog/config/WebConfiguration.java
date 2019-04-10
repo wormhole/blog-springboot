@@ -1,7 +1,10 @@
 package net.stackoverflow.blog.config;
 
 import net.stackoverflow.blog.web.interceptor.VisitInterceptor;
+import net.stackoverflow.blog.web.listener.InitListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -15,6 +18,11 @@ public class WebConfiguration implements WebMvcConfigurer {
     @Autowired
     private VisitInterceptor visitInterceptor;
 
+    /**
+     * 配置拦截器
+     *
+     * @param registry
+     */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         List<String> excludePaths = new ArrayList<>();
@@ -25,5 +33,17 @@ public class WebConfiguration implements WebMvcConfigurer {
         excludePaths.add("/admin/**");
         excludePaths.add("/favicon.ico");
         registry.addInterceptor(visitInterceptor).addPathPatterns("/**").excludePathPatterns(excludePaths);
+    }
+
+    /**
+     * 配置监听器
+     *
+     * @return
+     */
+    @Bean
+    public ServletListenerRegistrationBean addListener() {
+        ServletListenerRegistrationBean lrb = new ServletListenerRegistrationBean();
+        lrb.setListener(new InitListener());
+        return lrb;
     }
 }
