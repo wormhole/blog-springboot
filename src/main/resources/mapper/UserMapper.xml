@@ -5,58 +5,78 @@
 
 <mapper namespace="net.stackoverflow.blog.dao.UserDao">
 
-    <resultMap id="baseMap" type="user">
-        <id property="id" column="id"/>
-        <result property="email" column="email"/>
-        <result property="name" column="name"/>
-        <result property="password" column="password"/>
-        <result property="salt" column="salt"/>
+    <resultMap id="userMap" type="user">
+        <id property="id" column="id"></id>
+        <result property="email" column="email"></result>
+        <result property="nickname" column="nickname"></result>
+        <result property="password" column="password"></result>
+        <result property="salt" column="salt"></result>
+        <result property="deleteAble" column="deleteable"></result>
     </resultMap>
 
-    <select id="selectByPage" resultMap="baseMap" resultType="user">
+    <select id="selectByPage" resultMap="userMap" resultType="user">
         select * from user
         <where>
             <if test="searchMap != null">
-                <if test="searchMap.name != null">
-                    name = #{searchMap.name}
-                </if>
                 <if test="searchMap.email != null">
-                    and email = #{searchMap.email}
+                    email = #{searchMap.email}
+                </if>
+                <if test="searchMap.nickname != null">
+                    and nickname = #{searchMap.nickname}
+                </if>
+                <if test="searchMap.password != null">
+                    and password = #{searchMap.password}
+                </if>
+                <if test="searchMap.salt != null">
+                    and salt = #{searchMap.salt}
+                </if>
+                <if test="searchMap.deleteAble != null">
+                    and deleteable = #{searchMap.deleteAble}
                 </if>
             </if>
         </where>
-        limit #{start},#{limit}
+        order by lower(nickname) limit #{start},#{limit}
     </select>
 
-    <select id="selectByCondition" resultMap="baseMap" resultType="user">
+    <select id="selectByCondition" resultMap="userMap" resultType="user">
         select * from user
         <where>
-            <if test="name != null">
-                name = #{name}
-            </if>
             <if test="email != null">
-                and email = #{email}
+                email = #{email}
+            </if>
+            <if test="nickname != null">
+                and nickname = #{nickname}
+            </if>
+            <if test="password != null">
+                and password = #{password}
+            </if>
+            <if test="salt != null">
+                and salt = #{salt}
+            </if>
+            <if test="deleteAble != null">
+                and deleteable = #{deleteAble}
             </if>
         </where>
+        order by lower(nickname)
     </select>
 
-    <select id="selectById" resultMap="baseMap" resultType="user">
+    <select id="selectById" resultMap="userMap" resultType="user">
         select * from user where id = #{id}
     </select>
 
-    <insert id="insert" parameterType="user" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insert" parameterType="user">
         <selectKey keyProperty="id" resultType="string" order="BEFORE">
             select uuid()
         </selectKey>
-        insert into user (id,name,email,password,salt)
-        values (#{id},#{name},#{email},#{password},#{salt})
+        insert into user (id,email,nickname,password,salt,deleteable)
+        values (#{id},#{email},#{nickname},#{password},#{salt},#{deleteAble})
     </insert>
 
     <insert id="batchInsert" parameterType="list">
-        insert into user (id,name,email,password,salt)
+        insert into user (id,email,nickname,password,salt,deleteable)
         values
         <foreach collection="list" item="item" separator=",">
-            ((select uuid()),#{item.name},#{item.email},#{item.password},#{item.salt})
+            ((select uuid()),#{item.email},#{item.nickname},#{item.password},#{item.salt},#{item.deleteAble})
         </foreach>
     </insert>
 
@@ -74,37 +94,43 @@
     <update id="update" parameterType="user">
         update user
         <set>
-            <if test="name != null">
-                name = #{name},
+            <if test="nickname!=null">
+                nickname=#{nickname},
             </if>
-            <if test="email != null">
-                email = #{email},
+            <if test="email!=null">
+                email=#{email},
             </if>
-            <if test="password != null">
-                password = #{password},
+            <if test="password!=null">
+                password=#{password},
             </if>
-            <if test="salt != null">
-                salt = #{salt},
+            <if test="salt!=null">
+                salt=#{salt},
+            </if>
+            <if test="deleteAble!=null">
+                deleteable=#{deleteAble},
             </if>
         </set>
-        where id = #{id}
+        where id=#{id}
     </update>
 
     <update id="batchUpdate" parameterType="list">
         <foreach collection="list" item="item" open="" close="" separator=";">
             update user
             <set>
-                <if test="item.name != null">
-                    name = #{item.name},
+                <if test="item.nickname!=null">
+                    nickname=#{item.nickname},
                 </if>
-                <if test="item.email != null">
-                    email = #{item.email},
+                <if test="item.email!=null">
+                    email=#{item.email},
                 </if>
-                <if test="item.password != null">
-                    password = #{item.password},
+                <if test="item.password!=null">
+                    password=#{item.password},
                 </if>
-                <if test="item.salt != null">
-                    salt = #{item.salt},
+                <if test="item.salt!=null">
+                    salt=#{item.salt},
+                </if>
+                <if test="item.deleteAble!=null">
+                    deleteable=#{item.deleteAble},
                 </if>
             </set>
             where id = #{item.id}
