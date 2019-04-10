@@ -32,7 +32,7 @@ public class RedisCacheUtils {
      * @param time
      * @return
      */
-    public boolean expire(String key, long time) {
+    public static boolean expire(String key, long time) {
 
         if (key == null || "".equals(key) || time < 0) {
             return false;
@@ -53,7 +53,7 @@ public class RedisCacheUtils {
      * @param key
      * @return
      */
-    public long getExpire(String key) {
+    public static long getExpire(String key) {
         return redisTemplate.getExpire(key, TimeUnit.SECONDS);
     }
 
@@ -63,7 +63,7 @@ public class RedisCacheUtils {
      * @param key
      * @return
      */
-    public boolean hasKey(String key) {
+    public static boolean hasKey(String key) {
 
         if (key == null || "".equals(key)) {
             return false;
@@ -82,7 +82,7 @@ public class RedisCacheUtils {
      *
      * @param key
      */
-    public void del(String... key) {
+    public static void del(String... key) {
         if (key != null && key.length > 0) {
             if (key.length == 1) {
                 redisTemplate.delete(key[0]);
@@ -98,7 +98,7 @@ public class RedisCacheUtils {
      * @param key
      * @return
      */
-    public Object get(String key) {
+    public static Object get(String key) {
         if (key == null || "".equals(key)) {
             return null;
         } else {
@@ -113,7 +113,7 @@ public class RedisCacheUtils {
      * @param value
      * @return
      */
-    public boolean set(String key, Object value) {
+    public static boolean set(String key, Object value) {
         if (key == null || "".equals(key)) {
             return false;
         }
@@ -135,7 +135,7 @@ public class RedisCacheUtils {
      * @param time
      * @return
      */
-    public boolean set(String key, Object value, long time) {
+    public static boolean set(String key, Object value, long time) {
 
         if (key == null || "".equals(key) || time < 0) {
             return false;
@@ -157,7 +157,7 @@ public class RedisCacheUtils {
      * @param item
      * @return
      */
-    public Object hGet(String key, String item) {
+    public static Object hGet(String key, String item) {
 
         if (key == null || "".equals(key)) {
             return null;
@@ -172,7 +172,7 @@ public class RedisCacheUtils {
      * @param key
      * @return
      */
-    public Map<Object, Object> hmGet(String key) {
+    public static Map<Object, Object> hmGet(String key) {
         if (key == null || "".equals(key)) {
             return null;
         } else {
@@ -187,7 +187,7 @@ public class RedisCacheUtils {
      * @param map
      * @return
      */
-    public boolean hmSet(String key, Map<String, Object> map) {
+    public static boolean hmSet(String key, Map<String, Object> map) {
 
         if (key == null || "".equals(key)) {
             return false;
@@ -210,7 +210,7 @@ public class RedisCacheUtils {
      * @param time
      * @return
      */
-    public boolean hmSet(String key, Map<String, Object> map, long time) {
+    public static boolean hmSet(String key, Map<String, Object> map, long time) {
 
         if (key == null || "".equals(key) || time < 0) {
             return false;
@@ -234,7 +234,7 @@ public class RedisCacheUtils {
      * @param value
      * @return
      */
-    public boolean hSet(String key, String item, Object value) {
+    public static boolean hSet(String key, String item, Object value) {
 
         if (key == null || "".equals(key) || item == null || "".equals(item)) {
             return false;
@@ -258,7 +258,7 @@ public class RedisCacheUtils {
      * @param time
      * @return
      */
-    public boolean hSet(String key, String item, Object value, long time) {
+    public static boolean hSet(String key, String item, Object value, long time) {
 
         if (key == null || "".equals(key) || item == null || "".equals(item) || time < 0) {
             return false;
@@ -280,7 +280,7 @@ public class RedisCacheUtils {
      * @param key
      * @param items
      */
-    public void hDel(String key, Object... items) {
+    public static void hDel(String key, Object... items) {
 
         if (key != null && !"".equals(key)) {
             redisTemplate.opsForHash().delete(key, items);
@@ -294,7 +294,7 @@ public class RedisCacheUtils {
      * @param item
      * @return
      */
-    public boolean hHasKey(String key, String item) {
+    public static boolean hHasKey(String key, String item) {
         if (key == null || "".equals(key)) {
             return false;
         }
@@ -307,7 +307,7 @@ public class RedisCacheUtils {
      * @param key
      * @return
      */
-    public Set<Object> sGet(String key) {
+    public static Set<Object> sGet(String key) {
 
         if (key == null || "".equals(key)) {
             return null;
@@ -328,7 +328,7 @@ public class RedisCacheUtils {
      * @param value
      * @return
      */
-    public boolean sHasValue(String key, Object value) {
+    public static boolean sHasValue(String key, Object value) {
 
         if (key == null || "".equals(key) || value == null) {
             return false;
@@ -349,7 +349,7 @@ public class RedisCacheUtils {
      * @param values
      * @return
      */
-    public long sSet(String key, Object... values) {
+    public static long sSet(String key, Object... values) {
 
         if (key == null || "".equals(key)) {
             return 0;
@@ -371,7 +371,7 @@ public class RedisCacheUtils {
      * @param values
      * @return
      */
-    public long sSet(String key, long time, Object... values) {
+    public static long sSet(String key, long time, Object... values) {
 
         if (key == null || "".equals(key) || time < 0) {
             return 0;
@@ -393,7 +393,7 @@ public class RedisCacheUtils {
      * @param key
      * @return
      */
-    public long sGetSize(String key) {
+    public static long sGetSize(String key) {
 
         if (key == null || "".equals(key)) {
             return 0;
@@ -414,7 +414,7 @@ public class RedisCacheUtils {
      * @param values
      * @return
      */
-    public long sDel(String key, Object... values) {
+    public static long sDel(String key, Object... values) {
 
         if (key == null || "".equals(key)) {
             return 0;
@@ -437,7 +437,7 @@ public class RedisCacheUtils {
      * @param end
      * @return
      */
-    public List<Object> lGet(String key, long start, long end) {
+    public static List<Object> lGet(String key, long start, long end) {
 
         if (key == null || "".equals(key)) {
             return null;
@@ -457,7 +457,7 @@ public class RedisCacheUtils {
      * @param key
      * @return
      */
-    public long lGetSize(String key) {
+    public static long lGetSize(String key) {
 
         if (key == null || "".equals(key)) {
             return 0;
@@ -478,7 +478,7 @@ public class RedisCacheUtils {
      * @param index
      * @return
      */
-    public Object lGetIndex(String key, long index) {
+    public static Object lGetIndex(String key, long index) {
 
         if (key == null || "".equals(key)) {
             return null;
@@ -499,7 +499,7 @@ public class RedisCacheUtils {
      * @param value
      * @return
      */
-    public boolean lSet(String key, Object value) {
+    public static boolean lSet(String key, Object value) {
 
         if (key == null || "".equals(key)) {
             return false;
@@ -522,7 +522,7 @@ public class RedisCacheUtils {
      * @param time
      * @return
      */
-    public boolean lSet(String key, List<Object> value, long time) {
+    public static boolean lSet(String key, List<Object> value, long time) {
 
         if (key == null || "".equals(key) || time < 0) {
             return false;
@@ -546,7 +546,7 @@ public class RedisCacheUtils {
      * @param value
      * @return
      */
-    public boolean lsetIndex(String key, long index, Object value) {
+    public static boolean lsetIndex(String key, long index, Object value) {
 
         if (key == null || "".equals(key)) {
             return false;
