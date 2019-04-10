@@ -233,6 +233,7 @@ public class ShiroConfiguration {
         filterChainMap.put("/login", "authc");
         filterChainMap.put("/actuator/**", "anon");
         filterChainMap.put("/static/**", "anon");
+        filterChainMap.put("/upload/**", "anon");
         filterChainMap.put("/favicon.ico", "anon");
         filterChainMap.put("/robots.txt", "anon");
         filterChainMap.put("/**", "user");

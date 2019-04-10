@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -35,23 +34,23 @@ public class BackupController {
     private String host;
     @Value("${spring.datasource.db}")
     private String db;
+    @Value("${server.backup.path}")
+    private String path;
 
     /**
      * 导出sql备份文件 /api/admin/backup/sql
      * 方法 GET
      *
-     * @param request
      * @return
      * @throws IOException
      */
     @RequestMapping(value = "/backup/sql", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<byte[]> exportSql(HttpServletRequest request) throws IOException {
+    public ResponseEntity<byte[]> exportSql() throws IOException {
         String filename = "blog.sql";
-        String backupPath = request.getServletContext().getRealPath("WEB-INF/backup");
-        DBUtils.backup(host, username, password, backupPath, filename, db);
+        DBUtils.backup(host, username, password, path, filename, db);
 
-        InputStream is = new FileInputStream(new File(backupPath, filename));
+        InputStream is = new FileInputStream(new File(path, filename));
         byte[] body = new byte[is.available()];
         is.read(body);
 
