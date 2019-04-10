@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 访客实体类
+ * 访问量实体类
  *
  * @author 凉衫薄
  */
@@ -17,11 +17,14 @@ import java.util.Date;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Visitor implements Serializable {
+public class Visit implements Serializable {
 
     private String id;
+    private String url;
+    private Integer status;
     private String ip;
     private String agent;
+    private String referer;
     private Date date;
 
 }

@@ -3,24 +3,36 @@
         "-//mybtis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="net.stackoverflow.blog.dao.VisitorDao">
+<mapper namespace="net.stackoverflow.blog.dao.VisitDao">
 
-    <resultMap id="visitorMap" type="visitor">
+    <resultMap id="visitMap" type="visit">
         <id property="id" column="id"/>
+        <result property="url" column="url"/>
+        <result property="status" column="status"/>
         <result property="ip" column="ip"/>
         <result property="agent" column="agent"/>
+        <result property="referer" column="referer"/>
         <result property="date" column="date" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
     </resultMap>
 
-    <select id="selectByPage" resultMap="visitorMap" resultType="visitor">
-        select * from visitor
+    <select id="selectByPage" resultMap="visitMap" resultType="visit">
+        select * from visit
         <where>
             <if test="searchMap!=null">
+                <if test="searchMap.url!=null">
+                    url = #{searchMap.url}
+                </if>
+                <if test="searchMap.status!=null">
+                    and status = #{searchMap.status}
+                </if>
                 <if test="searchMap.ip!=null">
-                    ip = #{searchMap.ip}
+                    and ip = #{searchMap.ip}
                 </if>
                 <if test="searchMap.agent!=null">
                     and agent = #{searchMap.agent}
+                </if>
+                <if test="searchMap.referer!=null">
+                    and referer = #{searchMap.referer}
                 </if>
                 <if test="searchMap.date!=null">
                     and date = #{searchMap.date}
@@ -30,14 +42,23 @@
         order by date desc limit #{start},#{limit}
     </select>
 
-    <select id="selectByCondition" resultMap="visitorMap" resultType="visit">
-        select * from visitor
+    <select id="selectByCondition" resultMap="visitMap" resultType="visit">
+        select * from visit
         <where>
+            <if test="url != null">
+                url = #{url}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
             <if test="ip != null">
-                ip = #{ip}
+                and ip = #{ip}
             </if>
             <if test="agent != null">
                 and agent = #{agent}
+            </if>
+            <if test="referer != null">
+                and referer = #{referer}
             </if>
             <if test="date != null">
                 and date = #{date}
@@ -46,45 +67,54 @@
         order by date desc
     </select>
 
-    <select id="selectById" resultMap="visitorMap" resultType="visitor">
-        select * from visitor where id = #{id}
+    <select id="selectById" resultMap="visitMap" resultType="visit">
+        select * from visit where id = #{id}
     </select>
 
-    <insert id="insert" parameterType="visitor">
+    <insert id="insert" parameterType="visit">
         <selectKey keyProperty="id" resultType="string" order="BEFORE">
             select uuid()
         </selectKey>
-        insert into visitor (id,ip,agent,date)
-        values (#{id},#{ip},#{agent},#{date})
+        insert into visit (id,url,status,ip,referer,agent,date)
+        values (#{id},#{url},#{status},#{ip},#{referer},#{agent},#{date})
     </insert>
 
     <insert id="batchInsert" parameterType="list">
-        insert into visitor (id,ip,agent,date)
+        insert into visit (id,url,status,ip,referer,agent,date)
         values
         <foreach collection="list" item="item" separator=",">
-            ((select uuid()),#{item.ip},#{item.agent},#{item.date})
+            ((select uuid()),#{item.url},#{item.status},#{item.ip},#{item.referer},#{item.agent},#{item.date})
         </foreach>
     </insert>
 
     <delete id="deleteById" parameterType="string">
-        delete from visitor where id = #{id}
+        delete from visit where id = #{id}
     </delete>
 
     <delete id="batchDeleteById" parameterType="list">
-        delete from visitor where id in
+        delete from visit where id in
         <foreach collection="list" item="id" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
 
     <update id="update" parameterType="role">
-        update visitor
+        update visit
         <set>
+            <if test="url != null">
+                url = #{url},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
             <if test="ip != null">
                 ip = #{ip},
             </if>
             <if test="agent != null">
                 agent = #{agent},
+            </if>
+            <if test="referer != null">
+                referer = #{referer},
             </if>
             <if test="date != null">
                 date = #{date},
@@ -95,13 +125,22 @@
 
     <update id="batchUpdate" parameterType="list">
         <foreach collection="list" item="item" open="" close="" separator=";">
-            update visitor
+            update visit
             <set>
+                <if test="item.url != null">
+                    url = #{item.url},
+                </if>
+                <if test="item.status != null">
+                    status = #{item.status},
+                </if>
                 <if test="item.ip != null">
                     ip = #{item.ip},
                 </if>
                 <if test="item.agent != null">
                     agent = #{item.agent},
+                </if>
+                <if test="item.referer != null">
+                    referer = #{item.referer},
                 </if>
                 <if test="item.date != null">
                     date = #{item.date},
@@ -111,7 +150,8 @@
         </foreach>
     </update>
 
-    <select id="selectByDate" resultMap="visitorMap" resultType="visitor">
-        select * from visitor where date between #{arg0} and #{arg1}
+    <select id="selectByDate" resultMap="visitMap" resultType="visit">
+        select * from visit where date between #{arg0} and #{arg1}
     </select>
+
 </mapper>
