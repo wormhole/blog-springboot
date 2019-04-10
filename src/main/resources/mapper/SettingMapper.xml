@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybtis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.stackoverflow.blog.dao.SettingDao">
+
+    <resultMap id="settingMap" type="setting">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="value" column="value"/>
+    </resultMap>
+
+    <select id="selectByPage" resultMap="settingMap" resultType="setting">
+        select * from setting
+        <where>
+            <if test="searchMap != null">
+                <if test="searchMap.name != null">
+                    name = #{searchMap.name}
+                </if>
+                <if test="searchMap.value != null">
+                    and value = #{searchMap.value}
+                </if>
+            </if>
+        </where>
+        limit #{start},#{limit}
+    </select>
+
+    <select id="selectByCondition" resultMap="settingMap" resultType="setting">
+        select * from setting
+        <where>
+            <if test="key != null">
+                name = #{name}
+            </if>
+            <if test="value != null">
+                and value = #{value}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectById" resultMap="settingMap" resultType="setting">
+        select * from setting where id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="rolePermission">
+        <selectKey keyProperty="id" resultType="string" order="BEFORE">
+            select uuid()
+        </selectKey>
+        insert into setting (id,name,value)
+        values (#{id},#{name},#{value})
+    </insert>
+
+    <insert id="batchInsert" parameterType="list">
+        insert into setting (id,name,value)
+        values
+        <foreach collection="list" item="item" separator=",">
+            ((select uuid()),#{item.name},#{item.value})
+        </foreach>
+    </insert>
+
+    <delete id="deleteById" parameterType="string">
+        delete from setting where id = #{id}
+    </delete>
+
+    <delete id="batchDeleteById" parameterType="list">
+        delete from setting where id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="update" parameterType="setting">
+        update setting
+        <set>
+            <if test="value != null">
+                value = #{value},
+            </if>
+        </set>
+        where name = #{name}
+    </update>
+
+    <update id="batchUpdate" parameterType="list">
+        <foreach collection="list" item="item" open="" close="" separator=";">
+            update role_permission
+            <set>
+                <if test="item.value != null">
+                    value = #{item.value},
+                </if>
+            </set>
+            where name = #{item.name}
+        </foreach>
+    </update>
+
+</mapper>

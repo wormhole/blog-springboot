@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybtis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.stackoverflow.blog.dao.VisitorDao">
+
+    <resultMap id="visitorMap" type="visitor">
+        <id property="id" column="id"/>
+        <result property="ip" column="ip"/>
+        <result property="agent" column="agent"/>
+        <result property="date" column="date" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+    </resultMap>
+
+    <select id="selectByPage" resultMap="visitorMap" resultType="visitor">
+        select * from visitor
+        <where>
+            <if test="searchMap!=null">
+                <if test="searchMap.ip!=null">
+                    ip = #{searchMap.ip}
+                </if>
+                <if test="searchMap.agent!=null">
+                    and agent = #{searchMap.agent}
+                </if>
+                <if test="searchMap.date!=null">
+                    and date = #{searchMap.date}
+                </if>
+            </if>
+        </where>
+        order by date desc limit #{start},#{limit}
+    </select>
+
+    <select id="selectByCondition" resultMap="visitorMap" resultType="visit">
+        select * from visitor
+        <where>
+            <if test="ip != null">
+                ip = #{ip}
+            </if>
+            <if test="agent != null">
+                and agent = #{agent}
+            </if>
+            <if test="date != null">
+                and date = #{date}
+            </if>
+        </where>
+        order by date desc
+    </select>
+
+    <select id="selectById" resultMap="visitorMap" resultType="visitor">
+        select * from visitor where id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="visitor">
+        <selectKey keyProperty="id" resultType="string" order="BEFORE">
+            select uuid()
+        </selectKey>
+        insert into visitor (id,ip,agent,date)
+        values (#{id},#{ip},#{agent},#{date})
+    </insert>
+
+    <insert id="batchInsert" parameterType="list">
+        insert into visitor (id,ip,agent,date)
+        values
+        <foreach collection="list" item="item" separator=",">
+            ((select uuid()),#{item.ip},#{item.agent},#{item.date})
+        </foreach>
+    </insert>
+
+    <delete id="deleteById" parameterType="string">
+        delete from visitor where id = #{id}
+    </delete>
+
+    <delete id="batchDeleteById" parameterType="list">
+        delete from visitor where id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="update" parameterType="role">
+        update visitor
+        <set>
+            <if test="ip != null">
+                ip = #{ip},
+            </if>
+            <if test="agent != null">
+                agent = #{agent},
+            </if>
+            <if test="date != null">
+                date = #{date},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="batchUpdate" parameterType="list">
+        <foreach collection="list" item="item" open="" close="" separator=";">
+            update visitor
+            <set>
+                <if test="item.ip != null">
+                    ip = #{item.ip},
+                </if>
+                <if test="item.agent != null">
+                    agent = #{item.agent},
+                </if>
+                <if test="item.date != null">
+                    date = #{item.date},
+                </if>
+            </set>
+            where id = #{item.id}
+        </foreach>
+    </update>
+
+    <select id="selectByDate" resultMap="visitorMap" resultType="visitor">
+        select * from visitor where date between #{arg0} and #{arg1}
+    </select>
+</mapper>

@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybtis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.stackoverflow.blog.dao.ArticleDao">
+
+    <resultMap id="articleMap" type="article">
+        <id property="id" column="id"></id>
+        <result property="userId" column="userid"></result>
+        <result property="title" column="title"></result>
+        <result property="articleMd" column="articlemd"></result>
+        <result property="articleHtml" column="articlehtml"></result>
+        <result property="categoryId" column="categoryid"></result>
+        <result property="createDate" column="createdate" jdbcType="TIMESTAMP" javaType="java.util.Date"></result>
+        <result property="modifyDate" column="modifydate" jdbcType="TIMESTAMP" javaType="java.util.Date"></result>
+        <result property="url" column="url"></result>
+        <result property="hits" column="hits"></result>
+        <result property="likes" column="likes"></result>
+        <result property="visible" column="visible"></result>
+    </resultMap>
+
+    <select id="selectByPage" resultMap="articleMap" resultType="article">
+        select * from article
+        <where>
+            <if test="searchMap != null">
+                <if test="searchMap.userId != null">
+                    userid = #{searchMap.userId}
+                </if>
+                <if test="searchMap.title != null">
+                    and title = #{searchMap.title}
+                </if>
+                <if test="searchMap.articleMd != null">
+                    and articlemd = #{searchMap.articleMd}
+                </if>
+                <if test="searchMap.articleHtml != null">
+                    and articlehtml = #{searchMap.articleHtml}
+                </if>
+                <if test="searchMap.categoryId != null">
+                    and categoryid = #{searchMap.categoryId}
+                </if>
+                <if test="searchMap.createDate != null">
+                    and createdate = #{searchMap.createdate}
+                </if>
+                <if test="searchMap.modifyDate != null">
+                    and modifydate = #{searchMap.modifydate}
+                </if>
+                <if test="searchMap.url != null">
+                    and url = #{searchMap.url}
+                </if>
+                <if test="searchMap.hits != null">
+                    and hits = #{searchMap.hits}
+                </if>
+                <if test="searchMap.likes != null">
+                    and likes = #{searchMap.likes}
+                </if>
+                <if test="searchMap.visible != null">
+                    and visible = #{searchMap.visible}
+                </if>
+            </if>
+        </where>
+        order by createdate desc limit #{start},#{limit}
+    </select>
+
+    <select id="selectByCondition" resultMap="articleMap" resultType="article">
+        select * from article
+        <where>
+            <if test="userId != null">
+                userid = #{userId}
+            </if>
+            <if test="title != null">
+                and title = #{title}
+            </if>
+            <if test="articleMd != null">
+                and articlemd = #{articleMd}
+            </if>
+            <if test="articleHtml != null">
+                and articlehtml = #{articleHtml}
+            </if>
+            <if test="categoryId != null">
+                and categoryid = #{categoryId}
+            </if>
+            <if test="createDate != null">
+                and createdate = #{createdate}
+            </if>
+            <if test="modifyDate != null">
+                and modifydate = #{modifydate}
+            </if>
+            <if test="url != null">
+                and url = #{url}
+            </if>
+            <if test="hits != null">
+                and hits = #{hits}
+            </if>
+            <if test="likes != null">
+                and likes = #{likes}
+            </if>
+            <if test="visible != null">
+                and visible = #{visible}
+            </if>
+        </where>
+        order by createdate desc
+    </select>
+
+    <select id="selectById" resultMap="articleMap" resultType="article">
+        select * from article where id = #{id}
+    </select>
+
+    <select id="selectByUrl" resultMap="articleMap" resultType="article">
+        select * from article where url = #{url}
+    </select>
+
+    <insert id="insert" parameterType="article">
+        <selectKey keyProperty="id" resultType="string" order="BEFORE">
+            select uuid()
+        </selectKey>
+        insert into article
+        (id,userid,title,articlemd,articlehtml,categoryid,createdate,modifydate,url,hits,likes,visible)
+        values
+        (#{id},#{userId},#{title},#{articleMd},#{articleHtml},#{categoryId},#{createDate},#{modifyDate},#{url},#{hits},#{likes},#{visible})
+    </insert>
+
+    <insert id="batchInsert" parameterType="list">
+        insert into article
+        (id,userid,title,articlemd,articlehtml,categoryid,createdate,modifydate,url,hits,likes,visible)
+        values
+        <foreach collection="list" item="item" separator=",">
+            ((select
+            uuid()),#{item.userId},#{item.title},#{item.articleMd},#{item.articleHtml},#{item.categoryId},#{item.createDate},#{item.modifyDate},#{item.url},#{item.hits},#{item.likes},#{item.visible})
+        </foreach>
+    </insert>
+
+    <delete id="deleteById" parameterType="string">
+        delete from article where id = #{id}
+    </delete>
+
+    <delete id="batchDeleteById" parameterType="list">
+        delete from article where id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="update" parameterType="article">
+        update article
+        <set>
+            <if test="title != null">
+                title = #{title},
+            </if>
+            <if test="articleMd != null">
+                articlemd = #{articleMd},
+            </if>
+            <if test="articleHtml != null">
+                articlehtml = #{articleHtml},
+            </if>
+            <if test="categoryId != null">
+                categoryid = #{categoryId},
+            </if>
+            <if test="modifyDate != null">
+                modifydate = #{modifyDate},
+            </if>
+            <if test="url != null">
+                url = #{url},
+            </if>
+            <if test="hits != null">
+                hits = #{hits},
+            </if>
+            <if test="likes != null">
+                likes = #{likes},
+            </if>
+            <if test="visible != null">
+                visible = #{visible},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="batchUpdate" parameterType="list">
+        <foreach collection="list" item="item" open="" close="" separator=";">
+            update article
+            <set>
+                <if test="item.title != null">
+                    title = #{item.title},
+                </if>
+                <if test="item.articleMd != null">
+                    articlemd = #{item.articleMd},
+                </if>
+                <if test="item.articleHtml != null">
+                    articlehtml = #{item.articleHtml},
+                </if>
+                <if test="item.categoryId != null">
+                    categoryid = #{item.categoryId},
+                </if>
+                <if test="item.modifyDate != null">
+                    modifydate = #{item.modifyDate},
+                </if>
+                <if test="item.url != null">
+                    url = #{item.url},
+                </if>
+                <if test="item.hits != null">
+                    hits = #{item.hits},
+                </if>
+                <if test="item.likes != null">
+                    likes = #{item.likes},
+                </if>
+                <if test="item.visible != null">
+                    visible = #{item.visible},
+                </if>
+            </set>
+            where id = #{item.id}
+        </foreach>
+    </update>
+
+</mapper>

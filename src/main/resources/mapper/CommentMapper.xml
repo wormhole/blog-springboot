@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybtis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.stackoverflow.blog.dao.CommentDao">
+
+    <resultMap id="commentMap" type="comment">
+        <id property="id" column="id"/>
+        <result property="nickname" column="nickname"/>
+        <result property="email" column="email"/>
+        <result property="website" column="website"/>
+        <result property="content" column="content"/>
+        <result property="articleId" column="articleid"/>
+        <result property="replyTo" column="replyto"/>
+        <result property="review" column="review"/>
+        <result property="date" column="date" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <select id="selectByPage" resultMap="commentMap" resultType="comment">
+        select * from comment
+        <where>
+            <if test="searchMap != null">
+                <if test="searchMap.nickname != null">
+                    nickname = #{searchMap.nickname}
+                </if>
+                <if test="searchMap.email != null">
+                    and email = #{searchMap.email}
+                </if>
+                <if test="searchMap.website != null">
+                    and website = #{searchMap.website}
+                </if>
+                <if test="searchMap.content != null">
+                    and content = #{searchMap.content}
+                </if>
+                <if test="searchMap.articleId != null">
+                    and articleid = #{searchMap.articleId}
+                </if>
+                <if test="searchMap.replyTo != null">
+                    and replyto = #{searchMap.replyTo}
+                </if>
+                <if test="searchMap.review != null">
+                    and review = #{searchMap.review}
+                </if>
+                <if test="searchMap.date != null">
+                    and date = #{searchMap.date}
+                </if>
+            </if>
+        </where>
+        order by date desc limit #{start},#{limit}
+    </select>
+
+    <select id="selectByCondition" resultMap="commentMap" resultType="comment">
+        select * from comment
+        <where>
+            <if test="nickname != null">
+                nickname = #{nickname}
+            </if>
+            <if test="email != null">
+                and email = #{email}
+            </if>
+            <if test="website != null">
+                and website = #{website}
+            </if>
+            <if test="content != null">
+                and content = #{content}
+            </if>
+            <if test="articleId != null">
+                and articleid = #{articleId}
+            </if>
+            <if test="replyTo != null">
+                and replyto = #{replyTo}
+            </if>
+            <if test="review != null">
+                and review = #{review}
+            </if>
+            <if test="date != null">
+                and date = #{date}
+            </if>
+        </where>
+        order by date desc
+    </select>
+
+    <select id="selectById" resultMap="commentMap" resultType="comment">
+        select * from comment where id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="comment">
+        <selectKey keyProperty="id" resultType="string" order="BEFORE">
+            select uuid()
+        </selectKey>
+        insert into comment (id,nickname,email,website,content,articleid,replyto,review,date)
+        values (#{id},#{nickname},#{email},#{website},#{content},#{articleId},#{replyTo},#{review},#{date})
+    </insert>
+
+    <insert id="batchInsert" parameterType="list">
+        insert into comment (id,nickname,email,website,content,articleid,replyto,review,date)
+        values
+        <foreach collection="list" item="item" separator=",">
+            ((select
+            uuid()),#{item.nickname},#{item.email},#{item.website},#{item.content},#{item.articleId},#{item.replyTo},#{item.review},#{item.date})
+        </foreach>
+    </insert>
+
+    <delete id="deleteById" parameterType="string">
+        delete from comment where id = #{id}
+    </delete>
+
+    <delete id="batchDeleteById" parameterType="list">
+        delete from comment where id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="update" parameterType="comment">
+        update comment
+        <set>
+            <if test="nickname != null">
+                nickname = #{nickame},
+            </if>
+            <if test="email != null">
+                email = #{email}
+            </if>
+            <if test="website != null">
+                website = #{website}
+            </if>
+            <if test="content != null">
+                content = #{content}
+            </if>
+            <if test="articleId != null">
+                articleid = #{articleId}
+            </if>
+            <if test="replyTo != null">
+                replyto = #{replyTo}
+            </if>
+            <if test="review != null">
+                review = #{review}
+            </if>
+            <if test="date != null">
+                date = #{date}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="batchUpdate" parameterType="list">
+        <foreach collection="list" item="item" open="" close="" separator=";">
+            update comment
+            <set>
+                <if test="item.nickname != null">
+                    nickname = #{item.nickame},
+                </if>
+                <if test="item.email != null">
+                    email = #{item.email}
+                </if>
+                <if test="item.website != null">
+                    website = #{item.website}
+                </if>
+                <if test="item.content != null">
+                    content = #{item.content}
+                </if>
+                <if test="item.articleId != null">
+                    articleid = #{item.articleId}
+                </if>
+                <if test="item.replyTo != null">
+                    replyto = #{item.replyTo}
+                </if>
+                <if test="item.review != null">
+                    review = #{item.review}
+                </if>
+                <if test="item.date != null">
+                    date = #{item.date}
+                </if>
+            </set>
+            where id = #{item.id}
+        </foreach>
+    </update>
+
+</mapper>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybtis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.stackoverflow.blog.dao.CategoryDao">
+
+    <resultMap id="categoryMap" type="category">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="code" column="code"/>
+        <result property="deleteAble" column="deleteable"/>
+        <result property="date" column="date" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <select id="selectByPage" resultMap="categoryMap" resultType="category">
+        select * from category
+        <where>
+            <if test="searchMap != null">
+                <if test="searchMap.name != null">
+                    name = #{searchMap.name}
+                </if>
+                <if test="searchMap.code != null">
+                    and code = #{searchMap.code}
+                </if>
+                <if test="searchMap.deleteAble != null">
+                    and deleteable = #{searchMap.deleteAble}
+                </if>
+                <if test="searchMap.date != null">
+                    and date = #{searchMap.date}
+                </if>v
+            </if>
+        </where>
+        order by date limit #{start},#{limit}
+    </select>
+
+    <select id="selectByCondition" resultMap="categoryMap" resultType="category">
+        select * from category
+        <where>
+            <if test="name != null">
+                name = #{name}
+            </if>
+            <if test="code != null">
+                and code = #{code}
+            </if>
+            <if test="deleteAble != null">
+                and deleteable = #{deleteAble}
+            </if>
+            <if test="date != null">
+                and date = #{date}
+            </if>
+        </where>
+        order by date
+    </select>
+
+    <select id="selectById" resultMap="categoryMap" resultType="category">
+        select * from category where id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="category">
+        <selectKey keyProperty="id" resultType="string" order="BEFORE">
+            select uuid()
+        </selectKey>
+        insert into category (id,code,name,deleteable,date)
+        values (#{id},#{code},#{name},#{deleteAble},#{date})
+    </insert>
+
+    <insert id="batchInsert" parameterType="list">
+        insert into category (id,code,name,deleteable,date)
+        values
+        <foreach collection="list" item="item" separator=",">
+            ((select uuid()),#{item.code},#{item.name},#{item.deleteAble},#{item.date})
+        </foreach>
+    </insert>
+
+    <delete id="deleteById" parameterType="string">
+        delete from category where id = #{id}
+    </delete>
+
+    <delete id="batchDeleteById" parameterType="list">
+        delete from category where id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="update" parameterType="category">
+        update category
+        <set>
+            <if test="name!=null">
+                name = #{name},
+            </if>
+            <if test="code!=null">
+                code = #{code},
+            </if>
+            <if test="deleteAble!=null">
+                deleteable = #{deleteAble},
+            </if>
+            <if test="date!=null">
+                date = #{date},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="batchUpdate" parameterType="list">
+        <foreach collection="list" item="item" open="" close="" separator=";">
+            update category
+            <set>
+                <if test="item.name!=null">
+                    name = #{item.name},
+                </if>
+                <if test="item.code!=null">
+                    code = #{item.code},
+                </if>
+                <if test="item.deleteAble!=null">
+                    deleteable = #{item.deleteAble},
+                </if>
+                <if test="item.date!=null">
+                    date = #{item.date},
+                </if>
+            </set>
+            where id = #{item.id}
+        </foreach>
+    </update>
+
+</mapper>
