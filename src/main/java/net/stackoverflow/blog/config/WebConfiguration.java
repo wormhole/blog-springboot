@@ -33,7 +33,7 @@ public class WebConfiguration implements WebMvcConfigurer {
             registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
         }
         if (!registry.hasMappingForPattern("/upload/**")) {
-            registry.addResourceHandler("/upload/**").addResourceLocations(path);
+            registry.addResourceHandler("/upload/**").addResourceLocations("file:" + path);
         }
     }
 
