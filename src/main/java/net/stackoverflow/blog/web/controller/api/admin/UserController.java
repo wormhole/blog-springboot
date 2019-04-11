@@ -9,8 +9,8 @@ import net.stackoverflow.blog.pojo.entity.User;
 import net.stackoverflow.blog.service.UserService;
 import net.stackoverflow.blog.util.CollectionUtils;
 import net.stackoverflow.blog.util.PasswordUtils;
-import net.stackoverflow.blog.util.TransferUtils;
 import net.stackoverflow.blog.util.ValidationUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.data.redis.cache.RedisCacheManager;
@@ -78,7 +78,8 @@ public class UserController extends BaseController {
                 throw new BusinessException("邮箱已经存在");
             }
 
-            User updateUser = (User) TransferUtils.dto2po(User.class, userDTO);
+            User updateUser = new User();
+            BeanUtils.copyProperties(userDTO, updateUser);
             updateUser.setId(user.getId());
 
             if (!updateUser.getEmail().equals(user.getEmail())) {
@@ -107,7 +108,8 @@ public class UserController extends BaseController {
                 throw new BusinessException("旧密码不匹配");
             }
 
-            User updateUser = (User) TransferUtils.dto2po(User.class, userDTO);
+            User updateUser = new User();
+            BeanUtils.copyProperties(userDTO, updateUser);
             updateUser.setId(user.getId());
             updateUser.setEmail(user.getEmail());
             updateUser.setSalt(PasswordUtils.getSalt());

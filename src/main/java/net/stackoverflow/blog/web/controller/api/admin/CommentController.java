@@ -10,8 +10,8 @@ import net.stackoverflow.blog.pojo.entity.Comment;
 import net.stackoverflow.blog.service.ArticleService;
 import net.stackoverflow.blog.service.CommentService;
 import net.stackoverflow.blog.util.CollectionUtils;
-import net.stackoverflow.blog.util.TransferUtils;
 import net.stackoverflow.blog.util.ValidationUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
@@ -143,7 +143,8 @@ public class CommentController extends BaseController {
             throw new BusinessException("字段格式出错", map);
         }
 
-        Comment comment = (Comment) TransferUtils.dto2po(Comment.class, commentDTO);
+        Comment comment = new Comment();
+        BeanUtils.copyProperties(commentDTO, comment);
 
         if (commentService.update(comment) != null) {
             response.setStatus(Response.SUCCESS);

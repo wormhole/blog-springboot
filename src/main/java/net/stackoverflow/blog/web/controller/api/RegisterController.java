@@ -10,8 +10,8 @@ import net.stackoverflow.blog.pojo.entity.User;
 import net.stackoverflow.blog.service.RoleService;
 import net.stackoverflow.blog.service.UserService;
 import net.stackoverflow.blog.util.CollectionUtils;
-import net.stackoverflow.blog.util.TransferUtils;
 import net.stackoverflow.blog.util.ValidationUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -88,7 +88,8 @@ public class RegisterController extends BaseController {
                 throw new BusinessException("邮箱已经存在", map);
             }
 
-            User user = (User) TransferUtils.dto2po(User.class, userDTO);
+            User user = new User();
+            BeanUtils.copyProperties(userDTO, user);
             user.setDeleteAble(0);
             User newUser = userService.insert(user);
             List<Role> roles = roleService.selectByCondition(new HashMap<String, Object>() {{

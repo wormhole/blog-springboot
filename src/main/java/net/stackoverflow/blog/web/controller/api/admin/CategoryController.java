@@ -9,8 +9,8 @@ import net.stackoverflow.blog.pojo.dto.CategoryDTO;
 import net.stackoverflow.blog.pojo.entity.Category;
 import net.stackoverflow.blog.service.CategoryService;
 import net.stackoverflow.blog.util.CollectionUtils;
-import net.stackoverflow.blog.util.TransferUtils;
 import net.stackoverflow.blog.util.ValidationUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,7 +58,8 @@ public class CategoryController extends BaseController {
             throw new BusinessException("字段格式错误", map);
         }
 
-        Category category = (Category) TransferUtils.dto2po(Category.class, categoryDTO);
+        Category category = new Category();
+        BeanUtils.copyProperties(categoryDTO, category);
         if (categoryService.selectByCondition(new HashMap<String, Object>() {{
             put("name", category.getName());
         }}).size() != 0) {
@@ -204,7 +205,9 @@ public class CategoryController extends BaseController {
             throw new BusinessException("新分类编码已经存在");
         }
 
-        categoryService.update((Category) TransferUtils.dto2po(Category.class, categoryDTO));
+        Category category = new Category();
+        BeanUtils.copyProperties(categoryDTO, category);
+        categoryService.update(category);
         response.setStatus(Response.SUCCESS);
         response.setMessage("更新成功");
 

@@ -9,8 +9,8 @@ import net.stackoverflow.blog.pojo.entity.Setting;
 import net.stackoverflow.blog.service.SettingService;
 import net.stackoverflow.blog.util.CollectionUtils;
 import net.stackoverflow.blog.util.DateUtils;
-import net.stackoverflow.blog.util.TransferUtils;
 import net.stackoverflow.blog.validator.SettingValidator;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -66,7 +66,8 @@ public class SettingController extends BaseController {
         }
 
         for (SettingDTO settingDTO : settingDTOS) {
-            Setting setting = (Setting) TransferUtils.dto2po(Setting.class, settingDTO);
+            Setting setting = new Setting();
+            BeanUtils.copyProperties(settingDTO, setting);
             settingService.update(setting);
         }
 

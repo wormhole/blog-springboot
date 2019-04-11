@@ -11,8 +11,8 @@ import net.stackoverflow.blog.pojo.entity.Comment;
 import net.stackoverflow.blog.service.ArticleService;
 import net.stackoverflow.blog.service.CommentService;
 import net.stackoverflow.blog.util.CollectionUtils;
-import net.stackoverflow.blog.util.TransferUtils;
 import net.stackoverflow.blog.util.ValidationUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -74,7 +74,8 @@ public class CommentAndLikeController extends BaseController {
             throw new BusinessException("找不到该文章");
         }
 
-        Comment comment = (Comment) TransferUtils.dto2po(Comment.class, commentDTO);
+        Comment comment = new Comment();
+        BeanUtils.copyProperties(commentDTO, comment);
         comment.setDate(new Date());
         comment.setArticleId(article.getId());
         comment.setReview(0);

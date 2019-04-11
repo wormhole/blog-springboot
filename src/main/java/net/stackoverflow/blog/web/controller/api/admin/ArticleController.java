@@ -14,8 +14,8 @@ import net.stackoverflow.blog.service.CommentService;
 import net.stackoverflow.blog.service.UserService;
 import net.stackoverflow.blog.util.CollectionUtils;
 import net.stackoverflow.blog.util.DateUtils;
-import net.stackoverflow.blog.util.TransferUtils;
 import net.stackoverflow.blog.util.ValidationUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -111,7 +111,8 @@ public class ArticleController extends BaseController {
         }
 
         User user = (User) session.getAttribute("user");
-        Article article = (Article) TransferUtils.dto2po(Article.class, articleDTO);
+        Article article = new Article();
+        BeanUtils.copyProperties(articleDTO, article);
         article.setCreateDate(new Date());
         article.setModifyDate(new Date());
         article.setUserId(user.getId());
@@ -164,7 +165,8 @@ public class ArticleController extends BaseController {
             throw new BusinessException("url重复");
         }
 
-        Article updateArticle = (Article) TransferUtils.dto2po(Article.class, articleDTO);
+        Article updateArticle = new Article();
+        BeanUtils.copyProperties(articleDTO, updateArticle);
         updateArticle.setModifyDate(new Date());
         updateArticle.setUrl(url);
         articleService.update(updateArticle);
@@ -323,7 +325,8 @@ public class ArticleController extends BaseController {
             throw new BusinessException("字段格式错误", map);
         }
 
-        Article article = (Article) TransferUtils.dto2po(Article.class, articleDTO);
+        Article article = new Article();
+        BeanUtils.copyProperties(articleDTO, article);
 
         if (articleService.update(article) != null) {
             response.setStatus(Response.SUCCESS);

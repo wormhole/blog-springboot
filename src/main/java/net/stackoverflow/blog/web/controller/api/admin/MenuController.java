@@ -9,8 +9,8 @@ import net.stackoverflow.blog.pojo.dto.MenuDTO;
 import net.stackoverflow.blog.pojo.entity.Menu;
 import net.stackoverflow.blog.service.MenuService;
 import net.stackoverflow.blog.util.CollectionUtils;
-import net.stackoverflow.blog.util.TransferUtils;
 import net.stackoverflow.blog.util.ValidationUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
@@ -147,7 +147,8 @@ public class MenuController extends BaseController {
             throw new BusinessException("字段格式出错", map);
         }
 
-        Menu menu = (Menu) TransferUtils.dto2po(Menu.class, menuDTO);
+        Menu menu = new Menu();
+        BeanUtils.copyProperties(menuDTO, menu);
         menu.setDeleteAble(1);
         menu.setDate(new Date());
         menuService.insert(menu);
@@ -197,7 +198,9 @@ public class MenuController extends BaseController {
             throw new BusinessException("该菜单不允许被修改");
         }
 
-        menuService.update((Menu) TransferUtils.dto2po(Menu.class, menuDTO));
+        Menu updateMenu = new Menu();
+        BeanUtils.copyProperties(menuDTO, updateMenu);
+        menuService.update(updateMenu);
         ServletContext application = request.getServletContext();
         List<Menu> menus = menuService.selectByCondition(new HashMap<>());
         application.setAttribute("menu", menus);
