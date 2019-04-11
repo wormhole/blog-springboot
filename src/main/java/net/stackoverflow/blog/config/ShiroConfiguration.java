@@ -233,12 +233,9 @@ public class ShiroConfiguration {
         Map<String, String> filterChainMap = new LinkedHashMap<>();
         filterChainMap.put("/logout", "logout");
         filterChainMap.put("/login", "authc");
-        filterChainMap.put("/actuator/**", "anon");
-        filterChainMap.put("/static/**", "anon");
-        filterChainMap.put("/upload/**", "anon");
-        filterChainMap.put("/favicon.ico", "anon");
-        filterChainMap.put("/robots.txt", "anon");
         filterChainMap.put("/admin/**", "user");
+        filterChainMap.put("/api/admin/**", "user");
+        filterChainMap.put("/**", "anon");
         shiroFilter.setFilterChainDefinitionMap(filterChainMap);
 
         return shiroFilter;

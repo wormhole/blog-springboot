@@ -54,7 +54,7 @@ layui.use(['layer', 'jquery', 'table'], function () {
                 }
             },
             legend: {
-                data: ['访问量', '访客量']
+                data: ['访问量']
             },
             xAxis: {
                 type: 'category',
@@ -66,11 +66,6 @@ layui.use(['layer', 'jquery', 'table'], function () {
             },
             series: [{
                 name: '访问量',
-                type: 'line',
-                data: [],
-                areaStyle: {}
-            }, {
-                name: '访客量',
                 type: 'line',
                 data: [],
                 areaStyle: {}
@@ -92,7 +87,6 @@ layui.use(['layer', 'jquery', 'table'], function () {
                 if (response.status === 0) {
                     option.xAxis.data = response.data.dateList;
                     option.series[0].data = response.data.visitList;
-                    option.series[1].data = response.data.visitorList;
                     chart.setOption(option);
                 } else {
                     layer.open({
@@ -118,9 +112,7 @@ layui.use(['layer', 'jquery', 'table'], function () {
             success: function (response) {
                 if (response.status === 0) {
                     $('#todayVisit').text(response.data.todayVisit);
-                    $('#todayVisitor').text(response.data.todayVisitor);
                     $('#totalVisit').text(response.data.totalVisit);
-                    $('#totalVisitor').text(response.data.totalVisitor);
                 } else {
                     layer.open({
                         type: 0,

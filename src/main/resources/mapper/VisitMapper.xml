@@ -151,7 +151,7 @@
     </update>
 
     <select id="selectByDate" resultMap="visitMap" resultType="visit">
-        select * from visit where date between #{arg0} and #{arg1}
+        select * from visit where date between #{param1} and #{param2}
     </select>
 
 </mapper>

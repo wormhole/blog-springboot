@@ -48,16 +48,8 @@
                 <td id="todayVisit"></td>
             </tr>
             <tr>
-                <td>今日访客量</td>
-                <td id="todayVisitor"></td>
-            </tr>
-            <tr>
                 <td>所有访问量</td>
                 <td id="totalVisit"></td>
-            </tr>
-            <tr>
-                <td>所有访客量</td>
-                <td id="totalVisitor"></td>
             </tr>
             </tbody>
         </table>
