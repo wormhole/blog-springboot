@@ -1,4 +1,4 @@
-package net.stackoverflow.blog.web.controller.page.front;
+package net.stackoverflow.blog.web.controller.front;
 
 import net.stackoverflow.blog.common.Page;
 import net.stackoverflow.blog.pojo.dto.ArticleDTO;
@@ -8,6 +8,7 @@ import net.stackoverflow.blog.service.CategoryService;
 import net.stackoverflow.blog.service.CommentService;
 import net.stackoverflow.blog.service.UserService;
 import org.jsoup.Jsoup;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -25,12 +26,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 主页跳转控制器
+ * 主页转发
  *
- * @author 凉衫薄
+ * @author 凉衫薄
  */
 @Controller
-public class IndexPageController {
+public class IndexController {
 
     @Autowired
     private UserService userService;
@@ -42,10 +43,11 @@ public class IndexPageController {
     private CommentService commentService;
 
     /**
-     * 进入主页 /index
-     * 方法 GET
+     * 主页跳转
      *
-     * @return
+     * @param page    页码参数
+     * @param request HttpServletRequest对象
+     * @return 返回ModelAndView对象
      */
     @RequestMapping(value = "/index", method = RequestMethod.GET)
     public ModelAndView index(@RequestParam(value = "page", required = false, defaultValue = "1") String page, HttpServletRequest request) {
@@ -54,6 +56,7 @@ public class IndexPageController {
         Map<String, Object> settingMap = (Map<String, Object>) application.getAttribute("setting");
         int limit = Integer.valueOf((String) settingMap.get("limit"));
 
+        //计算总页数
         int count = articleService.selectByCondition(new HashMap<String, Object>() {{
             put("visible", 1);
         }}).size();
@@ -74,35 +77,33 @@ public class IndexPageController {
             return mv;
         }
 
+        //计算前端分页组件的起止页数
         int start = (p - 2 < 1) ? 1 : p - 2;
         int end = (start + 4 > pageCount) ? pageCount : start + 4;
         if ((end - start) < 4) {
             start = (end - 4 < 1) ? 1 : end - 4;
         }
 
-        Page page1 = new Page(p, limit, null);
-        page1.setSearchMap(new HashMap<String, Object>() {{
+        Page pageParam = new Page(p, limit, null);
+        pageParam.setSearchMap(new HashMap<String, Object>() {{
             put("visible", 1);
         }});
-        List<ArticlePO> articles = articleService.selectByPage(page1);
-        List<ArticleDTO> articleDTOS = new ArrayList<>();
-        for (ArticlePO article : articles) {
+        List<ArticlePO> articlePOs = articleService.selectByPage(pageParam);
+        List<ArticleDTO> articleDTOs = new ArrayList<>();
+        for (ArticlePO article : articlePOs) {
             ArticleDTO dto = new ArticleDTO();
+            BeanUtils.copyProperties(article, dto);
             dto.setTitle(HtmlUtils.htmlEscape(article.getTitle()));
             dto.setAuthor(HtmlUtils.htmlEscape(userService.selectById(article.getUserId()).getNickname()));
             dto.setCategoryName(categoryService.selectById(article.getCategoryId()).getName());
             dto.setCommentCount(commentService.selectByCondition(new HashMap<String, Object>() {{
                 put("articleId", article.getId());
             }}).size());
-            dto.setHits(article.getHits());
-            dto.setLikes(article.getLikes());
-            dto.setUrl(article.getUrl());
-            dto.setCreateDate(article.getCreateDate());
             dto.setPreview(HtmlUtils.htmlEscape(Jsoup.parse(article.getArticleHtml()).text()));
-            articleDTOS.add(dto);
+            articleDTOs.add(dto);
         }
 
-        mv.addObject("articleList", articleDTOS);
+        mv.addObject("articleList", articleDTOs);
         mv.addObject("start", start);
         mv.addObject("end", end);
         mv.addObject("page", p);
@@ -116,12 +117,11 @@ public class IndexPageController {
     }
 
     /**
-     * 主页跳转 /
-     * 方法 GET
+     * 主页跳转
      *
-     * @param page
-     * @param request
-     * @return
+     * @param page    页码参数
+     * @param request HttpServletRequest对象
+     * @return 返回ModelAndView
      */
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView root(@RequestParam(value = "page", required = false, defaultValue = "1") String page, HttpServletRequest request) {

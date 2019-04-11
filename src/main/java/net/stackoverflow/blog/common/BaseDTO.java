@@ -22,6 +22,14 @@ public class BaseDTO implements Serializable {
         this.data = data;
     }
 
+    public Page getPage() {
+        return page;
+    }
+
+    public void setPage(Page page) {
+        this.page = page;
+    }
+
     public Map<String, Map<String, Object>[]> getData() {
         return data;
     }
