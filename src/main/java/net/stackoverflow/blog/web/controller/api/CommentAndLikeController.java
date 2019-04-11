@@ -6,8 +6,8 @@ import net.stackoverflow.blog.common.Response;
 import net.stackoverflow.blog.exception.BusinessException;
 import net.stackoverflow.blog.pojo.dto.ArticleDTO;
 import net.stackoverflow.blog.pojo.dto.CommentDTO;
-import net.stackoverflow.blog.pojo.entity.Article;
-import net.stackoverflow.blog.pojo.entity.Comment;
+import net.stackoverflow.blog.pojo.po.ArticlePO;
+import net.stackoverflow.blog.pojo.po.CommentPO;
 import net.stackoverflow.blog.service.ArticleService;
 import net.stackoverflow.blog.service.CommentService;
 import net.stackoverflow.blog.util.CollectionUtils;
@@ -69,12 +69,12 @@ public class CommentAndLikeController extends BaseController {
             throw new BusinessException("字段格式错误", map);
         }
 
-        Article article = articleService.selectByUrl(commentDTO.getUrl());
+        ArticlePO article = articleService.selectByUrl(commentDTO.getUrl());
         if (article == null) {
             throw new BusinessException("找不到该文章");
         }
 
-        Comment comment = new Comment();
+        CommentPO comment = new CommentPO();
         BeanUtils.copyProperties(commentDTO, comment);
         comment.setDate(new Date());
         comment.setArticleId(article.getId());
@@ -116,7 +116,7 @@ public class CommentAndLikeController extends BaseController {
         Boolean isLike = (Boolean) session.getAttribute(articleDTO.getUrl());
 
         if (isLike != null && !isLike) {
-            Article article = articleService.selectByUrl(articleDTO.getUrl());
+            ArticlePO article = articleService.selectByUrl(articleDTO.getUrl());
             article.setLikes(article.getLikes() + 1);
             articleService.update(article);
             session.setAttribute(articleDTO.getUrl(), true);

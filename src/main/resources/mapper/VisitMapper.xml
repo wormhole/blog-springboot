@@ -5,7 +5,7 @@
 
 <mapper namespace="net.stackoverflow.blog.dao.VisitDao">
 
-    <resultMap id="visitMap" type="visit">
+    <resultMap id="visitMap" type="visitPO">
         <id property="id" column="id"/>
         <result property="url" column="url"/>
         <result property="status" column="status"/>
@@ -15,7 +15,7 @@
         <result property="date" column="date" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
     </resultMap>
 
-    <select id="selectByPage" resultMap="visitMap" resultType="visit">
+    <select id="selectByPage" resultMap="visitMap" resultType="visitPO">
         select * from visit
         <where>
             <if test="searchMap!=null">
@@ -42,7 +42,7 @@
         order by date desc limit #{start},#{limit}
     </select>
 
-    <select id="selectByCondition" resultMap="visitMap" resultType="visit">
+    <select id="selectByCondition" resultMap="visitMap" resultType="visitPO">
         select * from visit
         <where>
             <if test="url != null">
@@ -67,11 +67,11 @@
         order by date desc
     </select>
 
-    <select id="selectById" resultMap="visitMap" resultType="visit">
+    <select id="selectById" resultMap="visitMap" resultType="visitPO">
         select * from visit where id = #{id}
     </select>
 
-    <insert id="insert" parameterType="visit">
+    <insert id="insert" parameterType="visitPO">
         <selectKey keyProperty="id" resultType="string" order="BEFORE">
             select uuid()
         </selectKey>
@@ -98,7 +98,7 @@
         </foreach>
     </delete>
 
-    <update id="update" parameterType="role">
+    <update id="update" parameterType="visitPO">
         update visit
         <set>
             <if test="url != null">
@@ -150,7 +150,7 @@
         </foreach>
     </update>
 
-    <select id="selectByDate" resultMap="visitMap" resultType="visit">
+    <select id="selectByDate" resultMap="visitMap" resultType="visitPO">
         select * from visit where date between #{param1} and #{param2}
     </select>
 

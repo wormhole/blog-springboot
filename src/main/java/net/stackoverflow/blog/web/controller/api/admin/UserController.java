@@ -5,7 +5,7 @@ import net.stackoverflow.blog.common.BaseDTO;
 import net.stackoverflow.blog.common.Response;
 import net.stackoverflow.blog.exception.BusinessException;
 import net.stackoverflow.blog.pojo.dto.UserDTO;
-import net.stackoverflow.blog.pojo.entity.User;
+import net.stackoverflow.blog.pojo.po.UserPO;
 import net.stackoverflow.blog.service.UserService;
 import net.stackoverflow.blog.util.CollectionUtils;
 import net.stackoverflow.blog.util.PasswordUtils;
@@ -60,7 +60,7 @@ public class UserController extends BaseController {
             throw new BusinessException("找不到请求数据");
         }
         UserDTO userDTO = dtos.get(0);
-        User user = (User) session.getAttribute("user");
+        UserPO user = (UserPO) session.getAttribute("user");
 
         if (type.equals("base")) {
 
@@ -78,7 +78,7 @@ public class UserController extends BaseController {
                 throw new BusinessException("邮箱已经存在");
             }
 
-            User updateUser = new User();
+            UserPO updateUser = new UserPO();
             BeanUtils.copyProperties(userDTO, updateUser);
             updateUser.setId(user.getId());
 
@@ -89,7 +89,7 @@ public class UserController extends BaseController {
                 authorizationCache.evict("shiro:authorization:" + user.getEmail());
             }
 
-            User newUser = userService.update(updateUser);
+            UserPO newUser = userService.update(updateUser);
             session.setAttribute("user", newUser);
             response.setStatus(Response.SUCCESS);
             response.setMessage("基础信息修改成功");
@@ -108,7 +108,7 @@ public class UserController extends BaseController {
                 throw new BusinessException("旧密码不匹配");
             }
 
-            User updateUser = new User();
+            UserPO updateUser = new UserPO();
             BeanUtils.copyProperties(userDTO, updateUser);
             updateUser.setId(user.getId());
             updateUser.setEmail(user.getEmail());
@@ -120,7 +120,7 @@ public class UserController extends BaseController {
             Cache authorizationCache = redisCacheManager.getCache("authorization");
             authorizationCache.evict("shiro:authorization:" + user.getEmail());
 
-            User newUser = userService.update(updateUser);
+            UserPO newUser = userService.update(updateUser);
             session.setAttribute("user", newUser);
             response.setStatus(Response.SUCCESS);
             response.setMessage("修改成功");

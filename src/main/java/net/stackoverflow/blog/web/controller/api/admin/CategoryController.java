@@ -6,7 +6,7 @@ import net.stackoverflow.blog.common.Page;
 import net.stackoverflow.blog.common.Response;
 import net.stackoverflow.blog.exception.BusinessException;
 import net.stackoverflow.blog.pojo.dto.CategoryDTO;
-import net.stackoverflow.blog.pojo.entity.Category;
+import net.stackoverflow.blog.pojo.po.CategoryPO;
 import net.stackoverflow.blog.service.CategoryService;
 import net.stackoverflow.blog.util.CollectionUtils;
 import net.stackoverflow.blog.util.ValidationUtils;
@@ -58,7 +58,7 @@ public class CategoryController extends BaseController {
             throw new BusinessException("字段格式错误", map);
         }
 
-        Category category = new Category();
+        CategoryPO category = new CategoryPO();
         BeanUtils.copyProperties(categoryDTO, category);
         if (categoryService.selectByCondition(new HashMap<String, Object>() {{
             put("name", category.getName());
@@ -93,11 +93,11 @@ public class CategoryController extends BaseController {
         Response response = new Response();
 
         Page pageParam = new Page(Integer.valueOf(page), Integer.valueOf(limit), null);
-        List<Category> categorys = categoryService.selectByPage(pageParam);
+        List<CategoryPO> categorys = categoryService.selectByPage(pageParam);
         int count = categoryService.selectByCondition(new HashMap<>()).size();
 
         List<CategoryDTO> dtos = new ArrayList<>();
-        for (Category category : categorys) {
+        for (CategoryPO category : categorys) {
             CategoryDTO categoryDTO = new CategoryDTO();
             categoryDTO.setId(category.getId());
             categoryDTO.setName(category.getName());
@@ -144,7 +144,7 @@ public class CategoryController extends BaseController {
             throw new BusinessException("字段格式错误", map);
         }
 
-        Category category = categoryService.selectById(categoryDTO.getId());
+        CategoryPO category = categoryService.selectById(categoryDTO.getId());
 
         if (category == null) {
             throw new BusinessException("未找到该分类");
@@ -185,7 +185,7 @@ public class CategoryController extends BaseController {
             throw new BusinessException("字段格式错误", map);
         }
 
-        Category oldCategory = categoryService.selectById(categoryDTO.getId());
+        CategoryPO oldCategory = categoryService.selectById(categoryDTO.getId());
 
         if (oldCategory == null) {
             throw new BusinessException("未找到该分类");
@@ -205,7 +205,7 @@ public class CategoryController extends BaseController {
             throw new BusinessException("新分类编码已经存在");
         }
 
-        Category category = new Category();
+        CategoryPO category = new CategoryPO();
         BeanUtils.copyProperties(categoryDTO, category);
         categoryService.update(category);
         response.setStatus(Response.SUCCESS);

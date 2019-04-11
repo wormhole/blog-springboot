@@ -2,7 +2,7 @@ package net.stackoverflow.blog.service;
 
 import net.stackoverflow.blog.common.Page;
 import net.stackoverflow.blog.dao.CommentDao;
-import net.stackoverflow.blog.pojo.entity.Comment;
+import net.stackoverflow.blog.pojo.po.CommentPO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,39 +23,39 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<Comment> selectByPage(Page page) {
+    public List<CommentPO> selectByPage(Page page) {
         return dao.selectByPage(page);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<Comment> selectByCondition(Map<String, Object> searchMap) {
+    public List<CommentPO> selectByCondition(Map<String, Object> searchMap) {
         return dao.selectByCondition(searchMap);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Comment selectById(String id) {
+    public CommentPO selectById(String id) {
         return dao.selectById(id);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Comment insert(Comment comment) {
+    public CommentPO insert(CommentPO comment) {
         dao.insert(comment);
         return dao.selectById(comment.getId());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchInsert(List<Comment> list) {
+    public int batchInsert(List<CommentPO> list) {
         return dao.batchInsert(list);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Comment deleteById(String id) {
-        Comment comment = dao.selectById(id);
+    public CommentPO deleteById(String id) {
+        CommentPO comment = dao.selectById(id);
         dao.deleteById(id);
         return comment;
     }
@@ -68,14 +68,14 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Comment update(Comment comment) {
+    public CommentPO update(CommentPO comment) {
         dao.update(comment);
         return dao.selectById(comment.getId());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchUpdate(List<Comment> list) {
+    public int batchUpdate(List<CommentPO> list) {
         return dao.batchUpdate(list);
     }
 

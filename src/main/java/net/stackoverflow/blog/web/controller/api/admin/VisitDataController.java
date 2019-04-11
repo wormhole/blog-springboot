@@ -3,7 +3,7 @@ package net.stackoverflow.blog.web.controller.api.admin;
 import net.stackoverflow.blog.common.Page;
 import net.stackoverflow.blog.common.Response;
 import net.stackoverflow.blog.pojo.dto.VisitDTO;
-import net.stackoverflow.blog.pojo.entity.Visit;
+import net.stackoverflow.blog.pojo.po.VisitPO;
 import net.stackoverflow.blog.service.VisitService;
 import net.stackoverflow.blog.util.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,12 +77,12 @@ public class VisitDataController {
 
         Page page1 = new Page(Integer.valueOf(page), Integer.valueOf(limit), null);
 
-        List<Visit> visits = visitService.selectByPage(page1);
+        List<VisitPO> visits = visitService.selectByPage(page1);
         int count = visitService.selectByCondition(new HashMap<>()).size();
 
         List<VisitDTO> dtos = new ArrayList<>();
 
-        for (Visit visit : visits) {
+        for (VisitPO visit : visits) {
             VisitDTO dto = new VisitDTO();
             dto.setIp(visit.getIp());
             dto.setUrl(visit.getUrl());

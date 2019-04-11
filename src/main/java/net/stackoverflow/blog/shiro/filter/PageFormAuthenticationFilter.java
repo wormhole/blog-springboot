@@ -1,7 +1,7 @@
 package net.stackoverflow.blog.shiro.filter;
 
 import net.stackoverflow.blog.exception.VCodeException;
-import net.stackoverflow.blog.pojo.entity.User;
+import net.stackoverflow.blog.pojo.po.UserPO;
 import net.stackoverflow.blog.service.UserService;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
@@ -71,7 +71,7 @@ public class PageFormAuthenticationFilter extends FormAuthenticationFilter {
     @Override
     protected boolean onLoginSuccess(AuthenticationToken token, Subject subject, ServletRequest request, ServletResponse response) throws Exception {
         String email = (String) subject.getPrincipal();
-        User user = userService.selectByCondition(new HashMap<String, Object>() {{
+        UserPO user = userService.selectByCondition(new HashMap<String, Object>() {{
             put("email", email);
         }}).get(0);
         HttpServletRequest httpServletRequest = WebUtils.toHttp(request);

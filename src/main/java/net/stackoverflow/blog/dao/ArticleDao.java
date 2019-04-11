@@ -1,7 +1,7 @@
 package net.stackoverflow.blog.dao;
 
 import net.stackoverflow.blog.common.Page;
-import net.stackoverflow.blog.pojo.entity.Article;
+import net.stackoverflow.blog.pojo.po.ArticlePO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -15,24 +15,24 @@ import java.util.Map;
 @Mapper
 public interface ArticleDao {
 
-    List<Article> selectByPage(Page page);
+    List<ArticlePO> selectByPage(Page page);
 
-    List<Article> selectByCondition(Map<String, Object> searchMap);
+    List<ArticlePO> selectByCondition(Map<String, Object> searchMap);
 
-    Article selectById(String id);
+    ArticlePO selectById(String id);
 
-    Article selectByUrl(String url);
+    ArticlePO selectByUrl(String url);
 
-    int insert(Article article);
+    int insert(ArticlePO article);
 
-    int batchInsert(List<Article> list);
+    int batchInsert(List<ArticlePO> list);
 
     int deleteById(String id);
 
     int batchDeleteById(List<String> list);
 
-    int update(Article article);
+    int update(ArticlePO article);
 
-    int batchUpdate(List<Article> list);
+    int batchUpdate(List<ArticlePO> list);
 
 }

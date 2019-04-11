@@ -2,7 +2,7 @@ package net.stackoverflow.blog.service;
 
 import net.stackoverflow.blog.common.Page;
 import net.stackoverflow.blog.dao.SettingDao;
-import net.stackoverflow.blog.pojo.entity.Setting;
+import net.stackoverflow.blog.pojo.po.SettingPO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,39 +23,39 @@ public class SettingServiceImpl implements SettingService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<Setting> selectByPage(Page page) {
+    public List<SettingPO> selectByPage(Page page) {
         return dao.selectByPage(page);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<Setting> selectByCondition(Map<String, Object> searchMap) {
+    public List<SettingPO> selectByCondition(Map<String, Object> searchMap) {
         return dao.selectByCondition(searchMap);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Setting selectById(String id) {
+    public SettingPO selectById(String id) {
         return dao.selectById(id);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Setting insert(Setting setting) {
+    public SettingPO insert(SettingPO setting) {
         dao.insert(setting);
         return dao.selectById(setting.getId());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchInsert(List<Setting> list) {
+    public int batchInsert(List<SettingPO> list) {
         return dao.batchInsert(list);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Setting deleteById(String id) {
-        Setting setting = dao.selectById(id);
+    public SettingPO deleteById(String id) {
+        SettingPO setting = dao.selectById(id);
         dao.deleteById(id);
         return setting;
     }
@@ -68,14 +68,14 @@ public class SettingServiceImpl implements SettingService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Setting update(Setting setting) {
+    public SettingPO update(SettingPO setting) {
         dao.update(setting);
         return dao.selectById(setting.getId());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchUpdate(List<Setting> list) {
+    public int batchUpdate(List<SettingPO> list) {
         return dao.batchUpdate(list);
     }
 

@@ -5,7 +5,7 @@ import net.stackoverflow.blog.common.BaseDTO;
 import net.stackoverflow.blog.common.Response;
 import net.stackoverflow.blog.exception.BusinessException;
 import net.stackoverflow.blog.pojo.dto.SettingDTO;
-import net.stackoverflow.blog.pojo.entity.Setting;
+import net.stackoverflow.blog.pojo.po.SettingPO;
 import net.stackoverflow.blog.service.SettingService;
 import net.stackoverflow.blog.util.CollectionUtils;
 import net.stackoverflow.blog.util.DateUtils;
@@ -66,14 +66,14 @@ public class SettingController extends BaseController {
         }
 
         for (SettingDTO settingDTO : settingDTOS) {
-            Setting setting = new Setting();
+            SettingPO setting = new SettingPO();
             BeanUtils.copyProperties(settingDTO, setting);
             settingService.update(setting);
         }
 
-        List<Setting> settings = settingService.selectByCondition(new HashMap<>());
+        List<SettingPO> settings = settingService.selectByCondition(new HashMap<>());
         Map<String, Object> settingMap = new HashMap<>();
-        for (Setting setting : settings) {
+        for (SettingPO setting : settings) {
             settingMap.put(setting.getName(), setting.getValue());
         }
         application.setAttribute("setting", settingMap);
@@ -111,7 +111,7 @@ public class SettingController extends BaseController {
         try {
             file.transferTo(destFile);
             String url = "/upload" + dataPath + fileName;
-            Setting setting = new Setting();
+            SettingPO setting = new SettingPO();
             setting.setName("head");
             setting.setValue(url);
             settingService.update(setting);

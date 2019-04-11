@@ -1,4 +1,4 @@
-package net.stackoverflow.blog.pojo.entity;
+package net.stackoverflow.blog.pojo.po;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,10 +11,9 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Role implements Serializable {
+public class PermissionPO implements Serializable {
 
     private String id;
     private String name;
     private String code;
-
 }

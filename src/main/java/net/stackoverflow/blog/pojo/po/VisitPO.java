@@ -1,4 +1,4 @@
-package net.stackoverflow.blog.pojo.entity;
+package net.stackoverflow.blog.pojo.po;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,7 +17,7 @@ import java.util.Date;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Visit implements Serializable {
+public class VisitPO implements Serializable {
 
     private String id;
     private String url;

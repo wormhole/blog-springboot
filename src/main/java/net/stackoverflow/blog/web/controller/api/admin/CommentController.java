@@ -6,7 +6,7 @@ import net.stackoverflow.blog.common.Page;
 import net.stackoverflow.blog.common.Response;
 import net.stackoverflow.blog.exception.BusinessException;
 import net.stackoverflow.blog.pojo.dto.CommentDTO;
-import net.stackoverflow.blog.pojo.entity.Comment;
+import net.stackoverflow.blog.pojo.po.CommentPO;
 import net.stackoverflow.blog.service.ArticleService;
 import net.stackoverflow.blog.service.CommentService;
 import net.stackoverflow.blog.util.CollectionUtils;
@@ -50,11 +50,11 @@ public class CommentController extends BaseController {
         Response response = new Response();
 
         Page pageParam = new Page(Integer.valueOf(page), Integer.valueOf(limit), null);
-        List<Comment> comments = commentService.selectByPage(pageParam);
+        List<CommentPO> comments = commentService.selectByPage(pageParam);
         int count = commentService.selectByCondition(new HashMap<>()).size();
         List<CommentDTO> dtos = new ArrayList<>();
 
-        for (Comment comment : comments) {
+        for (CommentPO comment : comments) {
             CommentDTO dto = new CommentDTO();
             dto.setId(comment.getId());
             dto.setNickname(HtmlUtils.htmlEscape(comment.getNickname()));
@@ -143,7 +143,7 @@ public class CommentController extends BaseController {
             throw new BusinessException("字段格式出错", map);
         }
 
-        Comment comment = new Comment();
+        CommentPO comment = new CommentPO();
         BeanUtils.copyProperties(commentDTO, comment);
 
         if (commentService.update(comment) != null) {

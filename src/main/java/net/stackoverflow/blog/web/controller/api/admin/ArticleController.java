@@ -6,8 +6,8 @@ import net.stackoverflow.blog.common.Page;
 import net.stackoverflow.blog.common.Response;
 import net.stackoverflow.blog.exception.BusinessException;
 import net.stackoverflow.blog.pojo.dto.ArticleDTO;
-import net.stackoverflow.blog.pojo.entity.Article;
-import net.stackoverflow.blog.pojo.entity.User;
+import net.stackoverflow.blog.pojo.po.ArticlePO;
+import net.stackoverflow.blog.pojo.po.UserPO;
 import net.stackoverflow.blog.service.ArticleService;
 import net.stackoverflow.blog.service.CategoryService;
 import net.stackoverflow.blog.service.CommentService;
@@ -110,8 +110,8 @@ public class ArticleController extends BaseController {
             throw new BusinessException("url重复");
         }
 
-        User user = (User) session.getAttribute("user");
-        Article article = new Article();
+        UserPO user = (UserPO) session.getAttribute("user");
+        ArticlePO article = new ArticlePO();
         BeanUtils.copyProperties(articleDTO, article);
         article.setCreateDate(new Date());
         article.setModifyDate(new Date());
@@ -151,7 +151,7 @@ public class ArticleController extends BaseController {
             throw new BusinessException("字段格式错误", map);
         }
 
-        Article article = articleService.selectById(articleDTO.getId());
+        ArticlePO article = articleService.selectById(articleDTO.getId());
 
         if (article == null) {
             throw new BusinessException("未找到文章");
@@ -165,7 +165,7 @@ public class ArticleController extends BaseController {
             throw new BusinessException("url重复");
         }
 
-        Article updateArticle = new Article();
+        ArticlePO updateArticle = new ArticlePO();
         BeanUtils.copyProperties(articleDTO, updateArticle);
         updateArticle.setModifyDate(new Date());
         updateArticle.setUrl(url);
@@ -227,12 +227,12 @@ public class ArticleController extends BaseController {
         Response response = new Response();
 
         Page pageParam = new Page(Integer.valueOf(page), Integer.valueOf(limit), null);
-        List<Article> articles = articleService.selectByPage(pageParam);
+        List<ArticlePO> articles = articleService.selectByPage(pageParam);
 
         int count = articleService.selectByCondition(new HashMap<>()).size();
         List<ArticleDTO> dtos = new ArrayList<>();
 
-        for (Article article : articles) {
+        for (ArticlePO article : articles) {
             ArticleDTO articleDTO = new ArticleDTO();
             articleDTO.setId(article.getId());
             articleDTO.setTitle(HtmlUtils.htmlEscape(article.getTitle()));
@@ -325,7 +325,7 @@ public class ArticleController extends BaseController {
             throw new BusinessException("字段格式错误", map);
         }
 
-        Article article = new Article();
+        ArticlePO article = new ArticlePO();
         BeanUtils.copyProperties(articleDTO, article);
 
         if (articleService.update(article) != null) {
@@ -355,7 +355,7 @@ public class ArticleController extends BaseController {
      */
     @RequestMapping(value = "/article/export", method = RequestMethod.GET)
     public ResponseEntity<byte[]> export(@RequestParam("id") String id) throws IOException {
-        Article article = articleService.selectById(id);
+        ArticlePO article = articleService.selectById(id);
         String filename = article.getTitle() + ".md";
         filename = new String(filename.getBytes("UTF-8"), "ISO-8859-1");
 

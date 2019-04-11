@@ -1,7 +1,7 @@
 package net.stackoverflow.blog.service;
 
 import net.stackoverflow.blog.common.Page;
-import net.stackoverflow.blog.pojo.entity.Category;
+import net.stackoverflow.blog.pojo.po.CategoryPO;
 
 import java.util.List;
 import java.util.Map;
@@ -13,22 +13,22 @@ import java.util.Map;
  */
 public interface CategoryService {
 
-    List<Category> selectByPage(Page page);
+    List<CategoryPO> selectByPage(Page page);
 
-    List<Category> selectByCondition(Map<String, Object> searchMap);
+    List<CategoryPO> selectByCondition(Map<String, Object> searchMap);
 
-    Category selectById(String id);
+    CategoryPO selectById(String id);
 
-    Category insert(Category category);
+    CategoryPO insert(CategoryPO category);
 
-    int batchInsert(List<Category> list);
+    int batchInsert(List<CategoryPO> list);
 
-    Category deleteById(String id);
+    CategoryPO deleteById(String id);
 
     int batchDeleteById(List<String> list);
 
-    Category update(Category category);
+    CategoryPO update(CategoryPO category);
 
-    int batchUpdate(List<Category> list);
+    int batchUpdate(List<CategoryPO> list);
     
 }

@@ -5,7 +5,7 @@
 
 <mapper namespace="net.stackoverflow.blog.dao.CommentDao">
 
-    <resultMap id="commentMap" type="comment">
+    <resultMap id="commentMap" type="commentPO">
         <id property="id" column="id"/>
         <result property="nickname" column="nickname"/>
         <result property="email" column="email"/>
@@ -17,7 +17,7 @@
         <result property="date" column="date" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
     </resultMap>
 
-    <select id="selectByPage" resultMap="commentMap" resultType="comment">
+    <select id="selectByPage" resultMap="commentMap" resultType="commentPO">
         select * from comment
         <where>
             <if test="searchMap != null">
@@ -50,7 +50,7 @@
         order by date desc limit #{start},#{limit}
     </select>
 
-    <select id="selectByCondition" resultMap="commentMap" resultType="comment">
+    <select id="selectByCondition" resultMap="commentMap" resultType="commentPO">
         select * from comment
         <where>
             <if test="nickname != null">
@@ -81,11 +81,11 @@
         order by date desc
     </select>
 
-    <select id="selectById" resultMap="commentMap" resultType="comment">
+    <select id="selectById" resultMap="commentMap" resultType="commentPO">
         select * from comment where id = #{id}
     </select>
 
-    <insert id="insert" parameterType="comment">
+    <insert id="insert" parameterType="commentPO">
         <selectKey keyProperty="id" resultType="string" order="BEFORE">
             select uuid()
         </selectKey>
@@ -113,7 +113,7 @@
         </foreach>
     </delete>
 
-    <update id="update" parameterType="comment">
+    <update id="update" parameterType="commentPO">
         update comment
         <set>
             <if test="nickname != null">

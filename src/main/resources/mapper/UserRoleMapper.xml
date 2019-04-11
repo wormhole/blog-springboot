@@ -5,13 +5,13 @@
 
 <mapper namespace="net.stackoverflow.blog.dao.UserRoleDao">
 
-    <resultMap id="userRoleMap" type="userRole">
+    <resultMap id="userRoleMap" type="userRolePO">
         <id property="id" column="id"></id>
         <result property="userId" column="userid"></result>
         <result property="roleId" column="roleid"></result>
     </resultMap>
 
-    <select id="selectByPage" resultMap="userRoleMap" resultType="userRole">
+    <select id="selectByPage" resultMap="userRoleMap" resultType="userRolePO">
         select * from user_role
         <where>
             <if test="searchMap != null">
@@ -26,7 +26,7 @@
         limit #{start},#{limit}
     </select>
 
-    <select id="selectByCondition" resultMap="userRoleMap" resultType="userRole">
+    <select id="selectByCondition" resultMap="userRoleMap" resultType="userRolePO">
         select * from user_role
         <where>
             <if test="userId != null">
@@ -38,11 +38,11 @@
         </where>
     </select>
 
-    <select id="selectById" resultMap="userRoleMap" resultType="userRole">
+    <select id="selectById" resultMap="userRoleMap" resultType="userRolePO">
         select * from user_role where id = #{id}
     </select>
 
-    <insert id="insert" parameterType="userRole" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insert" parameterType="userRolePO" useGeneratedKeys="true" keyProperty="id">
         <selectKey keyProperty="id" resultType="string" order="BEFORE">
             select uuid()
         </selectKey>
@@ -69,7 +69,7 @@
         </foreach>
     </delete>
 
-    <update id="update" parameterType="userRole">
+    <update id="update" parameterType="userRolePO">
         update user_role
         <set>
             <if test="userId!=null">

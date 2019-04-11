@@ -1,7 +1,7 @@
 package net.stackoverflow.blog.dao;
 
 import net.stackoverflow.blog.common.Page;
-import net.stackoverflow.blog.pojo.entity.Menu;
+import net.stackoverflow.blog.pojo.po.MenuPO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -15,22 +15,22 @@ import java.util.Map;
 @Mapper
 public interface MenuDao {
 
-    List<Menu> selectByPage(Page page);
+    List<MenuPO> selectByPage(Page page);
 
-    List<Menu> selectByCondition(Map<String, Object> searchMap);
+    List<MenuPO> selectByCondition(Map<String, Object> searchMap);
 
-    Menu selectById(String id);
+    MenuPO selectById(String id);
 
-    int insert(Menu menu);
+    int insert(MenuPO menu);
 
-    int batchInsert(List<Menu> list);
+    int batchInsert(List<MenuPO> list);
 
     int deleteById(String id);
 
     int batchDeleteById(List<String> list);
 
-    int update(Menu menu);
+    int update(MenuPO menu);
 
-    int batchUpdate(List<Menu> list);
+    int batchUpdate(List<MenuPO> list);
 
 }

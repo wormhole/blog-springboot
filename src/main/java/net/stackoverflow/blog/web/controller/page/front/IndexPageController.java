@@ -2,7 +2,7 @@ package net.stackoverflow.blog.web.controller.page.front;
 
 import net.stackoverflow.blog.common.Page;
 import net.stackoverflow.blog.pojo.dto.ArticleDTO;
-import net.stackoverflow.blog.pojo.entity.Article;
+import net.stackoverflow.blog.pojo.po.ArticlePO;
 import net.stackoverflow.blog.service.ArticleService;
 import net.stackoverflow.blog.service.CategoryService;
 import net.stackoverflow.blog.service.CommentService;
@@ -84,9 +84,9 @@ public class IndexPageController {
         page1.setSearchMap(new HashMap<String, Object>() {{
             put("visible", 1);
         }});
-        List<Article> articles = articleService.selectByPage(page1);
+        List<ArticlePO> articles = articleService.selectByPage(page1);
         List<ArticleDTO> articleDTOS = new ArrayList<>();
-        for (Article article : articles) {
+        for (ArticlePO article : articles) {
             ArticleDTO dto = new ArticleDTO();
             dto.setTitle(HtmlUtils.htmlEscape(article.getTitle()));
             dto.setAuthor(HtmlUtils.htmlEscape(userService.selectById(article.getUserId()).getNickname()));

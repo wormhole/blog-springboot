@@ -1,7 +1,7 @@
 package net.stackoverflow.blog.service;
 
 import net.stackoverflow.blog.common.Page;
-import net.stackoverflow.blog.pojo.entity.Article;
+import net.stackoverflow.blog.pojo.po.ArticlePO;
 
 import java.util.List;
 import java.util.Map;
@@ -13,24 +13,24 @@ import java.util.Map;
  */
 public interface ArticleService {
 
-    List<Article> selectByPage(Page page);
+    List<ArticlePO> selectByPage(Page page);
 
-    List<Article> selectByCondition(Map<String, Object> searchMap);
+    List<ArticlePO> selectByCondition(Map<String, Object> searchMap);
 
-    Article selectById(String id);
+    ArticlePO selectById(String id);
 
-    Article selectByUrl(String url);
+    ArticlePO selectByUrl(String url);
 
-    Article insert(Article article);
+    ArticlePO insert(ArticlePO article);
 
-    int batchInsert(List<Article> list);
+    int batchInsert(List<ArticlePO> list);
 
-    Article deleteById(String id);
+    ArticlePO deleteById(String id);
 
     int batchDeleteById(List<String> list);
 
-    Article update(Article article);
+    ArticlePO update(ArticlePO article);
 
-    int batchUpdate(List<Article> list);
+    int batchUpdate(List<ArticlePO> list);
 
 }

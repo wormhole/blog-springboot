@@ -1,7 +1,7 @@
 package net.stackoverflow.blog.dao;
 
 import net.stackoverflow.blog.common.Page;
-import net.stackoverflow.blog.pojo.entity.User;
+import net.stackoverflow.blog.pojo.po.UserPO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -15,21 +15,21 @@ import java.util.Map;
 @Mapper
 public interface UserDao {
 
-    List<User> selectByPage(Page page);
+    List<UserPO> selectByPage(Page page);
 
-    List<User> selectByCondition(Map<String, Object> searchMap);
+    List<UserPO> selectByCondition(Map<String, Object> searchMap);
 
-    User selectById(String id);
+    UserPO selectById(String id);
 
-    int insert(User user);
+    int insert(UserPO user);
 
-    int batchInsert(List<User> users);
+    int batchInsert(List<UserPO> users);
 
     int deleteById(String id);
 
     int batchDeleteById(List<String> ids);
 
-    int update(User user);
+    int update(UserPO user);
 
-    int batchUpdate(List<User> users);
+    int batchUpdate(List<UserPO> users);
 }

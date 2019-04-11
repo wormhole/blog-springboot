@@ -2,7 +2,7 @@ package net.stackoverflow.blog.service;
 
 import net.stackoverflow.blog.common.Page;
 import net.stackoverflow.blog.dao.PermissionDao;
-import net.stackoverflow.blog.pojo.entity.Permission;
+import net.stackoverflow.blog.pojo.po.PermissionPO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +29,7 @@ public class PermissionServiceImpl implements PermissionService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<Permission> selectByPage(Page page) {
+    public List<PermissionPO> selectByPage(Page page) {
         return dao.selectByPage(page);
     }
 
@@ -41,7 +41,7 @@ public class PermissionServiceImpl implements PermissionService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<Permission> selectByCondition(Map<String, Object> searchMap) {
+    public List<PermissionPO> selectByCondition(Map<String, Object> searchMap) {
         return dao.selectByCondition(searchMap);
     }
 
@@ -53,7 +53,7 @@ public class PermissionServiceImpl implements PermissionService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Permission selectById(String id) {
+    public PermissionPO selectById(String id) {
         return dao.selectById(id);
     }
 
@@ -65,7 +65,7 @@ public class PermissionServiceImpl implements PermissionService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Permission insert(Permission permission) {
+    public PermissionPO insert(PermissionPO permission) {
         dao.insert(permission);
         return dao.selectById(permission.getId());
     }
@@ -78,7 +78,7 @@ public class PermissionServiceImpl implements PermissionService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchInsert(List<Permission> permissions) {
+    public int batchInsert(List<PermissionPO> permissions) {
         return dao.batchInsert(permissions);
     }
 
@@ -90,8 +90,8 @@ public class PermissionServiceImpl implements PermissionService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Permission deleteById(String id) {
-        Permission permission = dao.selectById(id);
+    public PermissionPO deleteById(String id) {
+        PermissionPO permission = dao.selectById(id);
         dao.deleteById(id);
         return permission;
     }
@@ -116,7 +116,7 @@ public class PermissionServiceImpl implements PermissionService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Permission update(Permission permission) {
+    public PermissionPO update(PermissionPO permission) {
         dao.update(permission);
         return dao.selectById(permission.getId());
     }
@@ -129,7 +129,7 @@ public class PermissionServiceImpl implements PermissionService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchUpdate(List<Permission> permissions) {
+    public int batchUpdate(List<PermissionPO> permissions) {
         return dao.batchUpdate(permissions);
     }
 

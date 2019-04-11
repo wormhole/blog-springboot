@@ -106,7 +106,7 @@
 						{
 							var name = entity.name.replace("&amp;", "&");
 
-							row += "<a href=\"javascript:;\" value=\"" + entity.name + "\" title=\"" + name + "\" class=\"" + classPrefix + "html-entity-btn\">" + name + "</a>";
+                            row += "<a href=\"javascript:;\" value=\"" + entity.name + "\" title=\"" + name + "\" class=\"" + classPrefix + "html-po-btn\">" + name + "</a>";
 						}
 					}
 					
@@ -115,7 +115,7 @@
 					table.append(row);
 				}
 
-				dialog.find("." + classPrefix + "html-entity-btn").bind(exports.mouseOrTouch("click", "touchend"), function() {
+                dialog.find("." + classPrefix + "html-po-btn").bind(exports.mouseOrTouch("click", "touchend"), function () {
 					$(this).toggleClass("selected");
 
 					if ($(this).hasClass("selected")) 

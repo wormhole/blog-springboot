@@ -10,6 +10,7 @@ INSERT INTO blog.setting (id, name, value) VALUES ('aabee5f3-70fa-4201-a8ae-c169
 INSERT INTO blog.setting (id, name, value) VALUES ('ad335e78-2908-4560-9653-b8a27a97d991', 'head', '/static/image/head.jpg');
 INSERT INTO blog.setting (id, name, value) VALUES ('ba059093-aa8f-4306-883b-4602dc3b4e03', 'title', '虫洞');
 INSERT INTO blog.setting (id, name, value) VALUES ('e786d6a5-2bf6-43a7-905a-bc438eb099dc', 'description', '个人博客网站');
+INSERT INTO blog.setting (id, name, value) VALUES ('a75a4b34-656c-45b8-8f89-f84a35d07500','register', '0');
 INSERT INTO blog.menu (id, name, url, deleteable, date) VALUES ('189bf822-797e-458b-9f7d-460e61737372', '首页', '/', 0, '2019-01-01 00:00:00');
 INSERT INTO blog.menu (id, name, url, deleteable, date) VALUES ('66876142-3852-4f89-90e1-e4753c903a29', '分类', '/category', 0, '2019-01-01 00:00:01');
 INSERT INTO blog.user (id, email, password, nickname, salt, deleteable) VALUES ('8fae055a-5c22-11e9-b112-00ff6984fcff', '363408268@qq.com', '75c02edcd99b5dcc3759394581070672', '凉衫薄', '27bfad8ffd65af7d4f848de6269525d6', 0);

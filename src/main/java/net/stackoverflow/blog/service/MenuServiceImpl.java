@@ -2,7 +2,7 @@ package net.stackoverflow.blog.service;
 
 import net.stackoverflow.blog.common.Page;
 import net.stackoverflow.blog.dao.MenuDao;
-import net.stackoverflow.blog.pojo.entity.Menu;
+import net.stackoverflow.blog.pojo.po.MenuPO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,39 +23,39 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<Menu> selectByPage(Page page) {
+    public List<MenuPO> selectByPage(Page page) {
         return dao.selectByPage(page);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<Menu> selectByCondition(Map<String, Object> searchMap) {
+    public List<MenuPO> selectByCondition(Map<String, Object> searchMap) {
         return dao.selectByCondition(searchMap);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Menu selectById(String id) {
+    public MenuPO selectById(String id) {
         return dao.selectById(id);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Menu insert(Menu menu) {
+    public MenuPO insert(MenuPO menu) {
         dao.insert(menu);
         return dao.selectById(menu.getId());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchInsert(List<Menu> list) {
+    public int batchInsert(List<MenuPO> list) {
         return dao.batchInsert(list);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Menu deleteById(String id) {
-        Menu menu = dao.selectById(id);
+    public MenuPO deleteById(String id) {
+        MenuPO menu = dao.selectById(id);
         dao.deleteById(id);
         return menu;
     }
@@ -68,14 +68,14 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Menu update(Menu menu) {
+    public MenuPO update(MenuPO menu) {
         dao.update(menu);
         return dao.selectById(menu.getId());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchUpdate(List<Menu> list) {
+    public int batchUpdate(List<MenuPO> list) {
         return dao.batchUpdate(list);
     }
 

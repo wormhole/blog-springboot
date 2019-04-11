@@ -2,8 +2,8 @@ package net.stackoverflow.blog.web.controller.page.front;
 
 import net.stackoverflow.blog.pojo.dto.ArticleDTO;
 import net.stackoverflow.blog.pojo.dto.CommentDTO;
-import net.stackoverflow.blog.pojo.entity.Article;
-import net.stackoverflow.blog.pojo.entity.Comment;
+import net.stackoverflow.blog.pojo.po.ArticlePO;
+import net.stackoverflow.blog.pojo.po.CommentPO;
 import net.stackoverflow.blog.service.ArticleService;
 import net.stackoverflow.blog.service.CategoryService;
 import net.stackoverflow.blog.service.CommentService;
@@ -58,7 +58,7 @@ public class ArticlePageController {
         ModelAndView mv = new ModelAndView();
         String url = "/article/" + year + "/" + month + "/" + day + "/" + articleCode;
 
-        Article article = articleService.selectByUrl(url);
+        ArticlePO article = articleService.selectByUrl(url);
         if (article != null) {
             article.setHits(article.getHits() + 1);
             articleService.update(article);
@@ -75,12 +75,12 @@ public class ArticlePageController {
             articleDTO.setCreateDate(article.getCreateDate());
             articleDTO.setArticleMd(article.getArticleMd());
 
-            List<Comment> comments = commentService.selectByCondition(new HashMap<String, Object>() {{
+            List<CommentPO> comments = commentService.selectByCondition(new HashMap<String, Object>() {{
                 put("articleId", article.getId());
                 put("review", 1);
             }});
             List<CommentDTO> dtos = new ArrayList<>();
-            for (Comment comment : comments) {
+            for (CommentPO comment : comments) {
                 CommentDTO commentDTO = new CommentDTO();
                 commentDTO.setNickname(HtmlUtils.htmlEscape(comment.getNickname()));
                 commentDTO.setDate(comment.getDate());

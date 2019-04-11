@@ -1,7 +1,7 @@
 package net.stackoverflow.blog.dao;
 
 import net.stackoverflow.blog.common.Page;
-import net.stackoverflow.blog.pojo.entity.Role;
+import net.stackoverflow.blog.pojo.po.RolePO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -15,22 +15,22 @@ import java.util.Map;
 @Mapper
 public interface RoleDao {
 
-    List<Role> selectByPage(Page page);
+    List<RolePO> selectByPage(Page page);
 
-    List<Role> selectByCondition(Map<String, Object> searchMap);
+    List<RolePO> selectByCondition(Map<String, Object> searchMap);
 
-    Role selectById(String id);
+    RolePO selectById(String id);
 
-    int insert(Role role);
+    int insert(RolePO role);
 
-    int batchInsert(List<Role> roles);
+    int batchInsert(List<RolePO> roles);
 
     int deleteById(String id);
 
     int batchDeleteById(List<String> ids);
 
-    int update(Role role);
+    int update(RolePO role);
 
-    int batchUpdate(List<Role> roles);
+    int batchUpdate(List<RolePO> roles);
 
 }

@@ -5,7 +5,7 @@
 
 <mapper namespace="net.stackoverflow.blog.dao.CategoryDao">
 
-    <resultMap id="categoryMap" type="category">
+    <resultMap id="categoryMap" type="categoryPO">
         <id property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="code" column="code"/>
@@ -13,7 +13,7 @@
         <result property="date" column="date" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
     </resultMap>
 
-    <select id="selectByPage" resultMap="categoryMap" resultType="category">
+    <select id="selectByPage" resultMap="categoryMap" resultType="categoryPO">
         select * from category
         <where>
             <if test="searchMap != null">
@@ -34,7 +34,7 @@
         order by date limit #{start},#{limit}
     </select>
 
-    <select id="selectByCondition" resultMap="categoryMap" resultType="category">
+    <select id="selectByCondition" resultMap="categoryMap" resultType="categoryPO">
         select * from category
         <where>
             <if test="name != null">
@@ -53,11 +53,11 @@
         order by date
     </select>
 
-    <select id="selectById" resultMap="categoryMap" resultType="category">
+    <select id="selectById" resultMap="categoryMap" resultType="categoryPO">
         select * from category where id = #{id}
     </select>
 
-    <insert id="insert" parameterType="category">
+    <insert id="insert" parameterType="categoryPO">
         <selectKey keyProperty="id" resultType="string" order="BEFORE">
             select uuid()
         </selectKey>
@@ -84,7 +84,7 @@
         </foreach>
     </delete>
 
-    <update id="update" parameterType="category">
+    <update id="update" parameterType="categoryPO">
         update category
         <set>
             <if test="name!=null">

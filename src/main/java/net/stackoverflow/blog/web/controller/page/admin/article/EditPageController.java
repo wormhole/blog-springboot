@@ -2,8 +2,8 @@ package net.stackoverflow.blog.web.controller.page.admin.article;
 
 import net.stackoverflow.blog.common.BaseController;
 import net.stackoverflow.blog.pojo.dto.ArticleDTO;
-import net.stackoverflow.blog.pojo.entity.Article;
-import net.stackoverflow.blog.pojo.entity.Category;
+import net.stackoverflow.blog.pojo.po.ArticlePO;
+import net.stackoverflow.blog.pojo.po.CategoryPO;
 import net.stackoverflow.blog.service.ArticleService;
 import net.stackoverflow.blog.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,10 +51,10 @@ public class EditPageController extends BaseController {
     public ModelAndView article(@RequestParam(value = "id", required = false) String id) {
         ModelAndView mv = new ModelAndView();
 
-        List<Category> categoryList = categoryService.selectByCondition(new HashMap<String, Object>());
+        List<CategoryPO> categoryList = categoryService.selectByCondition(new HashMap<String, Object>());
 
         if (id != null) {
-            Article article = articleService.selectById(id);
+            ArticlePO article = articleService.selectById(id);
             ArticleDTO articleVO = new ArticleDTO();
             articleVO.setTitle(article.getTitle());
             articleVO.setArticleCode(urlToCode(article.getUrl()));

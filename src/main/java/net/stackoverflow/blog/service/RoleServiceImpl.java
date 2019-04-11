@@ -4,9 +4,9 @@ import net.stackoverflow.blog.common.Page;
 import net.stackoverflow.blog.dao.PermissionDao;
 import net.stackoverflow.blog.dao.RoleDao;
 import net.stackoverflow.blog.dao.RolePermissionDao;
-import net.stackoverflow.blog.pojo.entity.Permission;
-import net.stackoverflow.blog.pojo.entity.Role;
-import net.stackoverflow.blog.pojo.entity.RolePermission;
+import net.stackoverflow.blog.pojo.po.PermissionPO;
+import net.stackoverflow.blog.pojo.po.RolePO;
+import net.stackoverflow.blog.pojo.po.RolePermissionPO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,7 +39,7 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<Role> selectByPage(Page page) {
+    public List<RolePO> selectByPage(Page page) {
         return roleDao.selectByPage(page);
     }
 
@@ -51,7 +51,7 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<Role> selectByCondition(Map<String, Object> searchMap) {
+    public List<RolePO> selectByCondition(Map<String, Object> searchMap) {
         return roleDao.selectByCondition(searchMap);
     }
 
@@ -63,7 +63,7 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Role selectById(String id) {
+    public RolePO selectById(String id) {
         return roleDao.selectById(id);
     }
 
@@ -75,7 +75,7 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Role insert(Role role) {
+    public RolePO insert(RolePO role) {
         roleDao.insert(role);
         return roleDao.selectById(role.getId());
     }
@@ -88,7 +88,7 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchInsert(List<Role> roles) {
+    public int batchInsert(List<RolePO> roles) {
         return roleDao.batchInsert(roles);
     }
 
@@ -100,8 +100,8 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Role deleteById(String id) {
-        Role role = roleDao.selectById(id);
+    public RolePO deleteById(String id) {
+        RolePO role = roleDao.selectById(id);
         roleDao.deleteById(id);
         return role;
     }
@@ -126,7 +126,7 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Role update(Role role) {
+    public RolePO update(RolePO role) {
         roleDao.update(role);
         return roleDao.selectById(role.getId());
     }
@@ -139,7 +139,7 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchUpdate(List<Role> roles) {
+    public int batchUpdate(List<RolePO> roles) {
         return roleDao.batchUpdate(roles);
     }
 
@@ -152,15 +152,15 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public RolePermission grantPermission(String roleId, String permissionId) {
-        Role role = roleDao.selectById(roleId);
-        Permission permission = permissionDao.selectById(permissionId);
+    public RolePermissionPO grantPermission(String roleId, String permissionId) {
+        RolePO role = roleDao.selectById(roleId);
+        PermissionPO permission = permissionDao.selectById(permissionId);
 
         if (role == null || permission == null) {
             return null;
         }
 
-        RolePermission rolePermission = new RolePermission();
+        RolePermissionPO rolePermission = new RolePermissionPO();
         rolePermission.setRoleId(roleId);
         rolePermission.setPermissionId(permissionId);
         rolePermissionDao.insert(rolePermission);
@@ -177,9 +177,9 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public RolePermission revokePermission(String roleId, String permissionId) {
+    public RolePermissionPO revokePermission(String roleId, String permissionId) {
 
-        List<RolePermission> rolePermissions = rolePermissionDao.selectByCondition(new HashMap<String, Object>() {{
+        List<RolePermissionPO> rolePermissions = rolePermissionDao.selectByCondition(new HashMap<String, Object>() {{
             put("roleId", roleId);
             put("permissionId", permissionId);
         }});
@@ -199,16 +199,16 @@ public class RoleServiceImpl implements RoleService {
      * @return 权限列表
      */
     @Override
-    public List<Permission> getPermissionByRoleId(String roleId) {
-        List<Permission> permissions = null;
+    public List<PermissionPO> getPermissionByRoleId(String roleId) {
+        List<PermissionPO> permissions = null;
 
-        List<RolePermission> rolePermissions = rolePermissionDao.selectByCondition(new HashMap<String, Object>() {{
+        List<RolePermissionPO> rolePermissions = rolePermissionDao.selectByCondition(new HashMap<String, Object>() {{
             put("roleId", roleId);
         }});
         if ((null != rolePermissions) && (rolePermissions.size() != 0)) {
             permissions = new ArrayList<>();
-            for (RolePermission rolePermission : rolePermissions) {
-                Permission permission = permissionDao.selectById(rolePermission.getPermissionId());
+            for (RolePermissionPO rolePermission : rolePermissions) {
+                PermissionPO permission = permissionDao.selectById(rolePermission.getPermissionId());
                 permissions.add(permission);
             }
         }

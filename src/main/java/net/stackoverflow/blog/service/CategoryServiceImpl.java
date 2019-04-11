@@ -3,8 +3,8 @@ package net.stackoverflow.blog.service;
 import net.stackoverflow.blog.common.Page;
 import net.stackoverflow.blog.dao.ArticleDao;
 import net.stackoverflow.blog.dao.CategoryDao;
-import net.stackoverflow.blog.pojo.entity.Article;
-import net.stackoverflow.blog.pojo.entity.Category;
+import net.stackoverflow.blog.pojo.po.ArticlePO;
+import net.stackoverflow.blog.pojo.po.CategoryPO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,49 +28,49 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<Category> selectByPage(Page page) {
+    public List<CategoryPO> selectByPage(Page page) {
         return categoryDao.selectByPage(page);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<Category> selectByCondition(Map<String, Object> searchMap) {
+    public List<CategoryPO> selectByCondition(Map<String, Object> searchMap) {
         return categoryDao.selectByCondition(searchMap);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Category selectById(String id) {
+    public CategoryPO selectById(String id) {
         return categoryDao.selectById(id);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Category insert(Category category) {
+    public CategoryPO insert(CategoryPO category) {
         categoryDao.insert(category);
         return categoryDao.selectById(category.getId());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchInsert(List<Category> list) {
+    public int batchInsert(List<CategoryPO> list) {
         return categoryDao.batchInsert(list);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Category deleteById(String id) {
-        Category category = categoryDao.selectById(id);
+    public CategoryPO deleteById(String id) {
+        CategoryPO category = categoryDao.selectById(id);
 
-        Category unCategory = categoryDao.selectByCondition(new HashMap<String, Object>() {{
+        CategoryPO unCategory = categoryDao.selectByCondition(new HashMap<String, Object>() {{
             put("code", "uncategory");
         }}).get(0);
-        List<Article> articleList = articleDao.selectByCondition(new HashMap<String, Object>() {{
+        List<ArticlePO> articleList = articleDao.selectByCondition(new HashMap<String, Object>() {{
             put("categoryId", category.getId());
         }});
 
         if (articleList.size() != 0) {
-            for (Article article : articleList) {
+            for (ArticlePO article : articleList) {
                 article.setCategoryId(unCategory.getId());
             }
             articleDao.batchUpdate(articleList);
@@ -84,16 +84,16 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional(rollbackFor = Exception.class)
     public int batchDeleteById(List<String> list) {
         for (String id : list) {
-            Category category = categoryDao.selectById(id);
+            CategoryPO category = categoryDao.selectById(id);
 
-            Category unCategory = categoryDao.selectByCondition(new HashMap<String, Object>() {{
+            CategoryPO unCategory = categoryDao.selectByCondition(new HashMap<String, Object>() {{
                 put("code", "uncategory");
             }}).get(0);
-            List<Article> articleList = articleDao.selectByCondition(new HashMap<String, Object>() {{
+            List<ArticlePO> articleList = articleDao.selectByCondition(new HashMap<String, Object>() {{
                 put("categoryId", category.getId());
             }});
             if (articleList.size() != 0) {
-                for (Article article : articleList) {
+                for (ArticlePO article : articleList) {
                     article.setCategoryId(unCategory.getId());
                 }
                 articleDao.batchUpdate(articleList);
@@ -104,14 +104,14 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Category update(Category category) {
+    public CategoryPO update(CategoryPO category) {
         categoryDao.update(category);
         return categoryDao.selectById(category.getId());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchUpdate(List<Category> list) {
+    public int batchUpdate(List<CategoryPO> list) {
         return categoryDao.batchUpdate(list);
     }
 

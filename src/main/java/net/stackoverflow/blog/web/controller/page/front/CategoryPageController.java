@@ -3,8 +3,8 @@ package net.stackoverflow.blog.web.controller.page.front;
 import net.stackoverflow.blog.common.Page;
 import net.stackoverflow.blog.pojo.dto.ArticleDTO;
 import net.stackoverflow.blog.pojo.dto.CategoryDTO;
-import net.stackoverflow.blog.pojo.entity.Article;
-import net.stackoverflow.blog.pojo.entity.Category;
+import net.stackoverflow.blog.pojo.po.ArticlePO;
+import net.stackoverflow.blog.pojo.po.CategoryPO;
 import net.stackoverflow.blog.service.ArticleService;
 import net.stackoverflow.blog.service.CategoryService;
 import net.stackoverflow.blog.service.CommentService;
@@ -57,11 +57,11 @@ public class CategoryPageController {
         Map<String, Object> settingMap = (Map<String, Object>) application.getAttribute("setting");
         int limit = Integer.valueOf((String) settingMap.get("limit"));
 
-        List<Category> categorys = categoryService.selectByCondition(new HashMap<String, Object>() {{
+        List<CategoryPO> categorys = categoryService.selectByCondition(new HashMap<String, Object>() {{
             put("code", categoryCode);
         }});
         if (categorys.size() != 0) {
-            Category category = categorys.get(0);
+            CategoryPO category = categorys.get(0);
             int count = articleService.selectByCondition(new HashMap<String, Object>() {{
                 put("visible", 1);
                 put("categoryId", category.getId());
@@ -94,9 +94,9 @@ public class CategoryPageController {
                 put("visible", 1);
                 put("categoryId", category.getId());
             }});
-            List<Article> articles = articleService.selectByPage(pageParam);
+            List<ArticlePO> articles = articleService.selectByPage(pageParam);
             List<ArticleDTO> articleDTOS = new ArrayList<>();
-            for (Article article : articles) {
+            for (ArticlePO article : articles) {
                 ArticleDTO dto = new ArticleDTO();
                 dto.setTitle(HtmlUtils.htmlEscape(article.getTitle()));
                 dto.setAuthor(HtmlUtils.htmlEscape(userService.selectById(article.getUserId()).getNickname()));
@@ -137,9 +137,9 @@ public class CategoryPageController {
     public ModelAndView category() {
         ModelAndView mv = new ModelAndView();
 
-        List<Category> categorys = categoryService.selectByCondition(new HashMap<>());
+        List<CategoryPO> categorys = categoryService.selectByCondition(new HashMap<>());
         List<CategoryDTO> categoryDTOS = new ArrayList<>();
-        for (Category category : categorys) {
+        for (CategoryPO category : categorys) {
             CategoryDTO dto = new CategoryDTO();
             dto.setName(category.getName());
             dto.setCode(category.getCode());

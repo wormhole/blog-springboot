@@ -6,7 +6,7 @@ import net.stackoverflow.blog.common.Page;
 import net.stackoverflow.blog.common.Response;
 import net.stackoverflow.blog.exception.BusinessException;
 import net.stackoverflow.blog.pojo.dto.MenuDTO;
-import net.stackoverflow.blog.pojo.entity.Menu;
+import net.stackoverflow.blog.pojo.po.MenuPO;
 import net.stackoverflow.blog.service.MenuService;
 import net.stackoverflow.blog.util.CollectionUtils;
 import net.stackoverflow.blog.util.ValidationUtils;
@@ -49,11 +49,11 @@ public class MenuController extends BaseController {
         Response response = new Response();
 
         Page pageParam = new Page(Integer.valueOf(page), Integer.valueOf(limit), null);
-        List<Menu> menus = menuService.selectByPage(pageParam);
+        List<MenuPO> menus = menuService.selectByPage(pageParam);
         int count = menuService.selectByCondition(new HashMap<>()).size();
 
         List<MenuDTO> dtos = new ArrayList<>();
-        for (Menu menu : menus) {
+        for (MenuPO menu : menus) {
             MenuDTO menuDTO = new MenuDTO();
             menuDTO.setId(menu.getId());
             menuDTO.setName(HtmlUtils.htmlEscape(menu.getName()));
@@ -100,7 +100,7 @@ public class MenuController extends BaseController {
             throw new BusinessException("字段格式出错", map);
         }
 
-        Menu menu = menuService.selectById(menuDTO.getId());
+        MenuPO menu = menuService.selectById(menuDTO.getId());
 
         if (menu == null) {
             throw new BusinessException("未找到该菜单或该菜单不允许删除");
@@ -112,7 +112,7 @@ public class MenuController extends BaseController {
         menuService.deleteById(menuDTO.getId());
 
         ServletContext application = request.getServletContext();
-        List<Menu> menus = menuService.selectByCondition(new HashMap<>());
+        List<MenuPO> menus = menuService.selectByCondition(new HashMap<>());
         application.setAttribute("menu", menus);
 
         response.setStatus(Response.SUCCESS);
@@ -147,14 +147,14 @@ public class MenuController extends BaseController {
             throw new BusinessException("字段格式出错", map);
         }
 
-        Menu menu = new Menu();
+        MenuPO menu = new MenuPO();
         BeanUtils.copyProperties(menuDTO, menu);
         menu.setDeleteAble(1);
         menu.setDate(new Date());
         menuService.insert(menu);
 
         ServletContext application = request.getServletContext();
-        List<Menu> menus = menuService.selectByCondition(new HashMap<>());
+        List<MenuPO> menus = menuService.selectByCondition(new HashMap<>());
         application.setAttribute("menu", menus);
 
         response.setStatus(Response.SUCCESS);
@@ -189,7 +189,7 @@ public class MenuController extends BaseController {
             throw new BusinessException("字段格式错误", map);
         }
 
-        Menu menu = menuService.selectById(menuDTO.getId());
+        MenuPO menu = menuService.selectById(menuDTO.getId());
 
         if (menu == null) {
             throw new BusinessException("未找到该菜单");
@@ -198,11 +198,11 @@ public class MenuController extends BaseController {
             throw new BusinessException("该菜单不允许被修改");
         }
 
-        Menu updateMenu = new Menu();
+        MenuPO updateMenu = new MenuPO();
         BeanUtils.copyProperties(menuDTO, updateMenu);
         menuService.update(updateMenu);
         ServletContext application = request.getServletContext();
-        List<Menu> menus = menuService.selectByCondition(new HashMap<>());
+        List<MenuPO> menus = menuService.selectByCondition(new HashMap<>());
         application.setAttribute("menu", menus);
         response.setStatus(Response.SUCCESS);
         response.setMessage("更新成功");
