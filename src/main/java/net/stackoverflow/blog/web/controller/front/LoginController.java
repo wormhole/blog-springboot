@@ -1,4 +1,4 @@
-package net.stackoverflow.blog.web.controller.page.front;
+package net.stackoverflow.blog.web.controller.front;
 
 import net.stackoverflow.blog.exception.VCodeException;
 import org.apache.shiro.authc.AuthenticationException;
@@ -11,19 +11,18 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * 登陆页面控制器
+ * 登陆接口
  *
  * @author 凉衫薄
  */
 @Controller
-public class LoginPageController {
+public class LoginController {
 
     /**
-     * Shiro登陆失败跳转方法 /login
-     * 方法 POST
+     * 如果shiro认证出错，会继续通过以下mapping处理
      *
-     * @param request
-     * @return
+     * @param request HttpServletRequest对象
+     * @return 返回ModelAndView
      */
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView login(HttpServletRequest request) {
@@ -45,13 +44,14 @@ public class LoginPageController {
     }
 
     /**
-     * 登陆页面跳转 /login
-     * 方法 GET
+     * 登陆页面跳转
      *
-     * @return
+     * @return 返回ModelAndView
      */
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String login() {
-        return "/login";
+    public ModelAndView login() {
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/login");
+        return mv;
     }
 }
