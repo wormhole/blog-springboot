@@ -1,6 +1,9 @@
 package net.stackoverflow.blog.config;
 
+import net.stackoverflow.blog.service.UserService;
 import net.stackoverflow.blog.shiro.cache.ShiroRedisCacheManager;
+import net.stackoverflow.blog.shiro.filter.PageFormAuthenticationFilter;
+import net.stackoverflow.blog.shiro.filter.PageUserFilter;
 import net.stackoverflow.blog.shiro.realm.JdbcRealm;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
@@ -17,8 +20,6 @@ import org.apache.shiro.session.mgt.eis.SessionIdGenerator;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
-import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
-import org.apache.shiro.web.filter.authc.UserFilter;
 import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
@@ -206,14 +207,14 @@ public class ShiroConfiguration {
      * @return shiroFilter
      */
     @Bean(name = "shiroFilter")
-    public ShiroFilterFactoryBean shiroFilter(SecurityManager securityManager) {
+    public ShiroFilterFactoryBean shiroFilter(SecurityManager securityManager, UserService userService) {
         ShiroFilterFactoryBean shiroFilter = new ShiroFilterFactoryBean();
         shiroFilter.setSecurityManager(securityManager);
         shiroFilter.setLoginUrl("/login");
         shiroFilter.setSuccessUrl("/");
         shiroFilter.setUnauthorizedUrl("/unauthorized");
 
-        FormAuthenticationFilter formAuthenticationFilter = new FormAuthenticationFilter();
+        PageFormAuthenticationFilter formAuthenticationFilter = new PageFormAuthenticationFilter(userService);
         formAuthenticationFilter.setUsernameParam("email");
         formAuthenticationFilter.setPasswordParam("password");
         formAuthenticationFilter.setLoginUrl("/login");
@@ -221,7 +222,7 @@ public class ShiroConfiguration {
         formAuthenticationFilter.setFailureKeyAttribute("shiroLoginFailure");
         formAuthenticationFilter.setRememberMeParam("rememberMe");
 
-        UserFilter userFilter = new UserFilter();
+        PageUserFilter userFilter = new PageUserFilter(userService);
         userFilter.setLoginUrl("/login");
 
         Map<String, Filter> filterMap = new HashMap<>();
