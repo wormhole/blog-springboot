@@ -1,4 +1,4 @@
-package net.stackoverflow.blog.web.controller.api;
+package net.stackoverflow.blog.web.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.util.Random;
 
 /**
- * 获取验证码控制器
+ * 验证码接口
  *
  * @author 凉衫薄
  */
@@ -27,7 +27,6 @@ public class VCodeController {
 
     /**
      * 获取验证码 /api/vcode
-     * 方法 GET
      *
      * @param response http响应对象
      * @param session  会话对象
