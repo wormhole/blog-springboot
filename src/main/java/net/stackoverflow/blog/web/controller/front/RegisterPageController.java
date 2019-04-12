@@ -35,7 +35,7 @@ import java.util.Set;
  * @author 凉衫薄
  */
 @Controller
-public class RegisterController extends BaseController {
+public class RegisterPageController extends BaseController {
 
     @Autowired
     private UserService userService;

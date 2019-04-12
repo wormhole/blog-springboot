@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author 凉衫薄
  */
 @Controller
-public class LoginController {
+public class LoginPageController {
 
     /**
      * 如果shiro认证出错，会继续通过以下mapping处理

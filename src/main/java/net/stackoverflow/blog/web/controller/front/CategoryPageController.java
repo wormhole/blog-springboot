@@ -1,4 +1,4 @@
-package net.stackoverflow.blog.web.controller.page.front;
+package net.stackoverflow.blog.web.controller.front;
 
 import net.stackoverflow.blog.common.Page;
 import net.stackoverflow.blog.pojo.dto.ArticleDTO;
@@ -10,6 +10,7 @@ import net.stackoverflow.blog.service.CategoryService;
 import net.stackoverflow.blog.service.CommentService;
 import net.stackoverflow.blog.service.UserService;
 import org.jsoup.Jsoup;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -28,9 +29,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 前端分类页面跳转控制器
+ * 分类页面跳转
  *
- * @author 凉衫薄
+ * @author 凉衫薄
  */
 @Controller
 public class CategoryPageController {
@@ -45,10 +46,40 @@ public class CategoryPageController {
     private CommentService commentService;
 
     /**
-     * 跳转到某一分类所有文章显示页面 /category/{categoryCode}
-     * 方法 GET
+     * 分类页面跳转
      *
-     * @return 返回ModelAndView, 查找成功时返回分类页面, 否则返回404页面
+     * @return 返回ModelAndView
+     */
+    @RequestMapping(value = "/category", method = RequestMethod.GET)
+    public ModelAndView category() {
+        ModelAndView mv = new ModelAndView();
+
+        //查询所有分类，并放入dto
+        List<CategoryPO> categoryPOs = categoryService.selectByCondition(new HashMap<>());
+        List<CategoryDTO> categoryDTOs = new ArrayList<>();
+        for (CategoryPO categoryPO : categoryPOs) {
+            CategoryDTO categoryDTO = new CategoryDTO();
+            BeanUtils.copyProperties(categoryPO, categoryDTO);
+            categoryDTO.setArticleCount(articleService.selectByCondition(new HashMap<String, Object>() {{
+                put("visible", 1);
+                put("categoryId", categoryPO.getId());
+            }}).size());
+            categoryDTOs.add(categoryDTO);
+        }
+
+        mv.addObject("categoryList", categoryDTOs);
+        mv.addObject("select", "/category");
+        mv.setViewName("/category");
+        return mv;
+    }
+
+    /**
+     * 具体显示某个分类页面跳转
+     *
+     * @param categoryCode 分类编码
+     * @param page 分页参数
+     * @param request HttpServletRequest请求对象
+     * @return 返回ModelAndView对象
      */
     @RequestMapping(value = "/category/{categoryCode}", method = RequestMethod.GET)
     public ModelAndView categoryArticle(@PathVariable("categoryCode") String categoryCode, @RequestParam(value = "page", required = false, defaultValue = "1") String page, HttpServletRequest request) {
@@ -57,14 +88,15 @@ public class CategoryPageController {
         Map<String, Object> settingMap = (Map<String, Object>) application.getAttribute("setting");
         int limit = Integer.valueOf((String) settingMap.get("limit"));
 
-        List<CategoryPO> categorys = categoryService.selectByCondition(new HashMap<String, Object>() {{
+        List<CategoryPO> categoryPOs = categoryService.selectByCondition(new HashMap<String, Object>() {{
             put("code", categoryCode);
         }});
-        if (categorys.size() != 0) {
-            CategoryPO category = categorys.get(0);
+        //如果查找到有该分类，则获取所有该分类文章，否则返回404
+        if (categoryPOs.size() != 0) {
+            CategoryPO categoryPO = categoryPOs.get(0);
             int count = articleService.selectByCondition(new HashMap<String, Object>() {{
                 put("visible", 1);
-                put("categoryId", category.getId());
+                put("categoryId", categoryPO.getId());
             }}).size();
             int pageCount = (count % limit == 0) ? count / limit : count / limit + 1;
             pageCount = pageCount == 0 ? 1 : pageCount;
@@ -83,76 +115,48 @@ public class CategoryPageController {
                 return mv;
             }
 
+            //计算前端分页组件的起止页
             int start = (p - 2 < 1) ? 1 : p - 2;
             int end = (start + 4 > pageCount) ? pageCount : start + 4;
             if ((end - start) < 4) {
                 start = (end - 4 < 1) ? 1 : end - 4;
             }
 
+            //查询该分类的所有文章，并放入dto
             Page pageParam = new Page(p, limit, null);
             pageParam.setSearchMap(new HashMap<String, Object>() {{
                 put("visible", 1);
-                put("categoryId", category.getId());
+                put("categoryId", categoryPO.getId());
             }});
-            List<ArticlePO> articles = articleService.selectByPage(pageParam);
-            List<ArticleDTO> articleDTOS = new ArrayList<>();
-            for (ArticlePO article : articles) {
-                ArticleDTO dto = new ArticleDTO();
-                dto.setTitle(HtmlUtils.htmlEscape(article.getTitle()));
-                dto.setAuthor(HtmlUtils.htmlEscape(userService.selectById(article.getUserId()).getNickname()));
-                dto.setCategoryName(categoryService.selectById(article.getCategoryId()).getName());
-                dto.setCommentCount(commentService.selectByCondition(new HashMap<String, Object>() {{
-                    put("articleId", article.getId());
+            List<ArticlePO> articlePOs = articleService.selectByPage(pageParam);
+            List<ArticleDTO> articleDTOs = new ArrayList<>();
+            for (ArticlePO articlePO : articlePOs) {
+                ArticleDTO articleDTO = new ArticleDTO();
+                BeanUtils.copyProperties(articlePO, articleDTO);
+                articleDTO.setTitle(HtmlUtils.htmlEscape(articlePO.getTitle()));
+                articleDTO.setAuthor(HtmlUtils.htmlEscape(userService.selectById(articlePO.getUserId()).getNickname()));
+                articleDTO.setCategoryName(categoryService.selectById(articlePO.getCategoryId()).getName());
+                articleDTO.setCommentCount(commentService.selectByCondition(new HashMap<String, Object>() {{
+                    put("articleId", articlePO.getId());
                 }}).size());
-                dto.setHits(article.getHits());
-                dto.setLikes(article.getLikes());
-                dto.setPreview(Jsoup.parse(article.getArticleHtml()).text());
-                dto.setUrl(article.getUrl());
-                dto.setCreateDate(article.getCreateDate());
-                articleDTOS.add(dto);
+                articleDTO.setPreview(Jsoup.parse(articlePO.getArticleHtml()).text());
+                articleDTOs.add(articleDTO);
             }
 
-            mv.addObject("articleList", articleDTOS);
+            //设置Model
+            mv.addObject("articleList", articleDTOs);
             mv.addObject("start", start);
             mv.addObject("end", end);
             mv.addObject("page", p);
             mv.addObject("pageCount", pageCount);
             mv.addObject("path", "/category/" + categoryCode);
             mv.addObject("select", "/category");
-            mv.addObject("header", category.getName());
+            mv.addObject("header", categoryPO.getName());
             mv.setViewName("/index");
         } else {
             mv.setStatus(HttpStatus.NOT_FOUND);
             mv.setViewName("/error/404");
         }
-        return mv;
-    }
-
-    /**
-     * 分类页面跳转
-     *
-     * @return
-     */
-    @RequestMapping(value = "/category", method = RequestMethod.GET)
-    public ModelAndView category() {
-        ModelAndView mv = new ModelAndView();
-
-        List<CategoryPO> categorys = categoryService.selectByCondition(new HashMap<>());
-        List<CategoryDTO> categoryDTOS = new ArrayList<>();
-        for (CategoryPO category : categorys) {
-            CategoryDTO dto = new CategoryDTO();
-            dto.setName(category.getName());
-            dto.setCode(category.getCode());
-            dto.setArticleCount(articleService.selectByCondition(new HashMap<String, Object>() {{
-                put("visible", 1);
-                put("categoryId", category.getId());
-            }}).size());
-            categoryDTOS.add(dto);
-        }
-
-        mv.addObject("categoryList", categoryDTOS);
-        mv.addObject("select", "/category");
-        mv.setViewName("/category");
         return mv;
     }
 }

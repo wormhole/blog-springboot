@@ -31,7 +31,7 @@ import java.util.Map;
  * @author 凉衫薄
  */
 @Controller
-public class IndexController {
+public class IndexPageController {
 
     @Autowired
     private UserService userService;
