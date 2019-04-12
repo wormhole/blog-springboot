@@ -104,7 +104,8 @@
             </ul>
             <div class="layui-tab-content">
                 <div class="layui-tab-item layui-show">
-                    <iframe src="/admin/welcome" width="100%" height="100%" name="iframe" scrolling="auto" class="iframe" framborder="0"></iframe>
+                    <iframe src="/admin/dashboard" width="100%" height="100%" name="iframe" scrolling="auto"
+                            class="iframe" framborder="0"></iframe>
                 </div>
             </div>
         </div>

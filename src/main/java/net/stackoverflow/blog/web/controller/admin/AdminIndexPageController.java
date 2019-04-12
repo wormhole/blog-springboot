@@ -1,4 +1,4 @@
-package net.stackoverflow.blog.web.controller.page.admin;
+package net.stackoverflow.blog.web.controller.admin;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * 后台管理页面跳转Controller
+ * 后台管理系统主页
  *
  * @author 凉衫薄
  */
@@ -14,10 +14,9 @@ import org.springframework.web.servlet.ModelAndView;
 public class AdminIndexPageController {
 
     /**
-     * 后台管理主页跳转 /admin/index
-     * 方法 GET
+     * 后台管理系统主页跳转
      *
-     * @return
+     * @return 返回ModelAndView对象
      */
     @RequestMapping(value = "/admin/index", method = RequestMethod.GET)
     public ModelAndView index() {
@@ -27,10 +26,9 @@ public class AdminIndexPageController {
     }
 
     /**
-     * 太管管理主页跳转 /admin
-     * 方法 GET
+     * 后台管理系统主页跳转
      *
-     * @return
+     * @return 返回ModelAndView对象
      */
     @RequestMapping(value = "/admin", method = RequestMethod.GET)
     public ModelAndView admin() {
