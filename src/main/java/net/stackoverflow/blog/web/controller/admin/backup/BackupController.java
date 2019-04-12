@@ -1,4 +1,4 @@
-package net.stackoverflow.blog.web.controller.api.admin;
+package net.stackoverflow.blog.web.controller.admin.backup;
 
 import net.stackoverflow.blog.util.DBUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,13 +18,12 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * 数据库备份接口Controller
+ * 备份接口
  *
- * @author 凉衫薄
+ * @author 凉衫薄
  */
 @Controller
 @PropertySource(value = {"classpath:application.properties"})
-@RequestMapping("/api/admin")
 public class BackupController {
 
     @Value("${spring.datasource.username}")
@@ -38,13 +38,24 @@ public class BackupController {
     private String path;
 
     /**
-     * 导出sql备份文件 /api/admin/backup/sql
-     * 方法 GET
+     * 备份页面跳转
      *
-     * @return
+     * @return 返回ModelAndView对象
+     */
+    @RequestMapping(value = "/admin/backup/backup", method = RequestMethod.GET)
+    public ModelAndView backup() {
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/admin/backup/backup");
+        return mv;
+    }
+
+    /**
+     * 导出数据库备份文件
+     *
+     * @return 返回ResponseEntity对象
      * @throws IOException
      */
-    @RequestMapping(value = "/backup/sql", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/admin/backup/sql", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<byte[]> exportSql() throws IOException {
         String filename = "blog.sql";
