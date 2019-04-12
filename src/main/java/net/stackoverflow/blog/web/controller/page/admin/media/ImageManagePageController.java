@@ -1,11 +1,11 @@
 package net.stackoverflow.blog.web.controller.page.admin.media;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,21 +21,22 @@ import java.util.TreeMap;
 @RequestMapping("/admin/media")
 public class ImageManagePageController {
 
+    @Value("${server.upload.path}")
+    private String path;
+
     /**
      * 页面跳转 /admin/media/image-manage
      * 方法 GET
      *
-     * @param request
      * @return
      */
     @RequestMapping(value = "/image-manage", method = RequestMethod.GET)
-    public ModelAndView image(HttpServletRequest request) {
+    public ModelAndView image() {
         ModelAndView mv = new ModelAndView();
-        String uploadDir = request.getServletContext().getRealPath("upload");
 
         Map<String, List<String>> imageMap = new TreeMap<>();
 
-        traverseFolder(uploadDir, imageMap);
+        traverseFolder(path, imageMap);
         mv.addObject("map", imageMap);
         mv.setViewName("/admin/media/image-manage");
         return mv;

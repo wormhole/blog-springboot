@@ -3,12 +3,12 @@ package net.stackoverflow.blog.web.controller.api.admin;
 import net.stackoverflow.blog.common.BaseController;
 import net.stackoverflow.blog.common.Response;
 import net.stackoverflow.blog.exception.BusinessException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 
 /**
@@ -20,19 +20,21 @@ import java.io.File;
 @RequestMapping("/api/admin")
 public class ImageController extends BaseController {
 
+    @Value("${server.upload.path}")
+    private String path;
+
     /**
      * 图片删除接口 /api/admin/image/delete
      * 方法 POST
      *
-     * @param request
      * @param url
      * @return
      */
     @RequestMapping(value = "/image/delete", method = RequestMethod.POST)
-    public Response delete(HttpServletRequest request, @RequestParam("url") String url) {
+    public Response delete(@RequestParam("url") String url) {
         Response response = new Response();
-        String rootDir = request.getServletContext().getRealPath("");
-        File file = new File(rootDir, url);
+        url = url.replaceFirst("/upload", "");
+        File file = new File(path, url);
         if (file.exists()) {
             file.delete();
             response.setStatus(Response.SUCCESS);
