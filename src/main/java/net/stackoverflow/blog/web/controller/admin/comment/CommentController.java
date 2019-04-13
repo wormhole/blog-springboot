@@ -1,4 +1,4 @@
-package net.stackoverflow.blog.web.controller.api.admin;
+package net.stackoverflow.blog.web.controller.admin.comment;
 
 import net.stackoverflow.blog.common.BaseController;
 import net.stackoverflow.blog.common.BaseDTO;
@@ -13,7 +13,12 @@ import net.stackoverflow.blog.util.CollectionUtils;
 import net.stackoverflow.blog.util.ValidationUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 
 import javax.validation.ConstraintViolation;
@@ -22,12 +27,11 @@ import javax.validation.ValidatorFactory;
 import java.util.*;
 
 /**
- * 评论管理接口Controller
+ * 评论管理接口
  *
  * @author 凉衫薄
  */
-@RestController
-@RequestMapping("/api/admin")
+@Controller
 public class CommentController extends BaseController {
 
     @Autowired
@@ -38,45 +42,56 @@ public class CommentController extends BaseController {
     private ValidatorFactory validatorFactory;
 
     /**
-     * 获取评论列表接口 /api/admin/comment/list
-     * 方法 GET
+     * 评论管理页面跳转
      *
-     * @param page
-     * @param limit
      * @return
      */
-    @RequestMapping(value = "/comment/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/admin/comment/comment-manage", method = RequestMethod.GET)
+    public ModelAndView management() {
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/admin/comment/comment-manage");
+        return mv;
+    }
+
+    /**
+     * 分页查询接口
+     *
+     * @param page  分页参数
+     * @param limit 每页数量
+     * @return 返回Response对象
+     */
+    @RequestMapping(value = "/api/admin/comment/list", method = RequestMethod.GET)
     public Response list(@RequestParam(value = "page") String page, @RequestParam(value = "limit") String limit) {
         Response response = new Response();
 
+        //分页查询
         Page pageParam = new Page(Integer.valueOf(page), Integer.valueOf(limit), null);
-        List<CommentPO> comments = commentService.selectByPage(pageParam);
+        List<CommentPO> commentPOs = commentService.selectByPage(pageParam);
         int count = commentService.selectByCondition(new HashMap<>()).size();
-        List<CommentDTO> dtos = new ArrayList<>();
+        List<CommentDTO> commentDTOs = new ArrayList<>();
 
-        for (CommentPO comment : comments) {
-            CommentDTO dto = new CommentDTO();
-            dto.setId(comment.getId());
-            dto.setNickname(HtmlUtils.htmlEscape(comment.getNickname()));
-            dto.setEmail(HtmlUtils.htmlEscape(comment.getEmail()));
-            dto.setWebsite(comment.getWebsite());
-            dto.setDate(comment.getDate());
-            dto.setContent(HtmlUtils.htmlEscape(comment.getContent()));
-            dto.setArticleTitle(HtmlUtils.htmlEscape(articleService.selectById(comment.getArticleId()).getTitle()));
-            if (comment.getReview() == 0) {
-                dto.setReviewTag("否");
+        //po转dto
+        for (CommentPO commentPO : commentPOs) {
+            CommentDTO commentDTO = new CommentDTO();
+            BeanUtils.copyProperties(commentPO, commentDTO);
+            commentDTO.setNickname(HtmlUtils.htmlEscape(commentPO.getNickname()));
+            commentDTO.setEmail(HtmlUtils.htmlEscape(commentPO.getEmail()));
+            commentDTO.setContent(HtmlUtils.htmlEscape(commentPO.getContent()));
+            commentDTO.setArticleTitle(HtmlUtils.htmlEscape(articleService.selectById(commentPO.getArticleId()).getTitle()));
+            if (commentPO.getReview() == 0) {
+                commentDTO.setReviewTag("否");
             } else {
-                dto.setReviewTag("是");
+                commentDTO.setReviewTag("是");
             }
-            if (comment.getReplyTo() != null) {
-                dto.setReplyTo(HtmlUtils.htmlEscape(comment.getReplyTo()));
+            if (commentPO.getReplyTo() != null) {
+                commentDTO.setReplyTo(HtmlUtils.htmlEscape(commentPO.getReplyTo()));
             }
-            dtos.add(dto);
+            commentDTOs.add(commentDTO);
         }
 
         Map<String, Object> map = new HashMap<>();
         map.put("count", count);
-        map.put("items", dtos);
+        map.put("items", commentDTOs);
         response.setStatus(Response.SUCCESS);
         response.setMessage("查询成功");
         response.setData(map);
@@ -84,26 +99,26 @@ public class CommentController extends BaseController {
     }
 
     /**
-     * 删除评论接口 /api/admin/comment/delete
-     * 方法 POST
+     * 评论删除接口
      *
-     * @param dto
-     * @return
+     * @param dto 公共dto对象
+     * @return 返回Response对象
      */
-    @RequestMapping(value = "/comment/delete", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/admin/comment/delete", method = RequestMethod.POST)
     public Response delete(@RequestBody BaseDTO dto) {
         Response response = new Response();
 
-        List<CommentDTO> dtos = (List<CommentDTO>) (Object) getDTO("comment", CommentDTO.class, dto);
-        if (CollectionUtils.isEmpty(dtos)) {
+        //从公共dto中提取commentDTO
+        List<CommentDTO> commentDTOs = (List<CommentDTO>) (Object) getDTO("comment", CommentDTO.class, dto);
+        if (CollectionUtils.isEmpty(commentDTOs)) {
             throw new BusinessException("找不到请求数据");
         }
-        CommentDTO commentDTO = dtos.get(0);
+        CommentDTO commentDTO = commentDTOs.get(0);
 
+        //校验字段
         Validator validator = validatorFactory.getValidator();
         Set<ConstraintViolation<CommentDTO>> violations = validator.validate(commentDTO, CommentDTO.DeleteGroup.class);
         Map<String, String> map = ValidationUtils.errorMap(violations);
-
         if (!CollectionUtils.isEmpty(map)) {
             throw new BusinessException("字段格式出错", map);
         }
@@ -119,42 +134,42 @@ public class CommentController extends BaseController {
     }
 
     /**
-     * 审核评论接口 /api/admin/comment/review
-     * 方法 POST
+     * 评论审核接口
      *
-     * @param dto
-     * @return
+     * @param dto 公共dto对象
+     * @return 返回Response对象
      */
-    @RequestMapping(value = "/comment/review", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/admin/comment/review", method = RequestMethod.POST)
     public Response review(@RequestBody BaseDTO dto) {
         Response response = new Response();
 
-        List<CommentDTO> dtos = (List<CommentDTO>) (Object) getDTO("comment", CommentDTO.class, dto);
-        if (CollectionUtils.isEmpty(dtos)) {
+        //从公共DTO中提取commentDTO
+        List<CommentDTO> commentDTOs = (List<CommentDTO>) (Object) getDTO("comment", CommentDTO.class, dto);
+        if (CollectionUtils.isEmpty(commentDTOs)) {
             throw new BusinessException("找不到请求数据");
         }
-        CommentDTO commentDTO = dtos.get(0);
+        CommentDTO commentDTO = commentDTOs.get(0);
 
+        //校验字段
         Validator validator = validatorFactory.getValidator();
         Set<ConstraintViolation<CommentDTO>> violations = validator.validate(commentDTO, CommentDTO.ReviewGroup.class);
         Map<String, String> map = ValidationUtils.errorMap(violations);
-
         if (!CollectionUtils.isEmpty(map)) {
             throw new BusinessException("字段格式出错", map);
         }
 
-        CommentPO comment = new CommentPO();
-        BeanUtils.copyProperties(commentDTO, comment);
+        CommentPO commentPO = new CommentPO();
+        BeanUtils.copyProperties(commentDTO, commentPO);
 
-        if (commentService.update(comment) != null) {
+        if (commentService.update(commentPO) != null) {
             response.setStatus(Response.SUCCESS);
-            if (comment.getReview() == 1) {
+            if (commentPO.getReview() == 1) {
                 response.setMessage("审核成功");
             } else {
                 response.setMessage("撤回成功");
             }
         } else {
-            if (comment.getReview() == 1) {
+            if (commentPO.getReview() == 1) {
                 throw new BusinessException("审核失败");
             } else {
                 throw new BusinessException("撤回失败");
