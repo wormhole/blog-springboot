@@ -15,6 +15,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * 图片管理接口
+ *
+ * @author 凉衫薄
+ */
 @Controller
 public class ImageController {
 

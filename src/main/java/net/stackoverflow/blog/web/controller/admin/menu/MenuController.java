@@ -1,4 +1,4 @@
-package net.stackoverflow.blog.web.controller.api.admin;
+package net.stackoverflow.blog.web.controller.admin.menu;
 
 import net.stackoverflow.blog.common.BaseController;
 import net.stackoverflow.blog.common.BaseDTO;
@@ -12,7 +12,12 @@ import net.stackoverflow.blog.util.CollectionUtils;
 import net.stackoverflow.blog.util.ValidationUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 
 import javax.servlet.ServletContext;
@@ -23,12 +28,11 @@ import javax.validation.ValidatorFactory;
 import java.util.*;
 
 /**
- * 菜单管理接口Controller
+ * 菜单管理接口
  *
  * @author 凉衫薄
  */
-@RestController
-@RequestMapping("/api/admin")
+@Controller
 public class MenuController extends BaseController {
 
     @Autowired
@@ -37,38 +41,49 @@ public class MenuController extends BaseController {
     private ValidatorFactory validatorFactory;
 
     /**
-     * 获取菜单列表 /api/admin/menu/list
-     * 方法 GET
+     * 菜单管理页面跳转
      *
-     * @param page
-     * @param limit
-     * @return
+     * @return 返回ModelAndView对象
      */
-    @RequestMapping(value = "/menu/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/admin/menu/menu-manage", method = RequestMethod.GET)
+    public ModelAndView management() {
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/admin/menu/menu-manage");
+        return mv;
+    }
+
+    /**
+     * 查询菜单列表
+     *
+     * @param page  分页参数
+     * @param limit 每页数量
+     * @return 返回Response对象
+     */
+    @RequestMapping(value = "/api/admin/menu/list", method = RequestMethod.GET)
     public Response list(@RequestParam(value = "page") String page, @RequestParam(value = "limit") String limit) {
         Response response = new Response();
 
+        //分页查询
         Page pageParam = new Page(Integer.valueOf(page), Integer.valueOf(limit), null);
-        List<MenuPO> menus = menuService.selectByPage(pageParam);
+        List<MenuPO> menuPOs = menuService.selectByPage(pageParam);
         int count = menuService.selectByCondition(new HashMap<>()).size();
 
-        List<MenuDTO> dtos = new ArrayList<>();
-        for (MenuPO menu : menus) {
+        List<MenuDTO> menuDTOs = new ArrayList<>();
+        for (MenuPO menuPO : menuPOs) {
             MenuDTO menuDTO = new MenuDTO();
-            menuDTO.setId(menu.getId());
-            menuDTO.setName(HtmlUtils.htmlEscape(menu.getName()));
-            menuDTO.setUrl(menu.getUrl());
-            if (menu.getDeleteAble() == 0) {
+            BeanUtils.copyProperties(menuPO, menuDTO);
+            menuDTO.setName(HtmlUtils.htmlEscape(menuPO.getName()));
+            if (menuPO.getDeleteAble() == 0) {
                 menuDTO.setDeleteTag("否");
             } else {
                 menuDTO.setDeleteTag("是");
             }
-            dtos.add(menuDTO);
+            menuDTOs.add(menuDTO);
         }
 
         Map<String, Object> map = new HashMap<>();
         map.put("count", count);
-        map.put("items", dtos);
+        map.put("items", menuDTOs);
         response.setStatus(Response.SUCCESS);
         response.setMessage("菜单查询成功");
         response.setData(map);
@@ -76,32 +91,33 @@ public class MenuController extends BaseController {
     }
 
     /**
-     * 删除菜单 /api/admin/menu/delete
-     * 方法 POST
+     * 删除菜单
      *
-     * @param dto
-     * @return
+     * @param dto     公共DTO
+     * @param request HttpServletRequest对象
+     * @return 返回Response对象
      */
-    @RequestMapping(value = "/menu/delete", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/admin/menu/delete", method = RequestMethod.POST)
     public Response delete(@RequestBody BaseDTO dto, HttpServletRequest request) {
         Response response = new Response();
 
-        List<MenuDTO> dtos = (List<MenuDTO>) (Object) getDTO("menu", MenuDTO.class, dto);
-        if (CollectionUtils.isEmpty(dtos)) {
+        //从公共dto中提取menuDTO
+        List<MenuDTO> menuDTOs = (List<MenuDTO>) (Object) getDTO("menu", MenuDTO.class, dto);
+        if (CollectionUtils.isEmpty(menuDTOs)) {
             throw new BusinessException("找不到请求数据");
         }
-        MenuDTO menuDTO = dtos.get(0);
+        MenuDTO menuDTO = menuDTOs.get(0);
 
+        //校验字段
         Validator validator = validatorFactory.getValidator();
         Set<ConstraintViolation<MenuDTO>> violations = validator.validate(menuDTO, MenuDTO.DeleteGroup.class);
         Map<String, String> map = ValidationUtils.errorMap(violations);
-
         if (!CollectionUtils.isEmpty(map)) {
             throw new BusinessException("字段格式出错", map);
         }
 
+        //判断该菜单是否可以被删除
         MenuPO menu = menuService.selectById(menuDTO.getId());
-
         if (menu == null) {
             throw new BusinessException("未找到该菜单或该菜单不允许删除");
         }
@@ -109,11 +125,12 @@ public class MenuController extends BaseController {
             throw new BusinessException("该菜单不允许被删除");
         }
 
+        //删除菜单，并更新ServletContext中的属性
         menuService.deleteById(menuDTO.getId());
 
         ServletContext application = request.getServletContext();
-        List<MenuPO> menus = menuService.selectByCondition(new HashMap<>());
-        application.setAttribute("menu", menus);
+        List<MenuPO> menuPOs = menuService.selectByCondition(new HashMap<>());
+        application.setAttribute("menu", menuPOs);
 
         response.setStatus(Response.SUCCESS);
         response.setMessage("删除成功");
@@ -122,40 +139,41 @@ public class MenuController extends BaseController {
     }
 
     /**
-     * 新增菜单 /api/admin/menu/insert
-     * 方法 POST
+     * 新增菜单
      *
-     * @param dto
-     * @param request
-     * @return
+     * @param dto     公共dto对象
+     * @param request HttpServletRequest对象
+     * @return 返回Response对象
      */
-    @RequestMapping(value = "/menu/insert", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/admin/menu/insert", method = RequestMethod.POST)
     public Response insert(@RequestBody BaseDTO dto, HttpServletRequest request) {
         Response response = new Response();
 
-        List<MenuDTO> dtos = (List<MenuDTO>) (Object) getDTO("menu", MenuDTO.class, dto);
-        if (CollectionUtils.isEmpty(dtos)) {
+        //从公共dto中提取menuDTO对象
+        List<MenuDTO> menuDTOs = (List<MenuDTO>) (Object) getDTO("menu", MenuDTO.class, dto);
+        if (CollectionUtils.isEmpty(menuDTOs)) {
             throw new BusinessException("找不到请求数据");
         }
-        MenuDTO menuDTO = dtos.get(0);
+        MenuDTO menuDTO = menuDTOs.get(0);
 
+        //校验字段
         Validator validator = validatorFactory.getValidator();
         Set<ConstraintViolation<MenuDTO>> violations = validator.validate(menuDTO, MenuDTO.InsertGroup.class);
         Map<String, String> map = ValidationUtils.errorMap(violations);
-
         if (!CollectionUtils.isEmpty(map)) {
             throw new BusinessException("字段格式出错", map);
         }
 
-        MenuPO menu = new MenuPO();
-        BeanUtils.copyProperties(menuDTO, menu);
-        menu.setDeleteAble(1);
-        menu.setDate(new Date());
-        menuService.insert(menu);
+        MenuPO menuPO = new MenuPO();
+        BeanUtils.copyProperties(menuDTO, menuPO);
+        menuPO.setDeleteAble(1);
+        menuPO.setDate(new Date());
+        menuService.insert(menuPO);
 
+        //更新ServletContext中的属性
         ServletContext application = request.getServletContext();
-        List<MenuPO> menus = menuService.selectByCondition(new HashMap<>());
-        application.setAttribute("menu", menus);
+        List<MenuPO> menuPOs = menuService.selectByCondition(new HashMap<>());
+        application.setAttribute("menu", menuPOs);
 
         response.setStatus(Response.SUCCESS);
         response.setMessage("菜单新增成功");
@@ -164,46 +182,47 @@ public class MenuController extends BaseController {
     }
 
     /**
-     * 更新菜单 /api/admin/menu/update
-     * 方法 POST
+     * 菜单更新
      *
-     * @param dto
-     * @param request
-     * @return
+     * @param dto     公共dto对象
+     * @param request HttpServletRequest对象
+     * @return 返回Response对象
      */
-    @RequestMapping(value = "/menu/update", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/admin/menu/update", method = RequestMethod.POST)
     public Response update(@RequestBody BaseDTO dto, HttpServletRequest request) {
         Response response = new Response();
 
-        List<MenuDTO> dtos = (List<MenuDTO>) (Object) getDTO("menu", MenuDTO.class, dto);
-        if (CollectionUtils.isEmpty(dtos)) {
+        //从公共dto中获取menuDTO对象
+        List<MenuDTO> menuDTOs = (List<MenuDTO>) (Object) getDTO("menu", MenuDTO.class, dto);
+        if (CollectionUtils.isEmpty(menuDTOs)) {
             throw new BusinessException("找不到请求数据");
         }
-        MenuDTO menuDTO = dtos.get(0);
+        MenuDTO menuDTO = menuDTOs.get(0);
 
+        //校验字段
         Validator validator = validatorFactory.getValidator();
         Set<ConstraintViolation<MenuDTO>> violations = validator.validate(menuDTO, MenuDTO.UpdateGroup.class);
         Map<String, String> map = ValidationUtils.errorMap(violations);
-
         if (!CollectionUtils.isEmpty(map)) {
             throw new BusinessException("字段格式错误", map);
         }
 
-        MenuPO menu = menuService.selectById(menuDTO.getId());
-
-        if (menu == null) {
+        //检查菜单是否可以被删除
+        MenuPO menuPO = menuService.selectById(menuDTO.getId());
+        if (menuPO == null) {
             throw new BusinessException("未找到该菜单");
         }
-        if (menu.getDeleteAble() == 0) {
+        if (menuPO.getDeleteAble() == 0) {
             throw new BusinessException("该菜单不允许被修改");
         }
 
-        MenuPO updateMenu = new MenuPO();
-        BeanUtils.copyProperties(menuDTO, updateMenu);
-        menuService.update(updateMenu);
+        //更新菜单，并更新ServletContext中的属性
+        MenuPO updateMenuPO = new MenuPO();
+        BeanUtils.copyProperties(menuDTO, updateMenuPO);
+        menuService.update(updateMenuPO);
         ServletContext application = request.getServletContext();
-        List<MenuPO> menus = menuService.selectByCondition(new HashMap<>());
-        application.setAttribute("menu", menus);
+        List<MenuPO> menuPOs = menuService.selectByCondition(new HashMap<>());
+        application.setAttribute("menu", menuPOs);
         response.setStatus(Response.SUCCESS);
         response.setMessage("更新成功");
 
