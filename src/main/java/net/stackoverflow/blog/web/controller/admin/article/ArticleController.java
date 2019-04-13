@@ -1,4 +1,4 @@
-package net.stackoverflow.blog.web.controller.api.admin;
+package net.stackoverflow.blog.web.controller.admin.article;
 
 import net.stackoverflow.blog.common.BaseController;
 import net.stackoverflow.blog.common.BaseDTO;
@@ -7,6 +7,7 @@ import net.stackoverflow.blog.common.Response;
 import net.stackoverflow.blog.exception.BusinessException;
 import net.stackoverflow.blog.pojo.dto.ArticleDTO;
 import net.stackoverflow.blog.pojo.po.ArticlePO;
+import net.stackoverflow.blog.pojo.po.CategoryPO;
 import net.stackoverflow.blog.pojo.po.UserPO;
 import net.stackoverflow.blog.service.ArticleService;
 import net.stackoverflow.blog.service.CategoryService;
@@ -21,11 +22,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
@@ -37,12 +42,11 @@ import java.io.InputStream;
 import java.util.*;
 
 /**
- * 文章管理接口Controller
+ * 文章管理接口
  *
  * @author 凉衫薄
  */
-@RestController
-@RequestMapping("/api/admin")
+@Controller
 public class ArticleController extends BaseController {
 
     @Autowired
@@ -59,10 +63,54 @@ public class ArticleController extends BaseController {
     private String path;
 
     /**
+     * 文章管理页面跳转
+     *
+     * @return 返回ModelAndView对象
+     */
+    @RequestMapping(value = "/admin/article/article-manage", method = RequestMethod.GET)
+    public ModelAndView management() {
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/admin/article/article-manage");
+        return mv;
+    }
+
+    /**
+     * 文章编辑页面跳转
+     *
+     * @param id 文章id
+     * @return 返回ModelAndView对象
+     */
+    @RequestMapping(value = "/admin/article/edit", method = RequestMethod.GET)
+    public ModelAndView article(@RequestParam(value = "id", required = false) String id) {
+        ModelAndView mv = new ModelAndView();
+
+        List<CategoryPO> categoryPOs = categoryService.selectByCondition(new HashMap<>());
+
+        //判断是否是从文章管理页面跳转过来的
+        if (id != null) {
+            ArticlePO articlePO = articleService.selectById(id);
+            ArticleDTO articleDTO = new ArticleDTO();
+            BeanUtils.copyProperties(articleDTO, articlePO);
+            articleDTO.setArticleCode(urlToCode(articlePO.getUrl()));
+            mv.addObject("selected", articlePO.getCategoryId());
+            mv.addObject("article", articleDTO);
+        } else {
+            mv.addObject("selected", categoryService.selectByCondition(new HashMap<String, Object>() {{
+                put("code", "uncategory");
+            }}).get(0).getId());
+        }
+
+        mv.addObject("categoryList", categoryPOs);
+        mv.setViewName("/admin/article/edit");
+
+        return mv;
+    }
+
+    /**
      * 通过文章url获取code
      *
-     * @param url
-     * @return
+     * @param url 文章url
+     * @return 返回文章编码
      */
     private String urlToCode(String url) {
         String[] paths = url.split("/");
@@ -72,50 +120,51 @@ public class ArticleController extends BaseController {
     /**
      * 通过code转url
      *
-     * @param code
-     * @return
+     * @param code 文章编码
+     * @return 返回文章url
      */
     private String codeToUrl(String code) {
         return "/article" + DateUtils.getDatePath() + code;
     }
 
     /**
-     * 保存文章 /api/admin/article/insert
-     * 方法 POST
+     * 保存文章
      *
-     * @param dto
-     * @param session
-     * @return
+     * @param dto     公共dto参数
+     * @param session 会话对象
+     * @return 返回Response对象
      */
-    @RequestMapping(value = "/article/insert", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/admin/article/insert", method = RequestMethod.POST)
     public Response save(@RequestBody BaseDTO dto, HttpSession session) {
         Response response = new Response();
 
-        List<ArticleDTO> dtos = (List<ArticleDTO>) (Object) getDTO("article", ArticleDTO.class, dto);
-        if (CollectionUtils.isEmpty(dtos)) {
+        //从公共dto中提取articleDTO对象
+        List<ArticleDTO> articleDTOs = (List<ArticleDTO>) (Object) getDTO("article", ArticleDTO.class, dto);
+        if (CollectionUtils.isEmpty(articleDTOs)) {
             throw new BusinessException("找不到请求数据");
         }
-        ArticleDTO articleDTO = dtos.get(0);
+        ArticleDTO articleDTO = articleDTOs.get(0);
 
+        //校验字段
         Validator validator = validatorFactory.getValidator();
         Set<ConstraintViolation<ArticleDTO>> violations = validator.validate(articleDTO, ArticleDTO.InsertGroup.class);
         Map<String, String> map = ValidationUtils.errorMap(violations);
-
         if (!CollectionUtils.isEmpty(map)) {
             throw new BusinessException("字段格式错误", map);
         }
 
+        //检验url是否重复
         articleDTO.setUrl(codeToUrl(articleDTO.getArticleCode()));
         if (articleService.selectByUrl(articleDTO.getUrl()) != null) {
             throw new BusinessException("url重复");
         }
 
-        UserPO user = (UserPO) session.getAttribute("user");
+        UserPO userPO = (UserPO) session.getAttribute("user");
         ArticlePO article = new ArticlePO();
         BeanUtils.copyProperties(articleDTO, article);
         article.setCreateDate(new Date());
         article.setModifyDate(new Date());
-        article.setUserId(user.getId());
+        article.setUserId(userPO.getId());
         article.setHits(0);
         article.setLikes(0);
         article.setVisible(1);
@@ -127,49 +176,49 @@ public class ArticleController extends BaseController {
     }
 
     /**
-     * 更新文章 /api/admin/article/update
-     * 方法 POST
+     * 更新文章
      *
-     * @param dto
-     * @return
+     * @param dto 公共dto对象
+     * @return 返回Response对象
      */
-    @RequestMapping(value = "/article/update", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/admin/article/update", method = RequestMethod.POST)
     public Response update(@RequestBody BaseDTO dto) {
         Response response = new Response();
 
-        List<ArticleDTO> dtos = (List<ArticleDTO>) (Object) getDTO("article", ArticleDTO.class, dto);
-        if (CollectionUtils.isEmpty(dtos)) {
+        //从公共dto中提取articleDTO对象
+        List<ArticleDTO> articleDTOs = (List<ArticleDTO>) (Object) getDTO("article", ArticleDTO.class, dto);
+        if (CollectionUtils.isEmpty(articleDTOs)) {
             throw new BusinessException("找不到请求数据");
         }
-        ArticleDTO articleDTO = dtos.get(0);
+        ArticleDTO articleDTO = articleDTOs.get(0);
 
+        //校验字段
         Validator validator = validatorFactory.getValidator();
         Set<ConstraintViolation<ArticleDTO>> violations = validator.validate(articleDTO, ArticleDTO.UpdateGroup.class);
         Map<String, String> map = ValidationUtils.errorMap(violations);
-
         if (!CollectionUtils.isEmpty(map)) {
             throw new BusinessException("字段格式错误", map);
         }
 
-        ArticlePO article = articleService.selectById(articleDTO.getId());
-
-        if (article == null) {
+        ArticlePO articlePO = articleService.selectById(articleDTO.getId());
+        if (articlePO == null) {
             throw new BusinessException("未找到文章");
         }
 
-        String[] paths = article.getUrl().split("/");
+        //校验url是否重复
+        String[] paths = articlePO.getUrl().split("/");
         paths[paths.length - 1] = articleDTO.getArticleCode();
         String url = String.join("/", paths);
 
-        if (!urlToCode(article.getUrl()).equals(articleDTO.getArticleCode()) && (articleService.selectByUrl(url) != null)) {
+        if (!urlToCode(articlePO.getUrl()).equals(articleDTO.getArticleCode()) && (articleService.selectByUrl(url) != null)) {
             throw new BusinessException("url重复");
         }
 
-        ArticlePO updateArticle = new ArticlePO();
-        BeanUtils.copyProperties(articleDTO, updateArticle);
-        updateArticle.setModifyDate(new Date());
-        updateArticle.setUrl(url);
-        articleService.update(updateArticle);
+        ArticlePO updateArticlePO = new ArticlePO();
+        BeanUtils.copyProperties(articleDTO, updateArticlePO);
+        updateArticlePO.setModifyDate(new Date());
+        updateArticlePO.setUrl(url);
+        articleService.update(updateArticlePO);
         response.setStatus(Response.SUCCESS);
         response.setMessage("文章更新成功");
 
@@ -177,15 +226,13 @@ public class ArticleController extends BaseController {
     }
 
     /**
-     * 保存图片 /api/admin/article/image
-     * 方法 POST
+     * 图片上传
      *
-     * @param request
-     * @param multipartFile
-     * @return 返回Map
+     * @param multipartFile multipartFile对象
+     * @return 返回Map对象
      */
-    @RequestMapping(value = "/article/image", method = RequestMethod.POST)
-    public Map image(HttpServletRequest request, @RequestParam("editormd-image-file") MultipartFile multipartFile) {
+    @RequestMapping(value = "/api/admin/article/image", method = RequestMethod.POST)
+    public Map image(@RequestParam("editormd-image-file") MultipartFile multipartFile) {
         Map<String, Object> result = new HashMap<>();
 
         String fileName = multipartFile.getOriginalFilename();
@@ -215,48 +262,43 @@ public class ArticleController extends BaseController {
     }
 
     /**
-     * 获取文章 /api/admin/article/list
-     * 方法 GET
+     * 分页查询文章列表
      *
-     * @param page
-     * @param limit
-     * @return
+     * @param page  分页参数
+     * @param limit 每页数量
+     * @return 返回Response对象
      */
-    @RequestMapping(value = "/article/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/admin/article/list", method = RequestMethod.GET)
     public Response list(@RequestParam(value = "page") String page, @RequestParam(value = "limit") String limit) {
         Response response = new Response();
 
         Page pageParam = new Page(Integer.valueOf(page), Integer.valueOf(limit), null);
-        List<ArticlePO> articles = articleService.selectByPage(pageParam);
+        List<ArticlePO> articlePOs = articleService.selectByPage(pageParam);
 
         int count = articleService.selectByCondition(new HashMap<>()).size();
-        List<ArticleDTO> dtos = new ArrayList<>();
+        List<ArticleDTO> articleDTOs = new ArrayList<>();
 
-        for (ArticlePO article : articles) {
+        for (ArticlePO articlePO : articlePOs) {
             ArticleDTO articleDTO = new ArticleDTO();
-            articleDTO.setId(article.getId());
-            articleDTO.setTitle(HtmlUtils.htmlEscape(article.getTitle()));
-            articleDTO.setAuthor(HtmlUtils.htmlEscape(userService.selectById(article.getUserId()).getNickname()));
-            articleDTO.setCategoryName(categoryService.selectById(article.getCategoryId()).getName());
-            articleDTO.setCreateDate(article.getCreateDate());
-            articleDTO.setModifyDate(article.getModifyDate());
-            articleDTO.setHits(article.getHits());
-            articleDTO.setLikes(article.getLikes());
+            BeanUtils.copyProperties(articlePO, articleDTO);
+            articleDTO.setTitle(HtmlUtils.htmlEscape(articlePO.getTitle()));
+            articleDTO.setAuthor(HtmlUtils.htmlEscape(userService.selectById(articlePO.getUserId()).getNickname()));
+            articleDTO.setCategoryName(categoryService.selectById(articlePO.getCategoryId()).getName());
             articleDTO.setCommentCount(commentService.selectByCondition(new HashMap<String, Object>() {{
-                put("articleId", article.getId());
+                put("articleId", articlePO.getId());
             }}).size());
-            articleDTO.setUrl(article.getUrl());
-            if (article.getVisible() == 0) {
+            articleDTO.setUrl(articlePO.getUrl());
+            if (articlePO.getVisible() == 0) {
                 articleDTO.setVisibleTag("否");
             } else {
                 articleDTO.setVisibleTag("是");
             }
-            dtos.add(articleDTO);
+            articleDTOs.add(articleDTO);
         }
 
         Map<String, Object> map = new HashMap<>();
         map.put("count", count);
-        map.put("items", dtos);
+        map.put("items", articleDTOs);
         response.setStatus(Response.SUCCESS);
         response.setMessage("查询成功");
         response.setData(map);
@@ -264,22 +306,22 @@ public class ArticleController extends BaseController {
     }
 
     /**
-     * 文章删除 /api/admin/article/delete
-     * 方法 POST
+     * 文章删除
      *
-     * @param dto
+     * @param dto 公共dto对象
      * @return
      */
     @RequestMapping(value = "/article/delete", method = RequestMethod.POST)
     public Response delete(@RequestBody BaseDTO dto) {
         Response response = new Response();
 
-        List<ArticleDTO> dtos = (List<ArticleDTO>) (Object) getDTO("article", ArticleDTO.class, dto);
-        if (CollectionUtils.isEmpty(dtos)) {
+        List<ArticleDTO> articleDTOs = (List<ArticleDTO>) (Object) getDTO("article", ArticleDTO.class, dto);
+        if (CollectionUtils.isEmpty(articleDTOs)) {
             throw new BusinessException("找不到请求数据");
         }
 
-        for (ArticleDTO articleDTO : dtos) {
+        //校验字段
+        for (ArticleDTO articleDTO : articleDTOs) {
             Validator validator = validatorFactory.getValidator();
             Set<ConstraintViolation<ArticleDTO>> violations = validator.validate(articleDTO, ArticleDTO.DeleteGroup.class);
             Map<String, String> map = ValidationUtils.errorMap(violations);
@@ -289,8 +331,9 @@ public class ArticleController extends BaseController {
             }
         }
 
+        //获取id
         List<String> ids = new ArrayList<>();
-        for (ArticleDTO articleDTO : dtos) {
+        for (ArticleDTO articleDTO : articleDTOs) {
             ids.add(articleDTO.getId());
         }
         articleService.batchDeleteById(ids);
@@ -301,42 +344,42 @@ public class ArticleController extends BaseController {
     }
 
     /**
-     * 设置文章是否显示 /api/admin/article/visible
-     * 方法 POST
+     * 设置文章是否显示
      *
-     * @param dto
-     * @return
+     * @param dto 公共dto对象
+     * @return 返回Response对象
      */
-    @RequestMapping(value = "/article/visible", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/admin/article/visible", method = RequestMethod.POST)
     public Response visible(@RequestBody BaseDTO dto) {
         Response response = new Response();
 
-        List<ArticleDTO> dtos = (List<ArticleDTO>) (Object) getDTO("article", ArticleDTO.class, dto);
-        if (CollectionUtils.isEmpty(dtos)) {
+        //从公共dto中提取articleDTO对象
+        List<ArticleDTO> articleDTOs = (List<ArticleDTO>) (Object) getDTO("article", ArticleDTO.class, dto);
+        if (CollectionUtils.isEmpty(articleDTOs)) {
             throw new BusinessException("找不到请求数据");
         }
-        ArticleDTO articleDTO = dtos.get(0);
+        ArticleDTO articleDTO = articleDTOs.get(0);
 
+        //校验字段
         Validator validator = validatorFactory.getValidator();
         Set<ConstraintViolation<ArticleDTO>> violations = validator.validate(articleDTO, ArticleDTO.VisibleGroup.class);
         Map<String, String> map = ValidationUtils.errorMap(violations);
-
         if (!CollectionUtils.isEmpty(map)) {
             throw new BusinessException("字段格式错误", map);
         }
 
-        ArticlePO article = new ArticlePO();
-        BeanUtils.copyProperties(articleDTO, article);
+        ArticlePO articlePO = new ArticlePO();
+        BeanUtils.copyProperties(articleDTO, articlePO);
 
-        if (articleService.update(article) != null) {
+        if (articleService.update(articlePO) != null) {
             response.setStatus(Response.SUCCESS);
-            if (article.getVisible() == 0) {
+            if (articlePO.getVisible() == 0) {
                 response.setMessage("隐藏成功");
             } else {
                 response.setMessage("显示成功");
             }
         } else {
-            if (article.getVisible() == 0) {
+            if (articlePO.getVisible() == 0) {
                 throw new BusinessException("隐藏失败");
             } else {
                 throw new BusinessException("显示失败");
@@ -346,20 +389,19 @@ public class ArticleController extends BaseController {
     }
 
     /**
-     * 导出markdown格式备份 /api/admin/article/export
-     * 方法 GET
+     * 导出markdown格式备份
      *
-     * @param id
-     * @return
+     * @param id 文章主键
+     * @return 返回ResponseEntity对象
      * @throws IOException
      */
-    @RequestMapping(value = "/article/export", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/admin/article/export", method = RequestMethod.GET)
     public ResponseEntity<byte[]> export(@RequestParam("id") String id) throws IOException {
-        ArticlePO article = articleService.selectById(id);
-        String filename = article.getTitle() + ".md";
+        ArticlePO articlePO = articleService.selectById(id);
+        String filename = articlePO.getTitle() + ".md";
         filename = new String(filename.getBytes("UTF-8"), "ISO-8859-1");
 
-        InputStream is = new ByteArrayInputStream(article.getArticleMd().getBytes("UTF-8"));
+        InputStream is = new ByteArrayInputStream(articlePO.getArticleMd().getBytes("UTF-8"));
         byte[] body = new byte[is.available()];
         is.read(body);
 
