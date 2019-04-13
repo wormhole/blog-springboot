@@ -1,4 +1,4 @@
-package net.stackoverflow.blog.web.controller.api.admin;
+package net.stackoverflow.blog.web.controller.admin.setting;
 
 import net.stackoverflow.blog.common.BaseController;
 import net.stackoverflow.blog.common.BaseDTO;
@@ -13,9 +13,14 @@ import net.stackoverflow.blog.validator.SettingValidator;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -26,12 +31,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 设置信息更新接口
+ * 系统设置接口
  *
  * @author 凉衫薄
  */
-@RestController
-@RequestMapping("/api/admin")
+@Controller
 public class SettingController extends BaseController {
 
     @Autowired
@@ -42,38 +46,52 @@ public class SettingController extends BaseController {
     private String path;
 
     /**
-     * 更改基础设置
+     * 配置页面跳转
      *
-     * @param dto
-     * @param request
      * @return
      */
-    @RequestMapping(value = "/setting/update", method = RequestMethod.POST)
+    @RequestMapping(value = "/configure", method = RequestMethod.GET)
+    public ModelAndView setting() {
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/admin/setting/configure");
+        return mv;
+    }
+
+    /**
+     * 更新基本设置
+     *
+     * @param dto     公共dto对象
+     * @param request HttpServletRequest请求对象
+     * @return 返回Response
+     */
+    @RequestMapping(value = "/api/admin/setting/update", method = RequestMethod.POST)
     public Response update(@RequestBody BaseDTO dto, HttpServletRequest request) {
         Response response = new Response();
         ServletContext application = request.getServletContext();
 
-        List<SettingDTO> dtos = (List<SettingDTO>) (Object) getDTO("setting", SettingDTO.class, dto);
-        if (CollectionUtils.isEmpty(dtos)) {
+        //从公共DTO中提取settingDTO
+        List<SettingDTO> settingDTOs = (List<SettingDTO>) (Object) getDTO("setting", SettingDTO.class, dto);
+        if (CollectionUtils.isEmpty(settingDTOs)) {
             throw new BusinessException("找不到请求数据");
         }
-        SettingDTO[] settingDTOS = dtos.toArray(new SettingDTO[0]);
+        SettingDTO[] settingDTOArray = settingDTOs.toArray(new SettingDTO[0]);
 
-        Map<String, String> map = settingValidator.validate(settingDTOS);
-
+        //校验字段
+        Map<String, String> map = settingValidator.validate(settingDTOArray);
         if (!CollectionUtils.isEmpty(map)) {
             throw new BusinessException("字段格式错误", map);
         }
 
-        for (SettingDTO settingDTO : settingDTOS) {
+        for (SettingDTO settingDTO : settingDTOArray) {
             SettingPO setting = new SettingPO();
             BeanUtils.copyProperties(settingDTO, setting);
             settingService.update(setting);
         }
 
-        List<SettingPO> settings = settingService.selectByCondition(new HashMap<>());
+        //更新ServletContext中的属性
+        List<SettingPO> settingPOs = settingService.selectByCondition(new HashMap<>());
         Map<String, Object> settingMap = new HashMap<>();
-        for (SettingPO setting : settings) {
+        for (SettingPO setting : settingPOs) {
             settingMap.put(setting.getName(), setting.getValue());
         }
         application.setAttribute("setting", settingMap);
@@ -87,10 +105,10 @@ public class SettingController extends BaseController {
     /**
      * 更改头像
      *
-     * @param request
-     * @return
+     * @param request HttpServletRequest对象
+     * @return 返回Response
      */
-    @RequestMapping(value = "/setting/update/head", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/admin/setting/update/head", method = RequestMethod.POST)
     @ResponseBody
     public Response updateHead(HttpServletRequest request) {
         Response response = new Response();
