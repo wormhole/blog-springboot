@@ -47,7 +47,12 @@ public class ArticleServiceImpl implements ArticleService {
         if (articlePO != null) {
             return articlePO;
         } else {
-            return articleDao.selectById(id);
+            articlePO = articleDao.selectById(id);
+            if (articlePO != null) {
+                RedisCacheUtils.set("article:" + id, articlePO);
+                RedisCacheUtils.set("article:" + articlePO.getUrl(), articlePO);
+            }
+            return articlePO;
         }
     }
 
@@ -58,7 +63,12 @@ public class ArticleServiceImpl implements ArticleService {
         if (articlePO != null) {
             return articlePO;
         } else {
-            return articleDao.selectById(url);
+            articlePO = articleDao.selectById(url);
+            if (articlePO != null) {
+                RedisCacheUtils.set("article:" + articlePO.getId(), articlePO);
+                RedisCacheUtils.set("article:" + url, articlePO);
+            }
+            return articlePO;
         }
     }
 
@@ -74,12 +84,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int batchInsert(List<ArticlePO> articles) {
-        int result = articleDao.batchInsert(articles);
-        for (ArticlePO article : articles) {
-            RedisCacheUtils.set("article:" + article.getId(), article);
-            RedisCacheUtils.set("article:" + article.getUrl(), article);
-        }
-        return result;
+        return articleDao.batchInsert(articles);
     }
 
     @Override
@@ -100,8 +105,10 @@ public class ArticleServiceImpl implements ArticleService {
         }
 
         articleDao.deleteById(id);
-        RedisCacheUtils.del("article:" + article.getUrl());
-        RedisCacheUtils.del("article:" + id);
+        if (article != null) {
+            RedisCacheUtils.del("article:" + article.getUrl());
+            RedisCacheUtils.del("article:" + id);
+        }
         return article;
     }
 
@@ -122,8 +129,10 @@ public class ArticleServiceImpl implements ArticleService {
             }
 
             ArticlePO article = articleDao.selectById(id);
-            RedisCacheUtils.del("article:" + article.getUrl());
-            RedisCacheUtils.del("article:" + id);
+            if (article != null) {
+                RedisCacheUtils.del("article:" + article.getUrl());
+                RedisCacheUtils.del("article:" + id);
+            }
         }
         return articleDao.batchDeleteById(ids);
     }
@@ -141,7 +150,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int batchUpdate(List<ArticlePO> articles) {
-        int result = articleDao.batchInsert(articles);
+        int result = articleDao.batchUpdate(articles);
         for (ArticlePO article : articles) {
             RedisCacheUtils.del("article:" + articleDao.selectById(article.getId()).getUrl());
             RedisCacheUtils.set("article:" + article.getId(), article);

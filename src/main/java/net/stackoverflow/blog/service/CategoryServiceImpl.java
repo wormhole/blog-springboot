@@ -42,14 +42,25 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public CategoryPO selectById(String id) {
-        return categoryDao.selectById(id);
+        CategoryPO categoryPO = (CategoryPO) RedisCacheUtils.get("category:" + id);
+        if (categoryPO != null) {
+            return categoryPO;
+        } else {
+            categoryPO = categoryDao.selectById(id);
+            if (categoryPO != null) {
+                RedisCacheUtils.set("category:" + id, categoryPO);
+            }
+            return categoryPO;
+        }
+
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public CategoryPO insert(CategoryPO category) {
         categoryDao.insert(category);
-        return categoryDao.selectById(category.getId());
+        RedisCacheUtils.set("category:" + category.getId(), category);
+        return category;
     }
 
     @Override
@@ -80,6 +91,7 @@ public class CategoryServiceImpl implements CategoryService {
         }
 
         categoryDao.deleteById(id);
+        RedisCacheUtils.del("category:" + id);
         return category;
     }
 
@@ -103,6 +115,7 @@ public class CategoryServiceImpl implements CategoryService {
                 }
                 articleDao.batchUpdate(articleList);
             }
+            RedisCacheUtils.del("category:" + id);
         }
         return categoryDao.batchDeleteById(ids);
     }
@@ -111,13 +124,18 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional(rollbackFor = Exception.class)
     public CategoryPO update(CategoryPO category) {
         categoryDao.update(category);
-        return categoryDao.selectById(category.getId());
+        RedisCacheUtils.set("category:" + category.getId(), category);
+        return category;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int batchUpdate(List<CategoryPO> categorys) {
-        return categoryDao.batchUpdate(categorys);
+        int result = categoryDao.batchUpdate(categorys);
+        for (CategoryPO categoryPO : categorys) {
+            RedisCacheUtils.set("category:" + categoryPO.getId(), categoryPO);
+        }
+        return result;
     }
 
 }
