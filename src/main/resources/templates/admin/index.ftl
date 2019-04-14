@@ -39,13 +39,18 @@
         <div class="layui-side-scroll">
             <ul class="layui-nav layui-nav-tree">
                 <li class="layui-nav-item">
-                    <a href="javascript:;"><i class="layui-icon layui-icon-template-1"></i>&nbsp;&nbsp;文章</a>
+                    <a href="javascript:;"><i class="layui-icon layui-icon-read"></i>&nbsp;&nbsp;文章</a>
                     <dl class="layui-nav-child">
                         <dd><a href="javascript:;" data-url="/admin/article/article-manage" data-title="文章管理"
                                data-id="article-manage">文章管理</a></dd>
-                        <dd><a href="javascript:;" data-url="/admin/article/edit" data-title="文章编辑"
-                               data-id="edit">文章编辑</a></dd>
-                        <dd><a href="javascript:;" data-url="/admin/article/category-manage" data-title="分类管理"
+                        <dd><a href="javascript:;" data-url="/admin/article/article-edit" data-title="文章编辑"
+                               data-id="article-edit">文章编辑</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="javascript:;"><i class="layui-icon layui-icon-note"></i>&nbsp;&nbsp;分类</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;" data-url="/admin/category/category-manage" data-title="分类管理"
                                data-id="category-manage">分类管理</a></dd>
                     </dl>
                 </li>
@@ -54,14 +59,6 @@
                     <dl class="layui-nav-child">
                         <dd><a href="javascript:;" data-url="/admin/comment/comment-manage" data-title="评论管理"
                                data-id="comment-manage">评论管理</a></dd>
-                    </dl>
-                </li>
-                <li class="layui-nav-item">
-                    <a href="javascript:;"><i class="layui-icon layui-icon-spread-left"></i>&nbsp;&nbsp;菜单</a>
-                    <dl class="layui-nav-child">
-                        <dd><a href="javascript:;" data-url="/admin/menu/menu-manage" data-title="菜单管理"
-                               data-id="menu-manage">菜单管理</a>
-                        </dd>
                     </dl>
                 </li>
                 <li class="layui-nav-item">
@@ -74,21 +71,19 @@
                 <li class="layui-nav-item">
                     <a href="javascript:;"><i class="layui-icon layui-icon-picture"></i>&nbsp;&nbsp;媒体</a>
                     <dl class="layui-nav-child">
-                        <dd><a href="javascript:;" data-url="/admin/media/image-manage" data-title="图片管理"
-                               data-id="image-manage">图片管理</a></dd>
+                        <dd><a href="javascript:;" data-url="/admin/media/image" data-title="图片管理"
+                               data-id="image">图片管理</a></dd>
                     </dl>
                 </li>
                 <li class="layui-nav-item">
-                    <a href="javascript:;"><i class="layui-icon layui-icon-set-fill"></i>&nbsp;&nbsp;设置</a>
+                    <a href="javascript:;"><i class="layui-icon layui-icon-set-fill"></i>&nbsp;&nbsp;系统</a>
                     <dl class="layui-nav-child">
-                        <dd><a href="javascript:;" data-url="/admin/setting/configure" data-title="常规设置"
-                               data-id="configure">常规设置</a></dd>
-                    </dl>
-                </li>
-                <li class="layui-nav-item">
-                    <a href="javascript:;"><i class="layui-icon layui-icon-upload"></i>&nbsp;&nbsp;备份</a>
-                    <dl class="layui-nav-child">
-                        <dd><a href="javascript:;" data-url="/admin/backup/backup" data-title="数据备份"
+                        <dd><a href="javascript:;" data-url="/admin/system/setting" data-title="常规设置"
+                               data-id="setting">常规设置</a></dd>
+                        <dd><a href="javascript:;" data-url="/admin/system/menu" data-title="菜单管理"
+                               data-id="menu">菜单管理</a>
+                        </dd>
+                        <dd><a href="javascript:;" data-url="/admin/system/backup" data-title="数据备份"
                                data-id="backup">数据备份</a></dd>
                     </dl>
                 </li>

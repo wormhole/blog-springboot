@@ -1,4 +1,4 @@
-package net.stackoverflow.blog.web.controller.admin.article;
+package net.stackoverflow.blog.web.controller.admin.category;
 
 import net.stackoverflow.blog.common.BaseController;
 import net.stackoverflow.blog.common.BaseDTO;
@@ -13,10 +13,7 @@ import net.stackoverflow.blog.util.ValidationUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.ConstraintViolation;
@@ -30,6 +27,7 @@ import java.util.*;
  * @author 凉衫薄
  */
 @Controller
+@RequestMapping("/admin/category")
 public class CategoryController extends BaseController {
 
     @Autowired
@@ -42,10 +40,10 @@ public class CategoryController extends BaseController {
      *
      * @return 返回ModelAndView对象
      */
-    @RequestMapping(value = "/admin/article/category-manage", method = RequestMethod.GET)
+    @RequestMapping(value = "/category-manage", method = RequestMethod.GET)
     public ModelAndView category() {
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("/admin/article/category-manage");
+        mv.setViewName("/admin/category/category-manage");
         return mv;
     }
 
@@ -55,7 +53,8 @@ public class CategoryController extends BaseController {
      * @param dto 公共dto对象
      * @return 返回Response对象
      */
-    @RequestMapping(value = "/api/admin/category/insert", method = RequestMethod.POST)
+    @RequestMapping(value = "/insert", method = RequestMethod.POST)
+    @ResponseBody
     public Response insert(@RequestBody BaseDTO dto) {
         Response response = new Response();
 
@@ -105,7 +104,8 @@ public class CategoryController extends BaseController {
      * @param limit 每页数量
      * @return 返回Response对象
      */
-    @RequestMapping(value = "/api/admin/category/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @ResponseBody
     public Response list(@RequestParam(value = "page") String page, @RequestParam(value = "limit") String limit) {
         Response response = new Response();
 
@@ -140,7 +140,8 @@ public class CategoryController extends BaseController {
      * @param dto 公共dto对象
      * @return 返回Response对象
      */
-    @RequestMapping(value = "/api/admin/category/delete", method = RequestMethod.POST)
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @ResponseBody
     public Response delete(@RequestBody BaseDTO dto) {
         Response response = new Response();
 
@@ -181,7 +182,8 @@ public class CategoryController extends BaseController {
      * @param dto 公共dto对象
      * @return 返回Response对象
      */
-    @RequestMapping(value = "/api/admin/category/update", method = RequestMethod.POST)
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    @ResponseBody
     public Response update(@RequestBody BaseDTO dto) {
         Response response = new Response();
 

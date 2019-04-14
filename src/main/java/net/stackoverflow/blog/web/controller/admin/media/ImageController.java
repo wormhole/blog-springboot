@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.File;
@@ -21,6 +22,7 @@ import java.util.TreeMap;
  * @author 凉衫薄
  */
 @Controller
+@RequestMapping(value = "/admin/media")
 public class ImageController {
 
     @Value("${server.upload.path}")
@@ -31,7 +33,7 @@ public class ImageController {
      *
      * @return 返回ModelAndView对象
      */
-    @RequestMapping(value = "/admin/media/image-manage", method = RequestMethod.GET)
+    @RequestMapping(value = "/image", method = RequestMethod.GET)
     public ModelAndView image() {
         ModelAndView mv = new ModelAndView();
 
@@ -40,7 +42,7 @@ public class ImageController {
         //遍历上传路径，存储在imageMap
         traverseFolder(path, imageMap);
         mv.addObject("map", imageMap);
-        mv.setViewName("/admin/media/image-manage");
+        mv.setViewName("/admin/media/image");
         return mv;
     }
 
@@ -50,7 +52,8 @@ public class ImageController {
      * @param url 图片url
      * @return
      */
-    @RequestMapping(value = "/api/admin/image/delete", method = RequestMethod.POST)
+    @RequestMapping(value = "/image/delete", method = RequestMethod.POST)
+    @ResponseBody
     public Response delete(@RequestParam("url") String url) {
         Response response = new Response();
         url = url.replaceFirst("/upload", "");

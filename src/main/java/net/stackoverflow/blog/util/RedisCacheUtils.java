@@ -2,7 +2,6 @@ package net.stackoverflow.blog.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
@@ -16,13 +15,14 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class RedisCacheUtils {
 
-    private static final RedisTemplate redisTemplate;
+    private static RedisTemplate redisTemplate;
 
-    static {
-        redisTemplate = new RedisTemplate();
-        RedisSerializer stringRedisSerializer = redisTemplate.getStringSerializer();
-        redisTemplate.setKeySerializer(stringRedisSerializer);
-        redisTemplate.setHashKeySerializer(stringRedisSerializer);
+    public static RedisTemplate getRedisTemplate() {
+        return redisTemplate;
+    }
+
+    public static void setRedisTemplate(RedisTemplate template) {
+        redisTemplate = template;
     }
 
     /**

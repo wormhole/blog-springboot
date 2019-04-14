@@ -1,4 +1,4 @@
-package net.stackoverflow.blog.web.controller.exception;
+package net.stackoverflow.blog.web.controller;
 
 import net.stackoverflow.blog.common.Response;
 import net.stackoverflow.blog.exception.BusinessException;

@@ -126,8 +126,9 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional(rollbackFor = Exception.class)
     @CachePut(value = "article", key = "'article:'+#result.url", condition = "#result!=null")
     public ArticlePO update(ArticlePO article) {
+        RedisCacheUtils.del("article:" + article.getId());
+        RedisCacheUtils.del("article:" + articleDao.selectById(article.getId()).getUrl());
         articleDao.update(article);
-        RedisCacheUtils.set("article:" + article.getId(), article);
         return articleDao.selectById(article.getId());
     }
 
@@ -135,6 +136,8 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional(rollbackFor = Exception.class)
     public int batchUpdate(List<ArticlePO> list) {
         for (ArticlePO article : list) {
+            RedisCacheUtils.del("article:" + article.getId());
+            RedisCacheUtils.del("article:" + articleDao.selectById(article.getId()).getUrl());
             RedisCacheUtils.set("article:" + article.getId(), article);
             RedisCacheUtils.set("article:" + article.getUrl(), article);
         }

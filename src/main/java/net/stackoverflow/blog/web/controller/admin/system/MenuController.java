@@ -1,4 +1,4 @@
-package net.stackoverflow.blog.web.controller.admin.menu;
+package net.stackoverflow.blog.web.controller.admin.system;
 
 import net.stackoverflow.blog.common.BaseController;
 import net.stackoverflow.blog.common.BaseDTO;
@@ -13,10 +13,7 @@ import net.stackoverflow.blog.util.ValidationUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 
@@ -33,6 +30,7 @@ import java.util.*;
  * @author 凉衫薄
  */
 @Controller
+@RequestMapping(value = "/admin/system")
 public class MenuController extends BaseController {
 
     @Autowired
@@ -45,10 +43,10 @@ public class MenuController extends BaseController {
      *
      * @return 返回ModelAndView对象
      */
-    @RequestMapping(value = "/admin/menu/menu-manage", method = RequestMethod.GET)
+    @RequestMapping(value = "/menu", method = RequestMethod.GET)
     public ModelAndView management() {
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("/admin/menu/menu-manage");
+        mv.setViewName("/admin/system/menu");
         return mv;
     }
 
@@ -59,7 +57,8 @@ public class MenuController extends BaseController {
      * @param limit 每页数量
      * @return 返回Response对象
      */
-    @RequestMapping(value = "/api/admin/menu/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/menu/list", method = RequestMethod.GET)
+    @ResponseBody
     public Response list(@RequestParam(value = "page") String page, @RequestParam(value = "limit") String limit) {
         Response response = new Response();
 
@@ -97,7 +96,8 @@ public class MenuController extends BaseController {
      * @param request HttpServletRequest对象
      * @return 返回Response对象
      */
-    @RequestMapping(value = "/api/admin/menu/delete", method = RequestMethod.POST)
+    @RequestMapping(value = "/menu/delete", method = RequestMethod.POST)
+    @ResponseBody
     public Response delete(@RequestBody BaseDTO dto, HttpServletRequest request) {
         Response response = new Response();
 
@@ -145,7 +145,8 @@ public class MenuController extends BaseController {
      * @param request HttpServletRequest对象
      * @return 返回Response对象
      */
-    @RequestMapping(value = "/api/admin/menu/insert", method = RequestMethod.POST)
+    @RequestMapping(value = "/menu/insert", method = RequestMethod.POST)
+    @ResponseBody
     public Response insert(@RequestBody BaseDTO dto, HttpServletRequest request) {
         Response response = new Response();
 
@@ -188,7 +189,8 @@ public class MenuController extends BaseController {
      * @param request HttpServletRequest对象
      * @return 返回Response对象
      */
-    @RequestMapping(value = "/api/admin/menu/update", method = RequestMethod.POST)
+    @RequestMapping(value = "/menu/update", method = RequestMethod.POST)
+    @ResponseBody
     public Response update(@RequestBody BaseDTO dto, HttpServletRequest request) {
         Response response = new Response();
 

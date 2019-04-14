@@ -6,7 +6,7 @@ layui.use(['table', 'jquery', 'layer'], function () {
     var parameter = {
         id: 'article-table',
         elem: '#article-table',
-        url: '/api/admin/article/list',
+        url: '/admin/article/list',
         method: 'get',
         page: true,
         toolbar: 'default',
@@ -61,7 +61,7 @@ layui.use(['table', 'jquery', 'layer'], function () {
             };
             showHiddenAjax(param);
         } else if (layEvent === 'export') {
-            window.location.href = "/api/admin/article/export?id=" + data.id;
+            window.location.href = "/admin/article/export?id=" + data.id;
         } else if (layEvent === 'edit') {
             layer.open({
                 type: 2,
@@ -70,7 +70,7 @@ layui.use(['table', 'jquery', 'layer'], function () {
                 shade: 0.8,
                 area: ['90%', '90%'],
                 maxmin: true,
-                content: '/admin/article/edit?id=' + data.id,
+                content: '/admin/article/article-edit?id=' + data.id,
                 cancel: function (index, layero) {
                     tableIns.reload(parameter);
                 }
@@ -88,7 +88,7 @@ layui.use(['table', 'jquery', 'layer'], function () {
                 shade: 0.8,
                 area: ['90%', '90%'],
                 maxmin: true,
-                content: '/admin/article/edit',
+                content: '/admin/article/article-edit',
                 cancel: function (index, layero) {
                     tableIns.reload(parameter);
                 }
@@ -102,7 +102,7 @@ layui.use(['table', 'jquery', 'layer'], function () {
                     shade: 0.8,
                     area: ['90%', '90%'],
                     maxmin: true,
-                    content: '/admin/article/edit?id=' + checkStatus.data[0].id,
+                    content: '/admin/article/article-edit?id=' + checkStatus.data[0].id,
                     cancel: function (index, layero) {
                         tableIns.reload(parameter);
                     }
@@ -142,7 +142,7 @@ layui.use(['table', 'jquery', 'layer'], function () {
 
     function deleteArticleAjax(param) {
         $.ajax({
-            url: "/api/admin/article/delete",
+            url: "/admin/article/delete",
             type: "post",
             data: JSON.stringify(param),
             dataType: "json",
@@ -172,7 +172,7 @@ layui.use(['table', 'jquery', 'layer'], function () {
 
     function showHiddenAjax(param) {
         $.ajax({
-            url: "/api/admin/article/visible",
+            url: "/admin/article/visible",
             type: "post",
             data: JSON.stringify(param),
             dataType: "json",

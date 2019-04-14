@@ -14,10 +14,7 @@ import net.stackoverflow.blog.util.ValidationUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 
@@ -32,6 +29,7 @@ import java.util.*;
  * @author 凉衫薄
  */
 @Controller
+@RequestMapping(value = "/admin/comment")
 public class CommentController extends BaseController {
 
     @Autowired
@@ -46,7 +44,7 @@ public class CommentController extends BaseController {
      *
      * @return
      */
-    @RequestMapping(value = "/admin/comment/comment-manage", method = RequestMethod.GET)
+    @RequestMapping(value = "/comment-manage", method = RequestMethod.GET)
     public ModelAndView management() {
         ModelAndView mv = new ModelAndView();
         mv.setViewName("/admin/comment/comment-manage");
@@ -60,7 +58,8 @@ public class CommentController extends BaseController {
      * @param limit 每页数量
      * @return 返回Response对象
      */
-    @RequestMapping(value = "/api/admin/comment/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @ResponseBody
     public Response list(@RequestParam(value = "page") String page, @RequestParam(value = "limit") String limit) {
         Response response = new Response();
 
@@ -104,7 +103,8 @@ public class CommentController extends BaseController {
      * @param dto 公共dto对象
      * @return 返回Response对象
      */
-    @RequestMapping(value = "/api/admin/comment/delete", method = RequestMethod.POST)
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @ResponseBody
     public Response delete(@RequestBody BaseDTO dto) {
         Response response = new Response();
 
@@ -139,7 +139,8 @@ public class CommentController extends BaseController {
      * @param dto 公共dto对象
      * @return 返回Response对象
      */
-    @RequestMapping(value = "/api/admin/comment/review", method = RequestMethod.POST)
+    @RequestMapping(value = "/review", method = RequestMethod.POST)
+    @ResponseBody
     public Response review(@RequestBody BaseDTO dto) {
         Response response = new Response();
 

@@ -4,7 +4,7 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
     <link rel="stylesheet" href="/static/plugins/layui/css/layui.css"/>
-    <link rel="stylesheet" href="/static/admin/css/article/category-manage.css"/>
+    <link rel="stylesheet" href="/static/admin/css/category/category-manage.css"/>
     <script src="/static/plugins/layui/layui.js"></script>
     <meta name="keywords" content="${Application.setting.keywords}"/>
     <meta name="description" content="${Application.setting.description}"/>
@@ -40,6 +40,6 @@
         </div>
     </div>
 </script>
-<script type="text/javascript" src="/static/admin/js/article/category-manage.js"></script>
+<script type="text/javascript" src="/static/admin/js/category/category-manage.js"></script>
 </body>
 </html>

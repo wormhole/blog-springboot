@@ -1,4 +1,4 @@
-package net.stackoverflow.blog.web.controller.admin.setting;
+package net.stackoverflow.blog.web.controller.admin.system;
 
 import net.stackoverflow.blog.common.BaseController;
 import net.stackoverflow.blog.common.BaseDTO;
@@ -36,6 +36,7 @@ import java.util.Map;
  * @author 凉衫薄
  */
 @Controller
+@RequestMapping(value = "/admin/system")
 public class SettingController extends BaseController {
 
     @Autowired
@@ -50,10 +51,10 @@ public class SettingController extends BaseController {
      *
      * @return
      */
-    @RequestMapping(value = "/configure", method = RequestMethod.GET)
+    @RequestMapping(value = "/setting", method = RequestMethod.GET)
     public ModelAndView setting() {
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("/admin/setting/configure");
+        mv.setViewName("/admin/system/setting");
         return mv;
     }
 
@@ -64,7 +65,8 @@ public class SettingController extends BaseController {
      * @param request HttpServletRequest请求对象
      * @return 返回Response
      */
-    @RequestMapping(value = "/api/admin/setting/update", method = RequestMethod.POST)
+    @RequestMapping(value = "/setting/update", method = RequestMethod.POST)
+    @ResponseBody
     public Response update(@RequestBody BaseDTO dto, HttpServletRequest request) {
         Response response = new Response();
         ServletContext application = request.getServletContext();
@@ -108,7 +110,7 @@ public class SettingController extends BaseController {
      * @param request HttpServletRequest对象
      * @return 返回Response
      */
-    @RequestMapping(value = "/api/admin/setting/update/head", method = RequestMethod.POST)
+    @RequestMapping(value = "/setting/head", method = RequestMethod.POST)
     @ResponseBody
     public Response updateHead(HttpServletRequest request) {
         Response response = new Response();

@@ -46,7 +46,8 @@ public class DashboardPageController {
      *
      * @return 返回Response对象
      */
-    @RequestMapping(value = "/api/admin/visit/chart", method = RequestMethod.GET)
+    @RequestMapping(value = "/dashboard/visit/chart", method = RequestMethod.GET)
+    @ResponseBody
     public Response flow() {
         Response response = new Response();
         List<String> dates = new ArrayList<>();
@@ -84,7 +85,7 @@ public class DashboardPageController {
      * @param limit 每页数量
      * @return 返回Response对象
      */
-    @RequestMapping(value = "/api/admin/visit/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/dashboard/visit/list", method = RequestMethod.GET)
     @ResponseBody
     public Response today(@RequestParam(value = "page") String page, @RequestParam(value = "limit") String limit) {
         Response response = new Response();
@@ -114,7 +115,7 @@ public class DashboardPageController {
      *
      * @return 返回Response对象
      */
-    @RequestMapping(value = "/api/admin/visit/count", method = RequestMethod.GET)
+    @RequestMapping(value = "/dashboard/visit/count", method = RequestMethod.GET)
     @ResponseBody
     public Response count() {
         Response response = new Response();

@@ -11,7 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
  * @author 凉衫薄
  */
 @Controller
-public class AdminIndexPageController {
+public class AdminPageController {
 
     /**
      * 后台管理系统主页跳转

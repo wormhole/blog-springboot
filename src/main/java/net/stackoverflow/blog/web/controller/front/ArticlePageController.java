@@ -128,7 +128,7 @@ public class ArticlePageController extends BaseController {
      * @param dto 前端传来的公共DTO
      * @return 返回Response对象
      */
-    @RequestMapping(value = "/api/comment", method = RequestMethod.POST)
+    @RequestMapping(value = "/comment", method = RequestMethod.POST)
     @ResponseBody
     public Response insertComment(@RequestBody BaseDTO dto) {
         Response response = new Response();
@@ -176,7 +176,7 @@ public class ArticlePageController extends BaseController {
      * @param session 会话对象
      * @return 返回Response对象
      */
-    @RequestMapping(value = "/api/like", method = RequestMethod.POST)
+    @RequestMapping(value = "/like", method = RequestMethod.POST)
     @ResponseBody
     public Response like(@RequestBody BaseDTO dto, HttpSession session) {
         Response response = new Response();

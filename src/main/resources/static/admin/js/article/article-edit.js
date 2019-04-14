@@ -14,7 +14,7 @@ layui.use(['form', 'layer'], function () {
             saveHTMLToTextarea: true,
             imageUpload: true,
             imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
-            imageUploadURL: "/api/admin/article/image",
+            imageUploadURL: "/admin/article/image",
         });
     });
 
@@ -32,7 +32,7 @@ layui.use(['form', 'layer'], function () {
 
     function saveArticleAjax(param) {
         $.ajax({
-            url: "/api/admin/article/insert",
+            url: "/admin/article/insert",
             type: "post",
             data: JSON.stringify(param),
             dataType: "json",
@@ -71,7 +71,7 @@ layui.use(['form', 'layer'], function () {
 
     function updateArticleAjax(param) {
         $.ajax({
-            url: "/api/admin/article/update",
+            url: "/admin/article/update",
             type: "post",
             data: JSON.stringify(param),
             dataType: "json",

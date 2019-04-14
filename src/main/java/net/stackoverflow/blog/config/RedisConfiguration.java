@@ -1,5 +1,6 @@
 package net.stackoverflow.blog.config;
 
+import net.stackoverflow.blog.util.RedisCacheUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -26,5 +27,6 @@ public class RedisConfiguration {
         RedisSerializer stringRedisSerializer = redisTemplate.getStringSerializer();
         redisTemplate.setKeySerializer(stringRedisSerializer);
         redisTemplate.setHashKeySerializer(stringRedisSerializer);
+        RedisCacheUtils.setRedisTemplate(redisTemplate);
     }
 }

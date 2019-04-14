@@ -4,7 +4,7 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
     <link rel="stylesheet" href="/static/plugins/layui/css/layui.css"/>
-    <link rel="stylesheet" href="/static/admin/css/setting/configure.css"/>
+    <link rel="stylesheet" href="/static/admin/css/system/setting.css"/>
     <script src="/static/plugins/layui/layui.js"></script>
     <meta name="keywords" content="${Application.setting.keywords}"/>
     <meta name="description" content="${Application.setting.description}"/>
@@ -105,6 +105,6 @@
         </div>
     </div>
 </div>
-<script type="text/javascript" src="/static/admin/js/setting/configure.js"></script>
+<script type="text/javascript" src="/static/admin/js/system/setting.js"></script>
 </body>
 </html>

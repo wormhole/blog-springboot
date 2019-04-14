@@ -234,7 +234,6 @@ public class ShiroConfiguration {
         filterChainMap.put("/logout", "logout");
         filterChainMap.put("/login", "authc");
         filterChainMap.put("/admin/**", "user");
-        filterChainMap.put("/api/admin/**", "user");
         filterChainMap.put("/**", "anon");
         shiroFilter.setFilterChainDefinitionMap(filterChainMap);
 

@@ -63,7 +63,7 @@ public class RegisterPageController extends BaseController {
      * @param session 会话对象
      * @return 返回Response对象
      */
-    @RequestMapping(value = "/api/register", method = RequestMethod.POST)
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
     @ResponseBody
     public Response register(@RequestBody BaseDTO dto, HttpSession session) {
 

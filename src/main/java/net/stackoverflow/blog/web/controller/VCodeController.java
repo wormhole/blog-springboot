@@ -22,7 +22,6 @@ import java.util.Random;
  * @author 凉衫薄
  */
 @Controller
-@RequestMapping("/api")
 public class VCodeController {
 
     /**

@@ -1,4 +1,4 @@
-package net.stackoverflow.blog.web.controller.admin.backup;
+package net.stackoverflow.blog.web.controller.admin.system;
 
 import net.stackoverflow.blog.util.DBUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +23,7 @@ import java.io.InputStream;
  * @author 凉衫薄
  */
 @Controller
+@RequestMapping(value = "/admin/system")
 @PropertySource(value = {"classpath:application.properties"})
 public class BackupController {
 
@@ -42,10 +43,10 @@ public class BackupController {
      *
      * @return 返回ModelAndView对象
      */
-    @RequestMapping(value = "/admin/backup/backup", method = RequestMethod.GET)
+    @RequestMapping(value = "/backup", method = RequestMethod.GET)
     public ModelAndView backup() {
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("/admin/backup/backup");
+        mv.setViewName("/admin/system/backup");
         return mv;
     }
 
@@ -55,7 +56,7 @@ public class BackupController {
      * @return 返回ResponseEntity对象
      * @throws IOException
      */
-    @RequestMapping(value = "/api/admin/backup/sql", method = RequestMethod.GET)
+    @RequestMapping(value = "/backup/db", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<byte[]> exportSql() throws IOException {
         String filename = "blog.sql";

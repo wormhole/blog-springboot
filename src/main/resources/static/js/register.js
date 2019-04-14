@@ -16,7 +16,7 @@ layui.use(['jquery'], function () {
             $('#re-password').val('');
             $('blockquote').html('两次密码不一致');
             $('blockquote').removeClass('hidden');
-            $('#verify-img').attr('src', '/api/vcode' + '?' + Math.random());
+            $('#verify-img').attr('src', '/vcode' + '?' + Math.random());
             return;
         }
 
@@ -32,7 +32,7 @@ layui.use(['jquery'], function () {
 
     function registerAjax(param) {
         $.ajax({
-            url: "/api/register",
+            url: "/register",
             type: "post",
             data: JSON.stringify(param),
             dataType: "json",
@@ -51,12 +51,12 @@ layui.use(['jquery'], function () {
                     }
                 }
                 $('blockquote').removeClass('hidden');
-                $('#verify-img').attr('src', '/api/vcode' + '?' + Math.random());
+                $('#verify-img').attr('src', '/vcode' + '?' + Math.random());
             },
             error: function (response) {
                 $('blockquote').html('服务器错误');
                 $('blockquote').removeClass('hidden');
-                $('#verif-img').attr('src', '/api/vcode' + '?' + Math.random());
+                $('#verif-img').attr('src', '/vcode' + '?' + Math.random());
             }
         });
     }

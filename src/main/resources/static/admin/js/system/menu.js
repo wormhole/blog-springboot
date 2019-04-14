@@ -6,7 +6,7 @@ layui.use(['table', 'jquery', 'layer'], function () {
     var parameter = {
         id: 'menu-table',
         elem: '#menu-table',
-        url: '/api/admin/menu/list',
+        url: '/admin/system/menu/list',
         method: 'get',
         page: true,
         toolbar: '#toolbar-head',
@@ -102,7 +102,7 @@ layui.use(['table', 'jquery', 'layer'], function () {
 
     function updateMenuAjax(param) {
         $.ajax({
-            url: "/api/admin/menu/update",
+            url: "/admin/system/menu/update",
             type: "post",
             data: JSON.stringify(param),
             dataType: "json",
@@ -142,7 +142,7 @@ layui.use(['table', 'jquery', 'layer'], function () {
 
     function deleteMenuAjax(param) {
         $.ajax({
-            url: "/api/admin/menu/delete",
+            url: "/admin/system/menu/delete",
             type: "post",
             data: JSON.stringify(param),
             dataType: "json",
@@ -172,7 +172,7 @@ layui.use(['table', 'jquery', 'layer'], function () {
 
     function insertMenuAjax(param) {
         $.ajax({
-            url: "/api/admin/menu/insert",
+            url: "/admin/system/menu/insert",
             type: "post",
             data: JSON.stringify(param),
             dataType: "json",

@@ -15,10 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
@@ -36,6 +33,7 @@ import java.util.Set;
  * @author 凉衫薄
  */
 @Controller
+@RequestMapping(value = "/admin/user")
 public class PersonalController extends BaseController {
 
     @Autowired
@@ -50,7 +48,7 @@ public class PersonalController extends BaseController {
      *
      * @return
      */
-    @RequestMapping(value = "/admin/user/personal", method = RequestMethod.GET)
+    @RequestMapping(value = "/personal", method = RequestMethod.GET)
     public ModelAndView personal() {
         ModelAndView mv = new ModelAndView();
         mv.setViewName("/admin/user/personal");
@@ -65,7 +63,8 @@ public class PersonalController extends BaseController {
      * @param session 会话对象
      * @return 返回Response对象
      */
-    @RequestMapping(value = "/api/admin/user/update", method = RequestMethod.POST)
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    @ResponseBody
     public Response updateUser(@RequestParam("type") String type, @RequestBody BaseDTO dto, HttpSession session) {
         Response response = new Response();
 
