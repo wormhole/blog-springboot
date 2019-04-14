@@ -21,14 +21,14 @@ public interface CommentService {
 
     CommentPO insert(CommentPO comment);
 
-    int batchInsert(List<CommentPO> list);
+    int batchInsert(List<CommentPO> comments);
 
     CommentPO deleteById(String id);
 
-    int batchDeleteById(List<String> list);
+    int batchDeleteById(List<String> ids);
 
     CommentPO update(CommentPO comment);
 
-    int batchUpdate(List<CommentPO> list);
+    int batchUpdate(List<CommentPO> comments);
 
 }

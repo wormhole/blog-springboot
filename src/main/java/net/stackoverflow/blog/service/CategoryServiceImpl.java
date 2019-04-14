@@ -5,6 +5,7 @@ import net.stackoverflow.blog.dao.ArticleDao;
 import net.stackoverflow.blog.dao.CategoryDao;
 import net.stackoverflow.blog.pojo.po.ArticlePO;
 import net.stackoverflow.blog.pojo.po.CategoryPO;
+import net.stackoverflow.blog.util.RedisCacheUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,8 +54,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchInsert(List<CategoryPO> list) {
-        return categoryDao.batchInsert(list);
+    public int batchInsert(List<CategoryPO> categorys) {
+        return categoryDao.batchInsert(categorys);
     }
 
     @Override
@@ -72,6 +73,8 @@ public class CategoryServiceImpl implements CategoryService {
         if (articleList.size() != 0) {
             for (ArticlePO article : articleList) {
                 article.setCategoryId(unCategory.getId());
+                RedisCacheUtils.set("article:" + article.getId(), article);
+                RedisCacheUtils.set("article:" + article.getUrl(), article);
             }
             articleDao.batchUpdate(articleList);
         }
@@ -82,8 +85,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchDeleteById(List<String> list) {
-        for (String id : list) {
+    public int batchDeleteById(List<String> ids) {
+        for (String id : ids) {
             CategoryPO category = categoryDao.selectById(id);
 
             CategoryPO unCategory = categoryDao.selectByCondition(new HashMap<String, Object>() {{
@@ -95,11 +98,13 @@ public class CategoryServiceImpl implements CategoryService {
             if (articleList.size() != 0) {
                 for (ArticlePO article : articleList) {
                     article.setCategoryId(unCategory.getId());
+                    RedisCacheUtils.set("article:" + article.getId(), article);
+                    RedisCacheUtils.set("article:" + article.getUrl(), article);
                 }
                 articleDao.batchUpdate(articleList);
             }
         }
-        return categoryDao.batchDeleteById(list);
+        return categoryDao.batchDeleteById(ids);
     }
 
     @Override
@@ -111,8 +116,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchUpdate(List<CategoryPO> list) {
-        return categoryDao.batchUpdate(list);
+    public int batchUpdate(List<CategoryPO> categorys) {
+        return categoryDao.batchUpdate(categorys);
     }
 
 }

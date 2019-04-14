@@ -21,14 +21,14 @@ public interface MenuService {
 
     MenuPO insert(MenuPO menu);
 
-    int batchInsert(List<MenuPO> list);
+    int batchInsert(List<MenuPO> menus);
 
     MenuPO deleteById(String id);
 
-    int batchDeleteById(List<String> list);
+    int batchDeleteById(List<String> ids);
 
     MenuPO update(MenuPO menu);
 
-    int batchUpdate(List<MenuPO> list);
+    int batchUpdate(List<MenuPO> menus);
 
 }

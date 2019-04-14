@@ -23,14 +23,14 @@ public interface ArticleService {
 
     ArticlePO insert(ArticlePO article);
 
-    int batchInsert(List<ArticlePO> list);
+    int batchInsert(List<ArticlePO> articles);
 
     ArticlePO deleteById(String id);
 
-    int batchDeleteById(List<String> list);
+    int batchDeleteById(List<String> ids);
 
     ArticlePO update(ArticlePO article);
 
-    int batchUpdate(List<ArticlePO> list);
+    int batchUpdate(List<ArticlePO> articles);
 
 }

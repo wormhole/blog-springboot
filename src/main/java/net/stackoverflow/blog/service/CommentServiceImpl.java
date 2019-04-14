@@ -48,8 +48,8 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchInsert(List<CommentPO> list) {
-        return dao.batchInsert(list);
+    public int batchInsert(List<CommentPO> comments) {
+        return dao.batchInsert(comments);
     }
 
     @Override
@@ -62,8 +62,8 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchDeleteById(List<String> list) {
-        return dao.batchDeleteById(list);
+    public int batchDeleteById(List<String> ids) {
+        return dao.batchDeleteById(ids);
     }
 
     @Override
@@ -75,8 +75,8 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchUpdate(List<CommentPO> list) {
-        return dao.batchUpdate(list);
+    public int batchUpdate(List<CommentPO> comments) {
+        return dao.batchUpdate(comments);
     }
 
 }

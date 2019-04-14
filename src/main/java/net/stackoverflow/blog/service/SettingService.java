@@ -21,14 +21,14 @@ public interface SettingService {
 
     SettingPO insert(SettingPO setting);
 
-    int batchInsert(List<SettingPO> list);
+    int batchInsert(List<SettingPO> settings);
 
     SettingPO deleteById(String id);
 
-    int batchDeleteById(List<String> list);
+    int batchDeleteById(List<String> ids);
 
     SettingPO update(SettingPO setting);
 
-    int batchUpdate(List<SettingPO> list);
+    int batchUpdate(List<SettingPO> settings);
 
 }

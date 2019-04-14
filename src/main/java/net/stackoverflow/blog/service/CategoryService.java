@@ -21,14 +21,14 @@ public interface CategoryService {
 
     CategoryPO insert(CategoryPO category);
 
-    int batchInsert(List<CategoryPO> list);
+    int batchInsert(List<CategoryPO> categorys);
 
     CategoryPO deleteById(String id);
 
-    int batchDeleteById(List<String> list);
+    int batchDeleteById(List<String> ids);
 
     CategoryPO update(CategoryPO category);
 
-    int batchUpdate(List<CategoryPO> list);
+    int batchUpdate(List<CategoryPO> categorys);
     
 }

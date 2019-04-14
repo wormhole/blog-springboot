@@ -48,8 +48,8 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchInsert(List<MenuPO> list) {
-        return dao.batchInsert(list);
+    public int batchInsert(List<MenuPO> menus) {
+        return dao.batchInsert(menus);
     }
 
     @Override
@@ -62,8 +62,8 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchDeleteById(List<String> list) {
-        return dao.batchDeleteById(list);
+    public int batchDeleteById(List<String> ids) {
+        return dao.batchDeleteById(ids);
     }
 
     @Override
@@ -75,8 +75,8 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchUpdate(List<MenuPO> list) {
-        return dao.batchUpdate(list);
+    public int batchUpdate(List<MenuPO> menus) {
+        return dao.batchUpdate(menus);
     }
 
 }
