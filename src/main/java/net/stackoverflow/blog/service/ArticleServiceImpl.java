@@ -148,6 +148,7 @@ public class ArticleServiceImpl implements ArticleService {
             List<String> ids = new ArrayList<>();
             for (CommentPO commentPO : commentPOs) {
                 ids.add(commentPO.getId());
+                RedisCacheUtils.del("comment:" + commentPO.getId());
             }
             commentDao.batchDeleteById(ids);
         }
@@ -180,6 +181,7 @@ public class ArticleServiceImpl implements ArticleService {
                 List<String> commentIds = new ArrayList<>();
                 for (CommentPO commentPO : commentPOs) {
                     commentIds.add(commentPO.getId());
+                    RedisCacheUtils.del("comment:" + commentPO.getId());
                 }
                 commentDao.batchDeleteById(commentIds);
             }
