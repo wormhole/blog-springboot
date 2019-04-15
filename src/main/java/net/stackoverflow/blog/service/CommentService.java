@@ -19,16 +19,16 @@ public interface CommentService {
 
     CommentPO selectById(String id);
 
-    CommentPO insert(CommentPO comment);
+    CommentPO insert(CommentPO commentPO);
 
-    int batchInsert(List<CommentPO> comments);
+    int batchInsert(List<CommentPO> commentPOs);
 
     CommentPO deleteById(String id);
 
     int batchDeleteById(List<String> ids);
 
-    CommentPO update(CommentPO comment);
+    CommentPO update(CommentPO commentPO);
 
-    int batchUpdate(List<CommentPO> comments);
+    int batchUpdate(List<CommentPO> commentPOs);
 
 }

@@ -19,16 +19,16 @@ public interface CategoryService {
 
     CategoryPO selectById(String id);
 
-    CategoryPO insert(CategoryPO category);
+    CategoryPO insert(CategoryPO categoryPO);
 
-    int batchInsert(List<CategoryPO> categorys);
+    int batchInsert(List<CategoryPO> categoryPOs);
 
     CategoryPO deleteById(String id);
 
     int batchDeleteById(List<String> ids);
 
-    CategoryPO update(CategoryPO category);
+    CategoryPO update(CategoryPO categoryPO);
 
-    int batchUpdate(List<CategoryPO> categorys);
+    int batchUpdate(List<CategoryPO> categoryPOs);
     
 }
