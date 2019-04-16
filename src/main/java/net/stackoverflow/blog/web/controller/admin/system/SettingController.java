@@ -131,10 +131,14 @@ public class SettingController extends BaseController {
         try {
             file.transferTo(destFile);
             String url = "/upload" + dataPath + fileName;
-            SettingPO setting = new SettingPO();
-            setting.setName("head");
-            setting.setValue(url);
-            settingService.update(setting);
+
+            List<SettingPO> settingPOs = settingService.selectByCondition(new HashMap<String, Object>() {{
+                put("name", "head");
+            }});
+
+            SettingPO settingPO = settingPOs.get(0);
+            settingPO.setValue(url);
+            settingService.update(settingPO);
 
             Map<String, Object> settingMap = (Map<String, Object>) application.getAttribute("setting");
             settingMap.replace("head", url);
@@ -142,7 +146,7 @@ public class SettingController extends BaseController {
 
             response.setStatus(Response.SUCCESS);
             response.setMessage("修改成功");
-            response.setData(setting);
+            response.setData(settingPO);
         } catch (IOException e) {
             throw new BusinessException("头像上传失败");
         }
