@@ -22,17 +22,17 @@ public interface UserService {
 
     UserPO selectById(String id);
 
-    UserPO insert(UserPO user);
+    UserPO insert(UserPO userPO);
 
-    int batchInsert(List<UserPO> users);
+    int batchInsert(List<UserPO> userPOs);
 
     UserPO deleteById(String id);
 
     int batchDeleteById(List<String> ids);
 
-    UserPO update(UserPO user);
+    UserPO update(UserPO userPO);
 
-    int batchUpdate(List<UserPO> users);
+    int batchUpdate(List<UserPO> userPOs);
 
     UserRolePO grantRole(String userId, String roleCode);
 
