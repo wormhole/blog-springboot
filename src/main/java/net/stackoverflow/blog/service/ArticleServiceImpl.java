@@ -209,9 +209,10 @@ public class ArticleServiceImpl implements ArticleService {
         RedisCacheUtils.del("article:" + articleDao.selectById(articlePO.getId()).getUrl());
         articleDao.update(articlePO);
         //重新设置缓存
-        RedisCacheUtils.set("article:" + articlePO.getId(), articlePO);
-        RedisCacheUtils.set("article:" + articlePO.getUrl(), articlePO);
-        return articleDao.selectById(articlePO.getId());
+        ArticlePO newArticlePO = articleDao.selectById(articlePO.getId());
+        RedisCacheUtils.set("article:" + newArticlePO.getId(), newArticlePO);
+        RedisCacheUtils.set("article:" + newArticlePO.getUrl(), newArticlePO);
+        return newArticlePO;
     }
 
     /**
@@ -223,13 +224,11 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int batchUpdate(List<ArticlePO> articlePOs) {
-        int result = articleDao.batchUpdate(articlePOs);
         for (ArticlePO articlePO : articlePOs) {
             RedisCacheUtils.del("article:" + articleDao.selectById(articlePO.getId()).getUrl());
-            RedisCacheUtils.set("article:" + articlePO.getId(), articlePO);
-            RedisCacheUtils.set("article:" + articlePO.getUrl(), articlePO);
+            RedisCacheUtils.del("article:" + articlePO.getId());
         }
-        return result;
+        return articleDao.batchUpdate(articlePOs);
     }
 
 }

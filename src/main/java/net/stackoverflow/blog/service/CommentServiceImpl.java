@@ -134,8 +134,9 @@ public class CommentServiceImpl implements CommentService {
     @Transactional(rollbackFor = Exception.class)
     public CommentPO update(CommentPO commentPO) {
         dao.update(commentPO);
-        RedisCacheUtils.set("comment:" + commentPO.getId(), commentPO);
-        return dao.selectById(commentPO.getId());
+        CommentPO newCommentPO = dao.selectById(commentPO.getId());
+        RedisCacheUtils.set("comment:" + newCommentPO.getId(), newCommentPO);
+        return newCommentPO;
     }
 
     /**
@@ -149,7 +150,7 @@ public class CommentServiceImpl implements CommentService {
     public int batchUpdate(List<CommentPO> commentPOs) {
         int result = dao.batchUpdate(commentPOs);
         for (CommentPO commentPO : commentPOs) {
-            RedisCacheUtils.set("comment:" + commentPO.getId(), commentPO);
+            RedisCacheUtils.del("comment:" + commentPO.getId());
         }
         return result;
     }

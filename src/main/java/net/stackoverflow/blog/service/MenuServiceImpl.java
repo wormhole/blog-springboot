@@ -134,8 +134,9 @@ public class MenuServiceImpl implements MenuService {
     @Transactional(rollbackFor = Exception.class)
     public MenuPO update(MenuPO menuPO) {
         dao.update(menuPO);
-        RedisCacheUtils.set("menu:" + menuPO.getId(), menuPO);
-        return dao.selectById(menuPO.getId());
+        MenuPO newMenuPO = dao.selectById(menuPO.getId());
+        RedisCacheUtils.set("menu:" + newMenuPO.getId(), newMenuPO);
+        return newMenuPO;
     }
 
     /**
@@ -149,7 +150,7 @@ public class MenuServiceImpl implements MenuService {
     public int batchUpdate(List<MenuPO> menuPOs) {
         int result = dao.batchUpdate(menuPOs);
         for (MenuPO menuPO : menuPOs) {
-            RedisCacheUtils.set("menu:" + menuPO.getId(), menuPO);
+            RedisCacheUtils.del("menu:" + menuPO.getId());
         }
         return result;
     }

@@ -173,8 +173,9 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional(rollbackFor = Exception.class)
     public CategoryPO update(CategoryPO categoryPO) {
         categoryDao.update(categoryPO);
-        RedisCacheUtils.set("category:" + categoryPO.getId(), categoryPO);
-        return categoryPO;
+        CategoryPO newCategoryPO = categoryDao.selectById(categoryPO.getId());
+        RedisCacheUtils.set("category:" + newCategoryPO.getId(), newCategoryPO);
+        return newCategoryPO;
     }
 
     /**
@@ -188,7 +189,7 @@ public class CategoryServiceImpl implements CategoryService {
     public int batchUpdate(List<CategoryPO> categoryPOs) {
         int result = categoryDao.batchUpdate(categoryPOs);
         for (CategoryPO categoryPO : categoryPOs) {
-            RedisCacheUtils.set("category:" + categoryPO.getId(), categoryPO);
+            RedisCacheUtils.del("category:" + categoryPO.getId());
         }
         return result;
     }
