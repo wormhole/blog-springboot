@@ -19,16 +19,16 @@ public interface SettingService {
 
     SettingPO selectById(String id);
 
-    SettingPO insert(SettingPO setting);
+    SettingPO insert(SettingPO settingPO);
 
-    int batchInsert(List<SettingPO> settings);
+    int batchInsert(List<SettingPO> settingPOs);
 
     SettingPO deleteById(String id);
 
     int batchDeleteById(List<String> ids);
 
-    SettingPO update(SettingPO setting);
+    SettingPO update(SettingPO settingPO);
 
-    int batchUpdate(List<SettingPO> settings);
+    int batchUpdate(List<SettingPO> settingPOs);
 
 }
