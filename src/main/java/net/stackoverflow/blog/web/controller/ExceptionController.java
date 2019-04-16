@@ -6,6 +6,7 @@ import net.stackoverflow.blog.exception.ServerException;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -18,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author 凉衫薄
  */
-//@ControllerAdvice
+@ControllerAdvice
 public class ExceptionController {
 
     /**
