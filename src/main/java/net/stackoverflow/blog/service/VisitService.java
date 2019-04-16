@@ -20,17 +20,17 @@ public interface VisitService {
 
     VisitPO selectById(String id);
 
-    VisitPO insert(VisitPO visit);
+    VisitPO insert(VisitPO visitPO);
 
-    int batchInsert(List<VisitPO> visits);
+    int batchInsert(List<VisitPO> visitPOs);
 
     VisitPO deleteById(String id);
 
     int batchDeleteById(List<String> ids);
 
-    VisitPO update(VisitPO visit);
+    VisitPO update(VisitPO visitPO);
 
-    int batchUpdate(List<VisitPO> visits);
+    int batchUpdate(List<VisitPO> visitPOs);
 
     List<VisitPO> selectByDate(Date startDate, Date endDate);
 
