@@ -3,6 +3,7 @@ package net.stackoverflow.blog.service;
 import net.stackoverflow.blog.common.Page;
 import net.stackoverflow.blog.dao.PermissionDao;
 import net.stackoverflow.blog.pojo.po.PermissionPO;
+import net.stackoverflow.blog.util.RedisCacheUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,32 +55,42 @@ public class PermissionServiceImpl implements PermissionService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public PermissionPO selectById(String id) {
-        return dao.selectById(id);
+        PermissionPO permissionPO = (PermissionPO) RedisCacheUtils.get("permission:" + id);
+        if (permissionPO != null) {
+            return permissionPO;
+        } else {
+            permissionPO = dao.selectById(id);
+            if (permissionPO != null) {
+                RedisCacheUtils.set("permission:" + id, permissionPO);
+            }
+            return permissionPO;
+        }
     }
 
     /**
      * 新增权限
      *
-     * @param permission 权限实体类
+     * @param permissionPO 权限实体类
      * @return 新增的权限实体类
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PermissionPO insert(PermissionPO permission) {
-        dao.insert(permission);
-        return dao.selectById(permission.getId());
+    public PermissionPO insert(PermissionPO permissionPO) {
+        dao.insert(permissionPO);
+        RedisCacheUtils.set("permission:" + permissionPO.getId(), permissionPO);
+        return permissionPO;
     }
 
     /**
      * 批量新增
      *
-     * @param permissions 权限列表
+     * @param permissionPOs 权限列表
      * @return 新增成功记录数
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchInsert(List<PermissionPO> permissions) {
-        return dao.batchInsert(permissions);
+    public int batchInsert(List<PermissionPO> permissionPOs) {
+        return dao.batchInsert(permissionPOs);
     }
 
     /**
@@ -91,9 +102,10 @@ public class PermissionServiceImpl implements PermissionService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public PermissionPO deleteById(String id) {
-        PermissionPO permission = dao.selectById(id);
+        PermissionPO permissionPO = dao.selectById(id);
         dao.deleteById(id);
-        return permission;
+        RedisCacheUtils.del("permission:" + id);
+        return permissionPO;
     }
 
     /**
@@ -105,32 +117,42 @@ public class PermissionServiceImpl implements PermissionService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int batchDeleteById(List<String> ids) {
-        return dao.batchDeleteById(ids);
+        int result = dao.batchDeleteById(ids);
+        for (String id : ids) {
+            RedisCacheUtils.del("permission:" + id);
+        }
+        return result;
     }
 
     /**
      * 更新权限
      *
-     * @param permission 权限实体类
+     * @param permissionPO 权限实体类
      * @return 更新后的权限实体类
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PermissionPO update(PermissionPO permission) {
-        dao.update(permission);
-        return dao.selectById(permission.getId());
+    public PermissionPO update(PermissionPO permissionPO) {
+        dao.update(permissionPO);
+        PermissionPO newPermissionPO = dao.selectById(permissionPO.getId());
+        RedisCacheUtils.set("permission" + newPermissionPO.getId(), newPermissionPO);
+        return newPermissionPO;
     }
 
     /**
      * 批量更新权限
      *
-     * @param permissions 权限实体类列表
+     * @param permissionPOs 权限实体类列表
      * @return 更新的记录数
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchUpdate(List<PermissionPO> permissions) {
-        return dao.batchUpdate(permissions);
+    public int batchUpdate(List<PermissionPO> permissionPOs) {
+        int result = dao.batchUpdate(permissionPOs);
+        for (PermissionPO permissionPO : permissionPOs) {
+            RedisCacheUtils.del("permission:" + permissionPO.getId());
+        }
+        return result;
     }
 
 }

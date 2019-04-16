@@ -19,16 +19,16 @@ public interface PermissionService {
 
     PermissionPO selectById(String id);
 
-    PermissionPO insert(PermissionPO permission);
+    PermissionPO insert(PermissionPO permissionPO);
 
-    int batchInsert(List<PermissionPO> permissions);
+    int batchInsert(List<PermissionPO> permissionPOs);
 
     PermissionPO deleteById(String id);
 
     int batchDeleteById(List<String> ids);
 
-    PermissionPO update(PermissionPO permission);
+    PermissionPO update(PermissionPO permissionPO);
 
-    int batchUpdate(List<PermissionPO> permissions);
+    int batchUpdate(List<PermissionPO> permissionPOs);
 
 }
