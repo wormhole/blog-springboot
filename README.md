@@ -5,11 +5,10 @@
 [![repo size](https://img.shields.io/github/repo-size/stdutil/blog-springboot.svg)](https://github.com/stdutil/blog-springboot/archive/master.zip)
 [![release](https://img.shields.io/github/release/stdutil/blog-springboot.svg)](https://github.com/stdutil/blog-springboot/releases)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/stdutil/blog-springboot/blob/dev/LICENSE)
-[![HitCount](http://hits.dwyl.io/stdutil/blog-springboot.svg)](http://hits.dwyl.io/stdutil/blog-springboot)
 
 ## 介绍
-本博客系统是在原来的[SSM架构的博客系统项目](https://github.com/stdutil/blog-ssm)基础上，用springboot重写的，简化了很多繁琐的xml配置。项目同样
-整合了许多常用的框架和中间件，例如Redis,Druid,Redis,Freemarker等配置，此项目不管是作为当下互联网项目架构的脚手架，还是学习为目的，都是一个不错的选择。
+本博客系统是在原来的[SSM架构的博客系统项目](https://github.com/stdutil/blog-ssm)基础上，用`springboot`重写的，简化了很多繁琐的xml配置。项目同样
+整合了许多常用的框架和中间件，例如Redis,Druid,Redis,Freemarker,Shiro等配置，此项目不管是作为当下互联网项目架构的脚手架，还是学习为目的，都是一个不错的选择。
 
 ## 技术架构
 * SpringBoot - [SpringBoot](https://spring.io/projects/spring-boot/)
@@ -23,10 +22,10 @@
 * 日志系统 - [slf4j](https://www.slf4j.org/) + [logback](https://logback.qos.ch/)
 
 ## 使用说明
->注意用外置的servlet容器部署时，需要配置去除项目名访问，不然会404。
-
-只需要将`application.properties`中的`spring.datasource.username`和`spring.datasource.password`改为你的数据库账户和密码,数据库
+* 只需要将`application.properties`中的`spring.datasource.username`和`spring.datasource.password`改为你的数据库账户和密码,数据库
 和redis都是按照默认的端口配置，如有需要也可更改配置文件，然后将打包后war包扔进webapp目录即可,容器初始化时会自动建表,无需手动建表。
+* 注意用外置的servlet容器部署时，需要配置去除项目名访问，不然会404。
+* 后台管理系统地址为`http://domain:port/admin`，初始用户名为`363408268@qq.com`,初始密码为`19960821`。
 
 ## 环境搭建
 >使用内嵌servlet容器部署，直接运行`java -jar blog.war`即可，下面主要介绍通过外置servlet容器部署。
@@ -89,3 +88,7 @@ mvn package
 mvn dockerfile:build
 ```
 2.不出意外本地已经成功生成docker镜像了，你可以push到你的docker仓库中，随时pull到任何一台docker容器中部署了
+3.运行容器
+```
+docker run -d -p 80:80 blog:latest
+```
