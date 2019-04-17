@@ -45,12 +45,12 @@ public class WebConfiguration implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         List<String> excludePaths = new ArrayList<>();
-        excludePaths.add("/api/**");
         excludePaths.add("/static/**");
         excludePaths.add("/upload/**");
         excludePaths.add("/error/**");
         excludePaths.add("/admin/**");
         excludePaths.add("/favicon.ico");
+        excludePaths.add("/vcode");
         registry.addInterceptor(visitInterceptor).addPathPatterns("/**").excludePathPatterns(excludePaths);
     }
 
