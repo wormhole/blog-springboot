@@ -17,7 +17,7 @@
 
 ## 技术架构
 * SpringBoot - [SpringBoot](https://spring.io/projects/spring-boot/)
-* Druid - [Druid](http://druid.io/)
+* 数据源 - [Druid](http://druid.io/)
 * 持久化框架 - [Mybatis](http://www.mybatis.org/mybatis-3/)
 * 缓存 - [Redis](https://redis.io/)
 * 认证授权安全框架 - [Shiro](http://shiro.apache.org/)
