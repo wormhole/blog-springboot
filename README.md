@@ -6,6 +6,9 @@
 [![release](https://img.shields.io/github/release/stdutil/blog-springboot.svg)](https://github.com/stdutil/blog-springboot/releases)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/stdutil/blog-springboot/blob/dev/LICENSE)
 
+## 响应式布局
+![PC布局](./image/pc.png "PC布局")![移动设备布局](./image/mobile.png "移动设备布局")
+
 ## 介绍
 本博客系统是在原来的[SSM架构的博客系统项目](https://github.com/stdutil/blog-ssm)基础上，用`springboot`重写的，简化了很多繁琐的xml配置。项目同样
 整合了许多常用的框架和中间件，例如Redis,Druid,Redis,Freemarker,Shiro等配置，此项目不管是作为当下互联网项目架构的脚手架，还是学习为目的，都是一个不错的选择。
