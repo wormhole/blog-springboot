@@ -8,7 +8,7 @@
 
 ## 响应式布局
 |pc布局|mobile布局|
-|:----:|:----:|
+|:---:|:---:|
 |![PC布局](./image/pc.png "PC布局")|![mobile布局](./image/mobile.png "mobile布局")|
 
 ## 介绍
