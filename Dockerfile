@@ -13,8 +13,8 @@ mysql -e "update mysql.user set plugin='mysql_native_password' where user='root'
 RUN rm -rf /usr/local/tomcat/webapps/*
 
 COPY ../target/${JAR_FILE} /usr/local/tomcat/webapps/blog.war
-COPY run.sh /
-COPY server.xml /usr/local/tomcat/conf/
+COPY docker/run.sh /
+COPY docker/server.xml /usr/local/tomcat/conf/
 
 EXPOSE 80
 
