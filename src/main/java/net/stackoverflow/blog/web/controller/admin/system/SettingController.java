@@ -85,16 +85,16 @@ public class SettingController extends BaseController {
         }
 
         for (SettingDTO settingDTO : settingDTOArray) {
-            SettingPO setting = new SettingPO();
-            BeanUtils.copyProperties(settingDTO, setting);
-            settingService.update(setting);
+            SettingPO settingPO = new SettingPO();
+            BeanUtils.copyProperties(settingDTO, settingPO);
+            settingService.update(settingPO);
         }
 
         //更新ServletContext中的属性
         List<SettingPO> settingPOs = settingService.selectByCondition(new HashMap<>());
         Map<String, Object> settingMap = new HashMap<>();
-        for (SettingPO setting : settingPOs) {
-            settingMap.put(setting.getName(), setting.getValue());
+        for (SettingPO settingPO : settingPOs) {
+            settingMap.put(settingPO.getName(), settingPO.getValue());
         }
         application.setAttribute("setting", settingMap);
 

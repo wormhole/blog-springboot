@@ -3,11 +3,13 @@ package net.stackoverflow.blog.service;
 import net.stackoverflow.blog.common.Page;
 import net.stackoverflow.blog.dao.SettingDao;
 import net.stackoverflow.blog.pojo.po.SettingPO;
+import net.stackoverflow.blog.util.CollectionUtils;
 import net.stackoverflow.blog.util.RedisCacheUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -104,6 +106,7 @@ public class SettingServiceImpl implements SettingService {
     public SettingPO deleteById(String id) {
         SettingPO settingPO = dao.selectById(id);
         dao.deleteById(id);
+        RedisCacheUtils.del("setting:" + id);
         return settingPO;
     }
 
@@ -133,9 +136,15 @@ public class SettingServiceImpl implements SettingService {
     @Transactional(rollbackFor = Exception.class)
     public SettingPO update(SettingPO settingPO) {
         dao.update(settingPO);
-        SettingPO newSettingPO = dao.selectById(settingPO.getId());
-        RedisCacheUtils.set("setting:" + newSettingPO.getId(), newSettingPO);
-        return newSettingPO;
+        List<SettingPO> settingPOs = dao.selectByCondition(new HashMap<String, Object>() {{
+            put("name", settingPO.getName());
+        }});
+        if (!CollectionUtils.isEmpty(settingPOs)) {
+            RedisCacheUtils.set("setting:" + settingPOs.get(0).getId(), settingPOs.get(0));
+            return settingPOs.get(0);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -149,7 +158,12 @@ public class SettingServiceImpl implements SettingService {
     public int batchUpdate(List<SettingPO> settingPOs) {
         int result = dao.batchUpdate(settingPOs);
         for (SettingPO settingPO : settingPOs) {
-            RedisCacheUtils.del("setting:" + settingPO.getId());
+            List<SettingPO> settingPOList = dao.selectByCondition(new HashMap<String, Object>() {{
+                put("name", settingPO.getName());
+            }});
+            if (!CollectionUtils.isEmpty(settingPOList)) {
+                RedisCacheUtils.set("setting:" + settingPOList.get(0).getId(), settingPOList.get(0));
+            }
         }
         return result;
     }

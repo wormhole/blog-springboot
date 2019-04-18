@@ -71,10 +71,10 @@ layui.use(['layer', 'jquery'], function () {
                     });
                 } else {
                     if (response.data !== null) {
-                        if (response.data['nickname'] !== undefined) {
+                        if (response.data['name'] !== undefined) {
                             layer.open({
                                 type: 0,
-                                content: response.data['nickname']
+                                content: response.data['name']
                             });
                         } else if (response.data['signature'] !== undefined) {
                             layer.open({
@@ -212,11 +212,11 @@ layui.use(['layer', 'jquery'], function () {
     });
 
     $('#base-btn').click(function () {
-        var nickname = $('#nickname').val();
+        var name = $('#name').val();
         var signature = $('#signature').val();
 
         var data = [];
-        data.push({name: 'nickname', value: nickname});
+        data.push({name: 'name', value: name});
         data.push({name: 'signature', value: signature});
 
         var param = {
