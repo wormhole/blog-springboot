@@ -114,7 +114,7 @@ docker run -d -p 80:80 blog:latest
 ```
 
 ## 项目结构
-java (源码根目录)
+java (源码根目录)  
 &emsp;&emsp;|----net.stackoverflow.blog  
 &emsp;&emsp;&emsp;&emsp;|----common/ (公共类)  
 &emsp;&emsp;&emsp;&emsp;|----config/ (项目配置目录，基于Java代码的配置)  
