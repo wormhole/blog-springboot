@@ -11,7 +11,7 @@
 |:---:|:---:|
 |![PC布局](./image/pc.png "PC布局")|![mobile布局](./image/mobile.png "mobile布局")|
 
-## 介绍
+## 项目介绍
 本博客系统是在原来的[SSM架构的博客系统项目](https://github.com/stdutil/blog-ssm)基础上，用`springboot`重写的，简化了很多繁琐的xml配置。项目同样
 整合了许多常用的框架和中间件，例如Redis,Druid,Redis,Freemarker,Shiro等配置，此项目不管是作为当下互联网架构项目的脚手架，还是学习为目的，都是一个不错的选择。
 
@@ -112,3 +112,32 @@ mvn dockerfile:build
 ```
 docker run -d -p 80:80 blog:latest
 ```
+
+## 项目结构
+java (源码根目录)
+&emsp;&emsp;|----net.stackoverflow.blog  
+&emsp;&emsp;&emsp;&emsp;|----common/ (公共类)  
+&emsp;&emsp;&emsp;&emsp;|----config/ (项目配置目录，基于Java代码的配置)  
+&emsp;&emsp;&emsp;&emsp;|----dao/ (数据访问对象，一般存放mybatis的mapper接口或jpa的repository接口)  
+&emsp;&emsp;&emsp;&emsp;|----exception/ (异常类定义)  
+&emsp;&emsp;&emsp;&emsp;|----pojo/ (存放po,vo,dto等类,可进一步划分子包)  
+&emsp;&emsp;&emsp;&emsp;|----service/ (服务接口,以及实现类)  
+&emsp;&emsp;&emsp;&emsp;|----shiro/ (shiro相关代码)  
+&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;|----cache/ (shiro整合redis缓存相关代码)  
+&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;|----filter/ (shiro自定义过滤器)  
+&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;|----realm/ (shiro自定义realm)  
+&emsp;&emsp;&emsp;&emsp;|----task/ (后台任务)  
+&emsp;&emsp;&emsp;&emsp;|----util/ (工具类)  
+&emsp;&emsp;&emsp;&emsp;|----validator/ (校验工具)  
+&emsp;&emsp;&emsp;&emsp;|----web/ (web相关代码)  
+&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;|----controller/ (业务层，提供restful接口)  
+&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;|----interceptor/ (拦截器)  
+&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;|----listener/ (监听器)  
+
+resources (资源文件夹)  
+&emsp;&emsp;|----mapper/ (存放mybatis的mapper.xml)  
+&emsp;&emsp;|----sql/ (存放sql脚本)  
+&emsp;&emsp;|----static/ (存放静态资源,css、js等)  
+&emsp;&emsp;|----templates/ (存放freemarker或thymeleaf模板)  
+&emsp;&emsp;|----application.properties (项目配置文件)  
+&emsp;&emsp;|----logback.xml (logback日志配置)
