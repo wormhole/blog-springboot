@@ -54,11 +54,11 @@
     <div class="layui-card-header">常规设置</div>
     <div class="layui-card-body">
         <div class="layui-form-item">
-            <label class="layui-form-label">昵称</label>
+            <label class="layui-form-label">网站名</label>
             <div class="layui-input-inline">
                 <input name="nickname" class="layui-input" type="text" required id="nickname" value="${Application.setting.nickname}">
             </div>
-            <div class="layui-form-mid layui-word-aux">页面左边栏显示昵称，建议与管理员昵称保持一致，长度小于等于100</div>
+            <div class="layui-form-mid layui-word-aux">页面左边栏网站名，长度小于等于100</div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">签名</label>

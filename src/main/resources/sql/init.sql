@@ -8,7 +8,7 @@ INSERT INTO blog.setting (id, name, value) VALUES ('8ac7719f-5bd2-4bbc-8ac8-32f2
 INSERT INTO blog.setting (id, name, value) VALUES ('a8ce36f1-1af4-494a-80dc-369ea174594b', 'nickname', '凉衫薄');
 INSERT INTO blog.setting (id, name, value) VALUES ('aabee5f3-70fa-4201-a8ae-c169c1b625a3', 'signature', '这个家伙很懒，没有留下任何东西。');
 INSERT INTO blog.setting (id, name, value) VALUES ('ad335e78-2908-4560-9653-b8a27a97d991', 'head', '/static/image/logo.png');
-INSERT INTO blog.setting (id, name, value) VALUES ('ba059093-aa8f-4306-883b-4602dc3b4e03', 'title', '虫洞');
+INSERT INTO blog.setting (id, name, value) VALUES ('ba059093-aa8f-4306-883b-4602dc3b4e03', 'title', '虫洞博客');
 INSERT INTO blog.setting (id, name, value) VALUES ('e786d6a5-2bf6-43a7-905a-bc438eb099dc', 'description', '个人博客网站');
 INSERT INTO blog.setting (id, name, value) VALUES ('a75a4b34-656c-45b8-8f89-f84a35d07500','register', '0');
 INSERT INTO blog.menu (id, name, url, deleteable, date) VALUES ('189bf822-797e-458b-9f7d-460e61737372', '首页', '/', 0, '2019-01-01 00:00:00');
