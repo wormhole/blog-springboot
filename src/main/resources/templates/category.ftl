@@ -22,7 +22,7 @@
         <div class="col-lg-3">
             <div class="left">
                 <img src="${Application.setting.head}" class="rounded-circle">
-                <div class="nickname">${Application.setting.nickname?html}</div>
+                <div class="nickname">${Application.setting.name?html}</div>
                 <hr/>
                 <div class="signature">${Application.setting.signature?html}</div>
                 <div class="menu">

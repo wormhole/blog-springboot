@@ -56,7 +56,8 @@
         <div class="layui-form-item">
             <label class="layui-form-label">网站名</label>
             <div class="layui-input-inline">
-                <input name="nickname" class="layui-input" type="text" required id="nickname" value="${Application.setting.nickname}">
+                <input name="name" class="layui-input" type="text" required id="name"
+                       value="${Application.setting.name}">
             </div>
             <div class="layui-form-mid layui-word-aux">页面左边栏网站名，长度小于等于100</div>
         </div>

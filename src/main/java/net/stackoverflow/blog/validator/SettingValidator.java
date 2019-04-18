@@ -50,9 +50,9 @@ public class SettingValidator implements Validator<SettingDTO[]> {
                         map.put("copyright", "版权长度应该在1到100之间");
                     }
                     break;
-                case "nickname":
+                case "name":
                     if (!validateNickname(settingDTO.getValue())) {
-                        map.put("nickname", "昵称长度应该在1到100之间");
+                        map.put("name", "网站名长度应该在1到100之间");
                     }
                     break;
                 case "signature":
