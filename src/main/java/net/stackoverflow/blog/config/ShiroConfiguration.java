@@ -233,6 +233,7 @@ public class ShiroConfiguration {
         Map<String, String> filterChainMap = new LinkedHashMap<>();
         filterChainMap.put("/logout", "logout");
         filterChainMap.put("/login", "authc");
+        filterChainMap.put("/actuator/**", "user");
         filterChainMap.put("/admin/**", "user");
         filterChainMap.put("/**", "anon");
         shiroFilter.setFilterChainDefinitionMap(filterChainMap);
