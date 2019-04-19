@@ -90,7 +90,7 @@ public class ArticleServiceImpl implements ArticleService {
         if (articlePO != null) {
             return articlePO;
         } else {
-            articlePO = articleDao.selectById(url);
+            articlePO = articleDao.selectByUrl(url);
             //如果查询数据库不为空，则设置缓存
             if (articlePO != null) {
                 RedisCacheUtils.set("article:" + articlePO.getId(), articlePO);
