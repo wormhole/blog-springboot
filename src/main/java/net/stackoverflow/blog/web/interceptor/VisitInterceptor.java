@@ -31,8 +31,7 @@ public class VisitInterceptor implements HandlerInterceptor {
      * @throws Exception
      */
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-        request.getSession();
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         String uri = request.getRequestURL().toString();
         String param = request.getQueryString();
         Integer status = response.getStatus();

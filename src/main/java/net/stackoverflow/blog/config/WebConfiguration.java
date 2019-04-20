@@ -49,8 +49,10 @@ public class WebConfiguration implements WebMvcConfigurer {
         excludePaths.add("/upload/**");
         excludePaths.add("/error/**");
         excludePaths.add("/admin/**");
-        excludePaths.add("/favicon.ico");
         excludePaths.add("/vcode");
+        excludePaths.add("/comment");
+        excludePaths.add("/like");
+        excludePaths.add("/favicon.ico");
         registry.addInterceptor(visitInterceptor).addPathPatterns("/**").excludePathPatterns(excludePaths);
     }
 
