@@ -144,6 +144,7 @@
                 </executions>
                 <configuration>
                     <repository>blog</repository>
+                    <tag>${version}</tag>
                     <buildArgs>
                         <JAR_FILE>${project.build.finalName}.war</JAR_FILE>
                     </buildArgs>
