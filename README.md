@@ -109,8 +109,9 @@ mvn dockerfile:build
 2. 不出意外本地已经成功生成docker镜像了，你可以push到你的docker仓库中，随时pull到任何一台docker容器中部署了
 
 3. 运行容器
+>`tag`是当前版本号
 ```
-docker run -d -p 80:80 blog:latest
+docker run -d -p 80:80 stdutil/blog-springboot:tag
 ```
 
 ## 项目结构
