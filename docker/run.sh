@@ -1,5 +1,5 @@
 #!/bin/bash
 
-redis-server /etc/redis/redis.conf
+redis-server &
 /etc/init.d/mysql start
-catalina.sh run
+/usr/local/tomcat/bin/catalina.sh run
