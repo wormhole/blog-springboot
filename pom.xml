@@ -143,7 +143,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <repository>blog</repository>
+                    <repository>stdutil/blog-springboot</repository>
                     <tag>${version}</tag>
                     <buildArgs>
                         <JAR_FILE>${project.build.finalName}.war</JAR_FILE>
