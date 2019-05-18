@@ -32,7 +32,7 @@ public class VisitInterceptor implements HandlerInterceptor {
      */
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-        String uri = request.getRequestURL().toString();
+        String uri = request.getRequestURI();
         String param = request.getQueryString();
         Integer status = response.getStatus();
         String ip = request.getRemoteAddr();
