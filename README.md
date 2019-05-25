@@ -15,6 +15,18 @@
 本博客系统是在原来的[SSM架构的博客系统项目](https://github.com/stdutil/blog-ssm)基础上，用`springboot`重写的，简化了很多繁琐的xml配置。项目同样
 整合了许多常用的框架和中间件，例如Redis,Druid,Redis,Freemarker,Shiro等配置，此项目不管是作为当下互联网架构项目的脚手架，还是学习为目的，都是一个不错的选择。
 
+## 功能
+* 文章发表
+* 文章导出
+* 用户管理
+* 分类
+* 评论
+* 点赞
+* 访客记录
+* 图片管理
+* 菜单管理
+* 数据库备份
+
 ## 技术架构
 * SpringBoot - [SpringBoot](https://spring.io/projects/spring-boot/)
 * 数据源 - [Druid](http://druid.io/)
