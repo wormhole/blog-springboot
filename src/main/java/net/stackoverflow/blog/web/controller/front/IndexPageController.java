@@ -111,6 +111,7 @@ public class IndexPageController {
         mv.addObject("path", "/");
         mv.addObject("select", "/");
         mv.addObject("header", "最新文章");
+        mv.addObject("index", true);
 
         mv.setViewName("/index");
         return mv;

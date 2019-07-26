@@ -12,7 +12,6 @@
     <script src="/static/plugins/jquery/jquery.min.js"></script>
     <script src="/static/plugins/bootstrap/js/bootstrap.min.js"></script>
     <meta name="keywords" content="${Application.setting.keywords}"/>
-    <meta name="description" content="${Application.setting.description}"/>
     <link rel="icon" href="${Application.setting.head}"/>
     <title>${Application.setting.title}</title>
 </head>

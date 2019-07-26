@@ -77,8 +77,8 @@ public class CategoryPageController {
      * 具体显示某个分类页面跳转
      *
      * @param categoryCode 分类编码
-     * @param page 分页参数
-     * @param request HttpServletRequest请求对象
+     * @param page         分页参数
+     * @param request      HttpServletRequest请求对象
      * @return 返回ModelAndView对象
      */
     @RequestMapping(value = "/category/{categoryCode}", method = RequestMethod.GET)
@@ -152,6 +152,7 @@ public class CategoryPageController {
             mv.addObject("path", "/category/" + categoryCode);
             mv.addObject("select", "/category");
             mv.addObject("header", categoryPO.getName());
+            mv.addObject("index", false);
             mv.setViewName("/index");
         } else {
             mv.setStatus(HttpStatus.NOT_FOUND);

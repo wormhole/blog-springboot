@@ -20,8 +20,7 @@
     <script src="/static/plugins/editor.md/editormd.min.js"></script>
     <script src="/static/plugins/knockout/knockout-3.4.2.js"></script>
     <script src="/static/plugins/layer/layer.js"></script>
-    <meta name="keywords" content="${Application.setting.keywords}"/>
-    <meta name="description" content="${Application.setting.description}"/>
+    <meta name="keywords" content="${article.categoryName}"/>
     <link rel="icon" href="${Application.setting.head}"/>
     <title>${title}</title>
 </head>

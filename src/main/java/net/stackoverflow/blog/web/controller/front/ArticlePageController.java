@@ -106,7 +106,7 @@ public class ArticlePageController extends BaseController {
             //设置model
             mv.addObject("article", articleDTO);
             mv.addObject("commentList", commentDTOs);
-            mv.addObject("title", ((Map<String, Object>) request.getServletContext().getAttribute("setting")).get("title") + " - " + articleDTO.getTitle());
+            mv.addObject("title", articleDTO.getTitle() + " - " + ((Map<String, Object>) request.getServletContext().getAttribute("setting")).get("title"));
             mv.setViewName("/article");
         } else {
             mv.setStatus(HttpStatus.NOT_FOUND);

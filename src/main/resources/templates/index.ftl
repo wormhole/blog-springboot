@@ -11,8 +11,12 @@
     <link rel="stylesheet" href="/static/css/index.css"/>
     <script src="/static/plugins/jquery/jquery.min.js"></script>
     <script src="/static/plugins/bootstrap/js/bootstrap.min.js"></script>
-    <meta name="keywords" content="${Application.setting.keywords}"/>
+    <#if (index == true)>
+        <meta name="keywords" content="${Application.setting.keywords}"/>
     <meta name="description" content="${Application.setting.description}"/>
+    <#else>
+        <meta name="keywords" content="${header}"/>
+    </#if>
     <link rel="icon" href="${Application.setting.head}"/>
     <title>${Application.setting.title}</title>
 </head>
@@ -27,10 +31,10 @@
                 <div class="signature">${Application.setting.signature?html}</div>
                 <div class="menu">
                     <div id="item" class="hidden">
-                    <#list Application.menu as menu>
-                        <a class="item btn <#if menu.url == select>select</#if>"
-                           href="${menu.url}">${menu.name?html}</a>
-                    </#list>
+                        <#list Application.menu as menu>
+                            <a class="item btn <#if menu.url == select>select</#if>"
+                               href="${menu.url}">${menu.name?html}</a>
+                        </#list>
                     </div>
                     <a class="btn-item btn">
                         <span class="oi oi-menu" aria-hidden="true"></span>
@@ -41,7 +45,7 @@
         <div class="col-lg-9">
             <div class="middle">
                 <div class="header">
-                ${header}
+                    ${header}
                 </div>
                 <div class="body">
                     <#list articleList as article>
