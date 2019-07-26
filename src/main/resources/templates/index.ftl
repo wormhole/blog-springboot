@@ -13,7 +13,7 @@
     <script src="/static/plugins/bootstrap/js/bootstrap.min.js"></script>
     <#if (index == true)>
         <meta name="keywords" content="${Application.setting.keywords}"/>
-    <meta name="description" content="${Application.setting.description}"/>
+        <meta name="description" content="${Application.setting.description}"/>
     <#else>
         <meta name="keywords" content="${header}"/>
     </#if>
