@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
@@ -51,9 +50,8 @@ public class RegisterPageController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public ModelAndView registerPage(HttpServletRequest request) {
+    public ModelAndView registerPage() {
         ModelAndView mv = new ModelAndView();
-        mv.addObject("title", "注册 - " + ((Map<String, Object>) request.getServletContext().getAttribute("setting")).get("title"));
         mv.setViewName("/register");
         return mv;
     }

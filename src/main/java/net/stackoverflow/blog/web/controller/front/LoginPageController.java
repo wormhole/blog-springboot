@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
 
 /**
  * 登陆接口
@@ -50,9 +49,8 @@ public class LoginPageController {
      * @return 返回ModelAndView
      */
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public ModelAndView loginPage(HttpServletRequest request) {
+    public ModelAndView loginPage() {
         ModelAndView mv = new ModelAndView();
-        mv.addObject("title", "登陆 - " + ((Map<String, Object>) request.getServletContext().getAttribute("setting")).get("title"));
         mv.setViewName("/login");
         return mv;
     }

@@ -9,7 +9,7 @@
     <script src="/static/plugins/layui/layui.js"></script>
     <meta name="keywords" content="登陆,login"/>
     <link rel="icon" href="${Application.setting.head}"/>
-    <title>${title}</title>
+    <title>登陆 - ${Application.setting.title}</title>
 </head>
 <body>
 <div class="login">
