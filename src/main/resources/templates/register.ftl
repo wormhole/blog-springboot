@@ -9,7 +9,7 @@
     <script src="/static/plugins/layui/layui.js"></script>
     <meta name="keywords" content="注册,register"/>
     <link rel="icon" href="${Application.setting.head}"/>
-    <title>${Application.setting.title}</title>
+    <title>${title}</title>
 </head>
 <body>
 <div class="register">

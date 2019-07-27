@@ -13,7 +13,7 @@
     <script src="/static/plugins/bootstrap/js/bootstrap.min.js"></script>
     <meta name="keywords" content="404"/>
     <link rel="icon" href="${Application.setting.head}"/>
-    <title>${Application.setting.title}</title>
+    <title>404</title>
 </head>
 <body>
 <div class="container">
