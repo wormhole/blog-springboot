@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/static/css/footer.css"/>
     <link rel="stylesheet" href="/static/css/register.css"/>
     <script src="/static/plugins/layui/layui.js"></script>
-    <meta name="keywords" content="${Application.setting.keywords}"/>
+    <meta name="keywords" content="注册,register"/>
     <link rel="icon" href="${Application.setting.head}"/>
     <title>${Application.setting.title}</title>
 </head>
