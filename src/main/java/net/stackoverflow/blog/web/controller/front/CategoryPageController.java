@@ -51,7 +51,7 @@ public class CategoryPageController {
      * @return 返回ModelAndView
      */
     @RequestMapping(value = "/category", method = RequestMethod.GET)
-    public ModelAndView categoryPage(HttpServletRequest request) {
+    public ModelAndView categoryPage() {
         ModelAndView mv = new ModelAndView();
 
         //查询所有分类，并放入dto
@@ -69,7 +69,6 @@ public class CategoryPageController {
 
         mv.addObject("categoryList", categoryDTOs);
         mv.addObject("select", "/category");
-        mv.addObject("title", "分类 - " + ((Map<String, Object>) request.getServletContext().getAttribute("setting")).get("title"));
         mv.setViewName("/category");
         return mv;
     }
