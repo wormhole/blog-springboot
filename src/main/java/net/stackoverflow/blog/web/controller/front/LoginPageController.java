@@ -11,7 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * 登陆接口
+ * 登录接口
  *
  * @author 凉衫薄
  */
@@ -44,7 +44,7 @@ public class LoginPageController {
     }
 
     /**
-     * 登陆页面跳转
+     * 登录页面跳转
      *
      * @return 返回ModelAndView
      */

@@ -7,13 +7,13 @@
     <link rel="stylesheet" href="/static/css/footer.css"/>
     <link rel="stylesheet" href="/static/css/login.css"/>
     <script src="/static/plugins/layui/layui.js"></script>
-    <meta name="keywords" content="登陆,login"/>
+    <meta name="keywords" content="登录,login"/>
     <link rel="icon" href="${Application.setting.head}"/>
-    <title>登陆 - ${Application.setting.title}</title>
+    <title>登录 - ${Application.setting.title}</title>
 </head>
 <body>
 <div class="login">
-    <h3>用户登陆</h3>
+    <h3>用户登录</h3>
     <div class="login-wrap">
         <#if error??>
             <blockquote class="layui-elem-quote">${error}</blockquote>
