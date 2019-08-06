@@ -13,7 +13,7 @@
     <script src="/static/plugins/bootstrap/js/bootstrap.min.js"></script>
     <meta name="keywords" content="分类,category"/>
     <link rel="icon" href="${Application.setting.head}"/>
-    <title>${Application.setting.title}</title>
+    <title>${Application.setting.title} - 分类</title>
 </head>
 <body>
 <div class="container">

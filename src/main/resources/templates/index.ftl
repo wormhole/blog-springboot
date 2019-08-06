@@ -14,11 +14,12 @@
     <#if (index == true)>
         <meta name="keywords" content="${Application.setting.keywords}"/>
         <meta name="description" content="${Application.setting.description}"/>
+        <title>${Application.setting.title} - 首页</title>
     <#else>
         <meta name="keywords" content="${header}"/>
+        <title>${Application.setting.title} - ${header}</title>
     </#if>
     <link rel="icon" href="${Application.setting.head}"/>
-    <title>${Application.setting.title}</title>
 </head>
 <body>
 <div class="container">
@@ -89,7 +90,7 @@
                     <#if (page > 1)>
                         <li class="page-item"><a class="page-link" href="${path}?page=${page-1}">上一页</a></li>
                     <#else>
-                        <li class="page-item disabled"><a class="page-link"">上一页</a></li>
+                        <li class="page-item disabled"><a class="page-link">上一页</a></li>
                     </#if>
                     <#list start..end as i>
                         <li class="page-item  <#if (i == page)>active</#if>"><a class="page-link"
@@ -98,7 +99,7 @@
                     <#if (page < pageCount)>
                         <li class="page-item"><a class="page-link" href="${path}?page=${page+1}">下一页</a></li>
                     <#else>
-                        <li class="page-item disabled"><a class="page-link"">下一页</a></li>
+                        <li class="page-item disabled"><a class="page-link">下一页</a></li>
                     </#if>
                 </ul>
             </div>

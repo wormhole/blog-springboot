@@ -13,7 +13,7 @@
     <script src="/static/plugins/bootstrap/js/bootstrap.min.js"></script>
     <meta name="keywords" content="500"/>
     <link rel="icon" href="${Application.setting.head}"/>
-    <title>500</title>
+    <title>${Application.setting.title} - 500</title>
 </head>
 <body>
 <div class="container">

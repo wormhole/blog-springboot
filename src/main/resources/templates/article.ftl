@@ -22,7 +22,7 @@
     <script src="/static/plugins/layer/layer.js"></script>
     <meta name="keywords" content="${article.categoryName}"/>
     <link rel="icon" href="${Application.setting.head}"/>
-    <title>${article.title} - ${Application.setting.title}</title>
+    <title>${Application.setting.title} - ${article.title}</title>
 </head>
 <body>
 <div class="container">
