@@ -1,7 +1,7 @@
 var viewModel;
 
 $(function () {
-    editormd.markdownToHTML("editormd-view", {});
+    editormd.markdownToHTML("editormd-view", {htmlDecode: true});
     viewModel = new ViewModel();
     ko.applyBindings(viewModel);
 
