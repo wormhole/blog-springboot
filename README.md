@@ -1,10 +1,10 @@
 # 虫洞博客
-[![downloads](https://img.shields.io/github/downloads/stdutil/blog-springboot/total.svg)](https://github.com/stdutil/blog-springboot/releases)
-[![forks](https://img.shields.io/github/forks/stdutil/blog-springboot.svg)](https://github.com/stdutil/blog-springboot/network/members)
-[![stars](https://img.shields.io/github/stars/stdutil/blog-springboot.svg)](https://github.com/stdutil/blog-springboot/stargazers) 
-[![repo size](https://img.shields.io/github/repo-size/stdutil/blog-springboot.svg)](https://github.com/stdutil/blog-springboot/archive/master.zip)
-[![release](https://img.shields.io/github/release/stdutil/blog-springboot.svg)](https://github.com/stdutil/blog-springboot/releases)
-[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/stdutil/blog-springboot/blob/dev/LICENSE)
+[![downloads](https://img.shields.io/github/downloads/wormhole/blog-springboot/total.svg)](https://github.com/wormhole/blog-springboot/releases)
+[![forks](https://img.shields.io/github/forks/wormhole/blog-springboot.svg)](https://github.com/stdutil/blog-springboot/network/members)
+[![stars](https://img.shields.io/github/stars/wormhole/blog-springboot.svg)](https://github.com/stdutil/blog-springboot/stargazers) 
+[![repo size](https://img.shields.io/github/repo-size/wormhole/blog-springboot.svg)](https://github.com/wormhole/blog-springboot/archive/master.zip)
+[![release](https://img.shields.io/github/release/wormhole/blog-springboot.svg)](https://github.com/wormhole/blog-springboot/releases)
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/wormhole/blog-springboot/blob/dev/LICENSE)
 
 ## 响应式布局
 |pc布局|mobile布局|
@@ -12,20 +12,58 @@
 |![PC布局](./image/pc.png "PC布局")|![mobile布局](./image/mobile.png "mobile布局")|
 
 ## 项目介绍
-本博客系统是在原来的[SSM架构的博客系统项目](https://github.com/stdutil/blog-ssm)基础上，用`springboot`重写的，简化了很多繁琐的xml配置。项目同样
+本博客系统是在原来的[SSM架构的博客系统项目](https://github.com/wormhole/blog-ssm)基础上，用`springboot`重写的，简化了很多繁琐的xml配置。项目同样
 整合了许多常用的框架和中间件，例如Redis,Druid,Redis,Freemarker,Shiro等配置，此项目不管是作为当下互联网架构项目的脚手架，还是学习为目的，都是一个不错的选择。
 
 ## 功能
-* 文章发表
-* 文章导出
-* 用户管理
-* 分类
-* 评论
-* 点赞
-* 访客记录
-* 图片管理
-* 菜单管理
-* 数据库备份
+- [x] 面板
+    - [x] 访客记录折线图
+    - [x] 访客记录清单
+    - [x] 访客量统计
+- [x] 文章
+    - [x] 文章管理
+        - [x] 文章导出
+        - [x] 文章更新
+        - [x] 文章删除
+        - [x] 显示/隐藏文章
+    - [x] 文章编辑
+- [x] 分类
+    - [x] 分类管理
+        - [x] 新建分类
+        - [x] 更新分类
+        - [x] 删除分类
+- [x] 评论
+    - [x] 评论管理
+        - [x] 审核/撤销评论
+        - [x] 删除评论
+- [x] 用户
+    - [x] 个人信息
+        - [x] 更改邮箱
+        - [x] 更改密码
+    - [ ] 用户管理
+    - [ ] 角色管理
+    - [ ] 权限管理
+- [x] 媒体
+    - [x] 图片管理
+        - [x] 浏览图片
+        - [x] 删除图片
+        - [ ] 更改URL
+- [x] 系统
+    - [x] 常规设置
+        - [x] 更改网站头像
+        - [x] 更改签名
+        - [x] 更改title
+        - [x] 更改content
+        - [x] 更改keywords
+        - [x] 更改底部版权
+        - [x] 设置每页显示的文章数
+    - [x] 菜单管理
+        - [x] 新建菜单
+        - [x] 删除菜单
+        - [x] 更新菜单
+    - [x] 数据备份
+        - [x] 数据库周期性备份
+        - [x] 导出数据库备份文件
 
 ## 技术架构
 * SpringBoot - [SpringBoot](https://spring.io/projects/spring-boot/)
