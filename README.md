@@ -11,6 +11,16 @@
 |:---:|:---:|
 |![PC布局](./image/pc.png "PC布局")|![mobile布局](./image/mobile.png "mobile布局")|
 
+## 后台管理系统
+### dashboard
+![dashboard](./image/admin.png)
+### 文章管理
+![article-management](./image/article-management.png)
+### 个人中心
+![pesonal](./image/personal.png)
+### 常规设置
+![setting](./image/setting.png)
+
 ## 项目介绍
 本博客系统是在原来的[SSM架构的博客系统项目](https://github.com/wormhole/blog-ssm)基础上，用`springboot`重写的，简化了很多繁琐的xml配置。项目同样
 整合了许多常用的框架和中间件，例如Redis,Druid,Redis,Freemarker,Shiro等配置，此项目不管是作为当下互联网架构项目的脚手架，还是学习为目的，都是一个不错的选择。
