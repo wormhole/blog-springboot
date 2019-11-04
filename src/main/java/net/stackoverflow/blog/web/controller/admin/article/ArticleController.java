@@ -178,21 +178,13 @@ public class ArticleController extends BaseController {
 
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity delete(@Validated(ArticleVO.DeleteGroup.class) @RequestBody ArticleVO[] articleVOs, Errors errors) {
+    public ResponseEntity delete(@RequestBody ArticleVO[] articleVOs) {
 
-        //校验数据
-        if (errors.hasErrors()) {
-            Map<String, String> errMap = new HashMap<>(16);
-            List<ObjectError> oes = errors.getAllErrors();
-            for (ObjectError oe : oes) {
-                if (oe instanceof FieldError) {
-                    FieldError fe = (FieldError) oe;
-                    errMap.put(fe.getField(), oe.getDefaultMessage());
-                } else {
-                    errMap.put(oe.getObjectName(), oe.getDefaultMessage());
-                }
+        //字段校验
+        for (ArticleVO articleVO : articleVOs) {
+            if (articleVO.getId() == null) {
+                throw new BusinessException("字段错误校验失败", "id不能为空");
             }
-            throw new BusinessException("字段格式错误", errMap);
         }
 
         //获取id
