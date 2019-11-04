@@ -2,7 +2,7 @@ package net.stackoverflow.blog.service;
 
 import net.stackoverflow.blog.common.Page;
 import net.stackoverflow.blog.dao.CommentDao;
-import net.stackoverflow.blog.pojo.po.CommentPO;
+import net.stackoverflow.blog.pojo.entity.Comment;
 import net.stackoverflow.blog.util.RedisCacheUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<CommentPO> selectByPage(Page page) {
+    public List<Comment> selectByPage(Page page) {
         return dao.selectByPage(page);
     }
 
@@ -42,7 +42,7 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<CommentPO> selectByCondition(Map<String, Object> searchMap) {
+    public List<Comment> selectByCondition(Map<String, Object> searchMap) {
         return dao.selectByCondition(searchMap);
     }
 
@@ -54,8 +54,8 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public CommentPO selectById(String id) {
-        CommentPO commentPO = (CommentPO) RedisCacheUtils.get("comment:" + id);
+    public Comment selectById(String id) {
+        Comment commentPO = (Comment) RedisCacheUtils.get("comment:" + id);
         if (commentPO != null) {
             return commentPO;
         } else {
@@ -75,7 +75,7 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public CommentPO insert(CommentPO commentPO) {
+    public Comment insert(Comment commentPO) {
         dao.insert(commentPO);
         RedisCacheUtils.set("comment:" + commentPO.getId(), commentPO);
         return dao.selectById(commentPO.getId());
@@ -89,7 +89,7 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchInsert(List<CommentPO> commentPOs) {
+    public int batchInsert(List<Comment> commentPOs) {
         return dao.batchInsert(commentPOs);
     }
 
@@ -101,8 +101,8 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public CommentPO deleteById(String id) {
-        CommentPO commentPO = dao.selectById(id);
+    public Comment deleteById(String id) {
+        Comment commentPO = dao.selectById(id);
         dao.deleteById(id);
         RedisCacheUtils.del("comment:" + id);
         return commentPO;
@@ -132,9 +132,9 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public CommentPO update(CommentPO commentPO) {
+    public Comment update(Comment commentPO) {
         dao.update(commentPO);
-        CommentPO newCommentPO = dao.selectById(commentPO.getId());
+        Comment newCommentPO = dao.selectById(commentPO.getId());
         RedisCacheUtils.set("comment:" + newCommentPO.getId(), newCommentPO);
         return newCommentPO;
     }
@@ -147,9 +147,9 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchUpdate(List<CommentPO> commentPOs) {
+    public int batchUpdate(List<Comment> commentPOs) {
         int result = dao.batchUpdate(commentPOs);
-        for (CommentPO commentPO : commentPOs) {
+        for (Comment commentPO : commentPOs) {
             RedisCacheUtils.del("comment:" + commentPO.getId());
         }
         return result;

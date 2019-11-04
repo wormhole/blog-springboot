@@ -1,4 +1,4 @@
-package net.stackoverflow.blog.pojo.po;
+package net.stackoverflow.blog.pojo.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 访问量实体类
+ * 分类实体类
  *
  * @author 凉衫薄
  */
@@ -17,14 +17,12 @@ import java.util.Date;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class VisitPO implements Serializable {
+public class Category implements Serializable {
 
     private String id;
-    private String url;
-    private Integer status;
-    private String ip;
-    private String agent;
-    private String referer;
+    private String name;
+    private String code;
+    private Integer deleteAble;
     private Date date;
 
 }

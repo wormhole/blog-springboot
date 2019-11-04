@@ -1,4 +1,4 @@
-package net.stackoverflow.blog.pojo.po;
+package net.stackoverflow.blog.pojo.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -6,10 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
- * 菜单实体类
+ * 用户实体类
  *
  * @author 凉衫薄
  */
@@ -17,12 +16,13 @@ import java.util.Date;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MenuPO implements Serializable {
+public class User implements Serializable {
 
     private String id;
-    private String name;
-    private String url;
+    private String email;
+    private String password;
+    private String nickname;
+    private String salt;
     private Integer deleteAble;
-    private Date date;
 
 }

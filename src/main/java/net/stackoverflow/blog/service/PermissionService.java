@@ -1,7 +1,7 @@
 package net.stackoverflow.blog.service;
 
 import net.stackoverflow.blog.common.Page;
-import net.stackoverflow.blog.pojo.po.PermissionPO;
+import net.stackoverflow.blog.pojo.entity.Permission;
 
 import java.util.List;
 import java.util.Map;
@@ -13,22 +13,22 @@ import java.util.Map;
  */
 public interface PermissionService {
 
-    List<PermissionPO> selectByPage(Page page);
+    List<Permission> selectByPage(Page page);
 
-    List<PermissionPO> selectByCondition(Map<String, Object> searchMap);
+    List<Permission> selectByCondition(Map<String, Object> searchMap);
 
-    PermissionPO selectById(String id);
+    Permission selectById(String id);
 
-    PermissionPO insert(PermissionPO permissionPO);
+    Permission insert(Permission permissionPO);
 
-    int batchInsert(List<PermissionPO> permissionPOs);
+    int batchInsert(List<Permission> permissionPOs);
 
-    PermissionPO deleteById(String id);
+    Permission deleteById(String id);
 
     int batchDeleteById(List<String> ids);
 
-    PermissionPO update(PermissionPO permissionPO);
+    Permission update(Permission permissionPO);
 
-    int batchUpdate(List<PermissionPO> permissionPOs);
+    int batchUpdate(List<Permission> permissionPOs);
 
 }

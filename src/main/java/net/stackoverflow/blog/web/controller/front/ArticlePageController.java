@@ -1,36 +1,34 @@
 package net.stackoverflow.blog.web.controller.front;
 
 import net.stackoverflow.blog.common.BaseController;
-import net.stackoverflow.blog.common.BaseDTO;
-import net.stackoverflow.blog.common.Response;
+import net.stackoverflow.blog.common.Result;
 import net.stackoverflow.blog.exception.BusinessException;
-import net.stackoverflow.blog.pojo.dto.ArticleDTO;
-import net.stackoverflow.blog.pojo.dto.CommentDTO;
-import net.stackoverflow.blog.pojo.po.ArticlePO;
-import net.stackoverflow.blog.pojo.po.CommentPO;
+import net.stackoverflow.blog.pojo.entity.Article;
+import net.stackoverflow.blog.pojo.entity.Comment;
+import net.stackoverflow.blog.pojo.vo.ArticleVO;
+import net.stackoverflow.blog.pojo.vo.CommentVO;
 import net.stackoverflow.blog.service.ArticleService;
 import net.stackoverflow.blog.service.CategoryService;
 import net.stackoverflow.blog.service.CommentService;
 import net.stackoverflow.blog.service.UserService;
-import net.stackoverflow.blog.util.CollectionUtils;
-import net.stackoverflow.blog.util.ValidationUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import java.util.*;
 
 /**
- * 文章页面跳转
+ * 文章详情页Controller
  *
  * @author 凉衫薄
  */
@@ -45,10 +43,6 @@ public class ArticlePageController extends BaseController {
     private CategoryService categoryService;
     @Autowired
     private CommentService commentService;
-    @Autowired
-    private ValidatorFactory validatorFactory;
-    @Autowired
-    private HttpServletRequest request;
 
     /**
      * 文章页面跳转
@@ -66,46 +60,46 @@ public class ArticlePageController extends BaseController {
         String url = "/article/" + year + "/" + month + "/" + day + "/" + articleCode;
 
         //根据url查询文章，若未找到则返回404
-        ArticlePO articlePO = articleService.selectByUrl(url);
-        if (articlePO != null) {
-            articlePO.setHits(articlePO.getHits() + 1);
-            articleService.update(articlePO);
+        Article article = articleService.selectByUrl(url);
+        if (article != null) {
+            article.setHits(article.getHits() + 1);
+            articleService.update(article);
 
-            //查询文章po，并赋值给dto
-            ArticleDTO articleDTO = new ArticleDTO();
-            BeanUtils.copyProperties(articlePO, articleDTO);
-            articleDTO.setTitle(HtmlUtils.htmlEscape(articlePO.getTitle()));
-            articleDTO.setAuthor(HtmlUtils.htmlEscape(userService.selectById(articlePO.getUserId()).getNickname()));
-            articleDTO.setCategoryName(categoryService.selectById(articlePO.getCategoryId()).getName());
-            articleDTO.setCommentCount(commentService.selectByCondition(new HashMap<String, Object>() {{
-                put("articleId", articlePO.getId());
+            //查询文章，并赋值给VO
+            ArticleVO articleVO = new ArticleVO();
+            BeanUtils.copyProperties(article, articleVO);
+            articleVO.setTitle(HtmlUtils.htmlEscape(articleVO.getTitle()));
+            articleVO.setAuthor(HtmlUtils.htmlEscape(userService.selectById(article.getUserId()).getNickname()));
+            articleVO.setCategoryName(categoryService.selectById(article.getCategoryId()).getName());
+            articleVO.setCommentCount(commentService.selectByCondition(new HashMap<String, Object>() {{
+                put("articleId", article.getId());
             }}).size());
 
-            //查询评论po，并赋值给dto
-            List<CommentPO> commentPOs = commentService.selectByCondition(new HashMap<String, Object>() {{
-                put("articleId", articlePO.getId());
+            //查询评论，并赋值给VO
+            List<Comment> comments = commentService.selectByCondition(new HashMap<String, Object>() {{
+                put("articleId", article.getId());
                 put("review", 1);
             }});
-            List<CommentDTO> commentDTOs = new ArrayList<>();
-            for (CommentPO commentPO : commentPOs) {
-                CommentDTO commentDTO = new CommentDTO();
-                BeanUtils.copyProperties(commentPO, commentDTO);
-                commentDTO.setNickname(HtmlUtils.htmlEscape(commentPO.getNickname()));
-                commentDTO.setContent(HtmlUtils.htmlEscape(commentPO.getContent()));
-                if (commentPO.getReplyTo() != null) {
-                    commentDTO.setReplyTo(HtmlUtils.htmlEscape(commentPO.getReplyTo()));
+            List<CommentVO> commentVOs = new ArrayList<>();
+            for (Comment comment : comments) {
+                CommentVO commentVO = new CommentVO();
+                BeanUtils.copyProperties(comment, commentVO);
+                commentVO.setNickname(HtmlUtils.htmlEscape(comment.getNickname()));
+                commentVO.setContent(HtmlUtils.htmlEscape(comment.getContent()));
+                if (comment.getReplyTo() != null) {
+                    commentVO.setReplyTo(HtmlUtils.htmlEscape(comment.getReplyTo()));
                 }
-                if (commentPO.getWebsite() != null) {
-                    commentDTO.setWebsite(commentPO.getWebsite());
+                if (comment.getWebsite() != null) {
+                    commentVO.setWebsite(comment.getWebsite());
                 } else {
-                    commentDTO.setWebsite("javascript:;");
+                    commentVO.setWebsite("javascript:;");
                 }
-                commentDTOs.add(commentDTO);
+                commentVOs.add(commentVO);
             }
 
             //设置model
-            mv.addObject("article", articleDTO);
-            mv.addObject("commentList", commentDTOs);
+            mv.addObject("article", articleVO);
+            mv.addObject("commentList", commentVOs);
             mv.setViewName("/article");
         } else {
             mv.setStatus(HttpStatus.NOT_FOUND);
@@ -124,92 +118,93 @@ public class ArticlePageController extends BaseController {
     /**
      * 评论接口
      *
-     * @param dto 前端传来的公共DTO
-     * @return 返回Response对象
+     * @param commentVO
+     * @param errors
+     * @return
      */
     @RequestMapping(value = "/comment", method = RequestMethod.POST)
     @ResponseBody
-    public Response insertComment(@RequestBody BaseDTO dto) {
-        Response response = new Response();
+    public ResponseEntity insertComment(@Validated(CommentVO.InsertGroup.class) @RequestBody CommentVO commentVO, Errors errors) {
 
-        //获取评论dto对象
-        List<CommentDTO> commentDTOs = (List<CommentDTO>) (Object) getDTO("comment", CommentDTO.class, dto);
-        if (CollectionUtils.isEmpty(commentDTOs)) {
-            throw new BusinessException("找不到请求数据");
-        }
-        CommentDTO commentDTO = commentDTOs.get(0);
-
-        //校验字段
-        Validator validator = validatorFactory.getValidator();
-        Set<ConstraintViolation<CommentDTO>> violations = validator.validate(commentDTO, CommentDTO.InsertGroup.class);
-        Map<String, String> map = ValidationUtils.errorMap(violations);
-
-        if (!CollectionUtils.isEmpty(map)) {
-            throw new BusinessException("字段格式错误", map);
+        //校验数据
+        if (errors.hasErrors()) {
+            Map<String, String> errMap = new HashMap<>();
+            List<ObjectError> oes = errors.getAllErrors();
+            for (ObjectError oe : oes) {
+                if (oe instanceof FieldError) {
+                    FieldError fe = (FieldError) oe;
+                    errMap.put(fe.getField(), oe.getDefaultMessage());
+                } else {
+                    errMap.put(oe.getObjectName(), oe.getDefaultMessage());
+                }
+            }
+            throw new BusinessException("字段格式错误", errMap);
         }
 
-        //获取评论的文章po
-        ArticlePO articlePO = articleService.selectByUrl(commentDTO.getUrl());
-        if (articlePO == null) {
+        //获取评论的文章
+        Article article = articleService.selectByUrl(commentVO.getUrl());
+        if (article == null) {
             throw new BusinessException("找不到该文章");
         }
 
         //评论插入数据库
-        CommentPO commentPO = new CommentPO();
-        BeanUtils.copyProperties(commentDTO, commentPO);
-        commentPO.setDate(new Date());
-        commentPO.setArticleId(articlePO.getId());
-        commentPO.setReview(0);
-        commentService.insert(commentPO);
+        Comment comment = new Comment();
+        BeanUtils.copyProperties(commentVO, comment);
+        comment.setDate(new Date());
+        comment.setArticleId(article.getId());
+        comment.setReview(0);
+        commentService.insert(comment);
 
-        response.setStatus(Response.SUCCESS);
-        response.setMessage("评论成功");
+        Result result = new Result();
+        result.setStatus(Result.SUCCESS);
+        result.setMessage("评论成功");
 
-        return response;
+        return new ResponseEntity(result, HttpStatus.OK);
     }
 
     /**
      * 点赞接口
      *
-     * @param dto     前端传来的公共DTO对象
-     * @param session 会话对象
-     * @return 返回Response对象
+     * @param articleVO
+     * @param errors
+     * @param session
+     * @return
      */
     @RequestMapping(value = "/like", method = RequestMethod.POST)
     @ResponseBody
-    public Response like(@RequestBody BaseDTO dto, HttpSession session) {
-        Response response = new Response();
+    public ResponseEntity like(@Validated(ArticleVO.LikeGroup.class) @RequestBody ArticleVO articleVO, Errors errors, HttpSession session) {
 
-        //从公共dto中获取articleDTO对象
-        List<ArticleDTO> articleDTOs = (List<ArticleDTO>) (Object) getDTO("article", ArticleDTO.class, dto);
-        if (CollectionUtils.isEmpty(articleDTOs)) {
-            throw new BusinessException("找不到请求数据");
-        }
-        ArticleDTO articleDTO = articleDTOs.get(0);
+        Result result = new Result();
 
-        //校验字段
-        Validator validator = validatorFactory.getValidator();
-        Set<ConstraintViolation<ArticleDTO>> violations = validator.validate(articleDTO, ArticleDTO.LikeGroup.class);
-        Map<String, String> map = ValidationUtils.errorMap(violations);
-
-        if (!CollectionUtils.isEmpty(map)) {
-            throw new BusinessException("字段格式错误", map);
+        //校验数据
+        if (errors.hasErrors()) {
+            Map<String, String> errMap = new HashMap<>();
+            List<ObjectError> oes = errors.getAllErrors();
+            for (ObjectError oe : oes) {
+                if (oe instanceof FieldError) {
+                    FieldError fe = (FieldError) oe;
+                    errMap.put(fe.getField(), oe.getDefaultMessage());
+                } else {
+                    errMap.put(oe.getObjectName(), oe.getDefaultMessage());
+                }
+            }
+            throw new BusinessException("字段格式错误", errMap);
         }
 
         //检验同一次会话是否重复点赞
-        Boolean isLike = (Boolean) session.getAttribute(articleDTO.getUrl());
+        Boolean isLike = (Boolean) session.getAttribute(articleVO.getUrl());
         if (isLike != null && !isLike) {
-            ArticlePO articlePO = articleService.selectByUrl(articleDTO.getUrl());
-            articlePO.setLikes(articlePO.getLikes() + 1);
-            articleService.update(articlePO);
-            session.setAttribute(articleDTO.getUrl(), true);
-            response.setStatus(Response.SUCCESS);
-            response.setMessage("点赞成功");
-            response.setData(articlePO.getLikes());
+            Article article = articleService.selectByUrl(articleVO.getUrl());
+            article.setLikes(article.getLikes() + 1);
+            articleService.update(article);
+            session.setAttribute(articleVO.getUrl(), true);
+            result.setStatus(Result.SUCCESS);
+            result.setMessage("点赞成功");
+            result.setData(article.getLikes());
+            return new ResponseEntity(result, HttpStatus.OK);
         } else {
             throw new BusinessException("不能重复点赞或找不到该url对应文章");
         }
 
-        return response;
     }
 }

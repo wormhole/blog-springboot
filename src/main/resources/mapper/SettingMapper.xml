@@ -5,13 +5,13 @@
 
 <mapper namespace="net.stackoverflow.blog.dao.SettingDao">
 
-    <resultMap id="settingMap" type="settingPO">
+    <resultMap id="settingMap" type="setting">
         <id property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="value" column="value"/>
     </resultMap>
 
-    <select id="selectByPage" resultMap="settingMap" resultType="settingPO">
+    <select id="selectByPage" resultMap="settingMap" resultType="setting">
         select * from setting
         <where>
             <if test="searchMap != null">
@@ -26,7 +26,7 @@
         limit #{start},#{limit}
     </select>
 
-    <select id="selectByCondition" resultMap="settingMap" resultType="settingPO">
+    <select id="selectByCondition" resultMap="settingMap" resultType="setting">
         select * from setting
         <where>
             <if test="name != null">
@@ -38,11 +38,11 @@
         </where>
     </select>
 
-    <select id="selectById" resultMap="settingMap" resultType="settingPO">
+    <select id="selectById" resultMap="settingMap" resultType="setting">
         select * from setting where id = #{id}
     </select>
 
-    <insert id="insert" parameterType="settingPO">
+    <insert id="insert" parameterType="setting">
         <selectKey keyProperty="id" resultType="string" order="BEFORE">
             select uuid()
         </selectKey>
@@ -69,7 +69,7 @@
         </foreach>
     </delete>
 
-    <update id="update" parameterType="settingPO">
+    <update id="update" parameterType="setting">
         update setting
         <set>
             <if test="value != null">

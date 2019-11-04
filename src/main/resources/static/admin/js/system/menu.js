@@ -46,12 +46,7 @@ layui.use(['table', 'jquery', 'layer'], function () {
                     data['name'] = name;
                     data['url'] = url;
 
-                    var param = {
-                        data: {
-                            menu: [data]
-                        }
-                    };
-                    insertMenuAjax(param);
+                    insertMenuAjax(data);
                     layer.close(index);
 
                 }
@@ -67,11 +62,7 @@ layui.use(['table', 'jquery', 'layer'], function () {
             layer.confirm('确认删除该菜单吗', function (index) {
 
                 var param = {
-                    data: {
-                        menu: [{
-                            id: data.id
-                        }]
-                    }
+                    id: data.id
                 };
                 deleteMenuAjax(param);
                 layer.close(index);
@@ -87,16 +78,12 @@ layui.use(['table', 'jquery', 'layer'], function () {
             });
             tableIns.reload(parameter);
         } else {
-            var param = {
-                data: {
-                    menu: [{
-                        id: obj.data.id,
-                        name: obj.data.name,
-                        url: obj.data.url
-                    }]
-                }
+            var data = {
+                id: obj.data.id,
+                name: obj.data.name,
+                url: obj.data.url
             };
-            updateMenuAjax(param);
+            updateMenuAjax(data);
         }
     });
 

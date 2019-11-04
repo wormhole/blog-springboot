@@ -3,8 +3,8 @@ package net.stackoverflow.blog.service;
 import net.stackoverflow.blog.common.Page;
 import net.stackoverflow.blog.dao.ArticleDao;
 import net.stackoverflow.blog.dao.CommentDao;
-import net.stackoverflow.blog.pojo.po.ArticlePO;
-import net.stackoverflow.blog.pojo.po.CommentPO;
+import net.stackoverflow.blog.pojo.entity.Article;
+import net.stackoverflow.blog.pojo.entity.Comment;
 import net.stackoverflow.blog.util.RedisCacheUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,7 +36,7 @@ public class ArticleServiceImpl implements ArticleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<ArticlePO> selectByPage(Page page) {
+    public List<Article> selectByPage(Page page) {
         return articleDao.selectByPage(page);
     }
 
@@ -48,7 +48,7 @@ public class ArticleServiceImpl implements ArticleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<ArticlePO> selectByCondition(Map<String, Object> searchMap) {
+    public List<Article> selectByCondition(Map<String, Object> searchMap) {
         return articleDao.selectByCondition(searchMap);
     }
 
@@ -60,9 +60,9 @@ public class ArticleServiceImpl implements ArticleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ArticlePO selectById(String id) {
+    public Article selectById(String id) {
         //先查询缓存，如果不为空，则直接返回，如果为空则查询数据库
-        ArticlePO articlePO = (ArticlePO) RedisCacheUtils.get("article:" + id);
+        Article articlePO = (Article) RedisCacheUtils.get("article:" + id);
         if (articlePO != null) {
             return articlePO;
         } else {
@@ -84,9 +84,9 @@ public class ArticleServiceImpl implements ArticleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ArticlePO selectByUrl(String url) {
+    public Article selectByUrl(String url) {
         //先查询缓存，如果不为空，则直接返回，如果为空则查询数据库
-        ArticlePO articlePO = (ArticlePO) RedisCacheUtils.get("article:" + url);
+        Article articlePO = (Article) RedisCacheUtils.get("article:" + url);
         if (articlePO != null) {
             return articlePO;
         } else {
@@ -108,7 +108,7 @@ public class ArticleServiceImpl implements ArticleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ArticlePO insert(ArticlePO articlePO) {
+    public Article insert(Article articlePO) {
         articleDao.insert(articlePO);
         RedisCacheUtils.set("article:" + articlePO.getId(), articlePO);
         RedisCacheUtils.set("article:" + articlePO.getUrl(), articlePO);
@@ -123,7 +123,7 @@ public class ArticleServiceImpl implements ArticleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchInsert(List<ArticlePO> articlePOs) {
+    public int batchInsert(List<Article> articlePOs) {
         return articleDao.batchInsert(articlePOs);
     }
 
@@ -135,18 +135,18 @@ public class ArticleServiceImpl implements ArticleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ArticlePO deleteById(String id) {
-        ArticlePO articlePO = articleDao.selectById(id);
+    public Article deleteById(String id) {
+        Article articlePO = articleDao.selectById(id);
 
         //查询所有评论
-        List<CommentPO> commentPOs = commentDao.selectByCondition(new HashMap<String, Object>() {{
+        List<Comment> commentPOs = commentDao.selectByCondition(new HashMap<String, Object>() {{
             put("articleId", id);
         }});
 
         //删除文章所有评论
         if (commentPOs != null && commentPOs.size() != 0) {
             List<String> ids = new ArrayList<>();
-            for (CommentPO commentPO : commentPOs) {
+            for (Comment commentPO : commentPOs) {
                 ids.add(commentPO.getId());
                 RedisCacheUtils.del("comment:" + commentPO.getId());
             }
@@ -173,13 +173,13 @@ public class ArticleServiceImpl implements ArticleService {
     public int batchDeleteById(List<String> ids) {
         for (String id : ids) {
             //查询评论并删除
-            List<CommentPO> commentPOs = commentDao.selectByCondition(new HashMap<String, Object>() {{
+            List<Comment> commentPOs = commentDao.selectByCondition(new HashMap<String, Object>() {{
                 put("articleId", id);
             }});
 
             if (commentPOs != null && commentPOs.size() != 0) {
                 List<String> commentIds = new ArrayList<>();
-                for (CommentPO commentPO : commentPOs) {
+                for (Comment commentPO : commentPOs) {
                     commentIds.add(commentPO.getId());
                     RedisCacheUtils.del("comment:" + commentPO.getId());
                 }
@@ -187,7 +187,7 @@ public class ArticleServiceImpl implements ArticleService {
             }
 
             //清楚缓存
-            ArticlePO articlePO = articleDao.selectById(id);
+            Article articlePO = articleDao.selectById(id);
             if (articlePO != null) {
                 RedisCacheUtils.del("article:" + articlePO.getUrl());
                 RedisCacheUtils.del("article:" + id);
@@ -204,12 +204,12 @@ public class ArticleServiceImpl implements ArticleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ArticlePO update(ArticlePO articlePO) {
+    public Article update(Article articlePO) {
         //删除之前的缓存
         RedisCacheUtils.del("article:" + articleDao.selectById(articlePO.getId()).getUrl());
         articleDao.update(articlePO);
         //重新设置缓存
-        ArticlePO newArticlePO = articleDao.selectById(articlePO.getId());
+        Article newArticlePO = articleDao.selectById(articlePO.getId());
         RedisCacheUtils.set("article:" + newArticlePO.getId(), newArticlePO);
         RedisCacheUtils.set("article:" + newArticlePO.getUrl(), newArticlePO);
         return newArticlePO;
@@ -223,8 +223,8 @@ public class ArticleServiceImpl implements ArticleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchUpdate(List<ArticlePO> articlePOs) {
-        for (ArticlePO articlePO : articlePOs) {
+    public int batchUpdate(List<Article> articlePOs) {
+        for (Article articlePO : articlePOs) {
             RedisCacheUtils.del("article:" + articleDao.selectById(articlePO.getId()).getUrl());
             RedisCacheUtils.del("article:" + articlePO.getId());
         }

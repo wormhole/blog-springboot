@@ -5,7 +5,7 @@ layui.use(['layer', 'jquery'], function () {
 
     function updateBaseInfoAjax(param) {
         $.ajax({
-            url: "/admin/user/update?type=base",
+            url: "/admin/user/update_base",
             type: "post",
             data: JSON.stringify(param),
             dataType: "json",
@@ -44,7 +44,7 @@ layui.use(['layer', 'jquery'], function () {
 
     function updatePasswordAjax(param) {
         $.ajax({
-            url: "/admin/user/update?type=password",
+            url: "/admin/user/update_password",
             type: "post",
             data: JSON.stringify(param),
             dataType: "json",
@@ -90,12 +90,7 @@ layui.use(['layer', 'jquery'], function () {
         data['email'] = email;
         data['nickname'] = nickname;
 
-        var param = {
-            data: {
-                user: [data]
-            }
-        };
-        updateBaseInfoAjax(param);
+        updateBaseInfoAjax(data);
     });
 
     $('#save-pwd-btn').click(function () {
@@ -117,14 +112,7 @@ layui.use(['layer', 'jquery'], function () {
         data['oldPassword'] = oldPassword;
         data['password'] = newPassword;
 
-        var param = {
-            data: {
-                user: [data]
-            }
-        };
-
-        updatePasswordAjax(param);
+        updatePasswordAjax(data);
     });
 
-})
-;
+});

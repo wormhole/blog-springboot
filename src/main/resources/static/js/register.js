@@ -20,14 +20,13 @@ layui.use(['jquery'], function () {
             return;
         }
 
-        var user = {};
-        user['email'] = email;
-        user['nickname'] = nickname;
-        user['password'] = password;
-        user['vcode'] = vcode;
-        var param = {'data': {"user": [user]}};
+        var data = {};
+        data['email'] = email;
+        data['nickname'] = nickname;
+        data['password'] = password;
+        data['vcode'] = vcode;
 
-        registerAjax(param);
+        registerAjax(data);
     });
 
     function registerAjax(param) {

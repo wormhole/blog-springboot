@@ -2,7 +2,7 @@ package net.stackoverflow.blog.service;
 
 import net.stackoverflow.blog.common.Page;
 import net.stackoverflow.blog.dao.*;
-import net.stackoverflow.blog.pojo.po.*;
+import net.stackoverflow.blog.pojo.entity.*;
 import net.stackoverflow.blog.util.PasswordUtils;
 import net.stackoverflow.blog.util.RedisCacheUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
      * @return 用户列表
      */
     @Override
-    public List<UserPO> selectByPage(Page page) {
+    public List<User> selectByPage(Page page) {
         return userDao.selectByPage(page);
     }
 
@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
      * @return 用户列表
      */
     @Override
-    public List<UserPO> selectByCondition(Map<String, Object> searchMap) {
+    public List<User> selectByCondition(Map<String, Object> searchMap) {
         return userDao.selectByCondition(searchMap);
     }
 
@@ -62,8 +62,8 @@ public class UserServiceImpl implements UserService {
      * @return 用户实体类
      */
     @Override
-    public UserPO selectById(String id) {
-        UserPO userPO = (UserPO) RedisCacheUtils.get("user:" + id);
+    public User selectById(String id) {
+        User userPO = (User) RedisCacheUtils.get("user:" + id);
         if (userPO != null) {
             return userPO;
         } else {
@@ -83,7 +83,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public UserPO insert(UserPO userPO) {
+    public User insert(User userPO) {
         userPO.setSalt(PasswordUtils.getSalt());
         userPO.setPassword(PasswordUtils.encryptPassword(userPO.getSalt(), userPO.getPassword()));
         userDao.insert(userPO);
@@ -99,8 +99,8 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchInsert(List<UserPO> userPOs) {
-        for (UserPO userPO : userPOs) {
+    public int batchInsert(List<User> userPOs) {
+        for (User userPO : userPOs) {
             userPO.setSalt(PasswordUtils.getSalt());
             userPO.setPassword(PasswordUtils.encryptPassword(userPO.getSalt(), userPO.getPassword()));
         }
@@ -115,8 +115,8 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public UserPO deleteById(String id) {
-        UserPO userPO = userDao.selectById(id);
+    public User deleteById(String id) {
+        User userPO = userDao.selectById(id);
         userDao.deleteById(id);
         RedisCacheUtils.del("user:" + id);
         return userPO;
@@ -146,9 +146,9 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public UserPO update(UserPO userPO) {
+    public User update(User userPO) {
         userDao.update(userPO);
-        UserPO newUserPO = userDao.selectById(userPO.getId());
+        User newUserPO = userDao.selectById(userPO.getId());
         RedisCacheUtils.set("user:" + newUserPO.getId(), newUserPO);
         return newUserPO;
     }
@@ -161,9 +161,9 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchUpdate(List<UserPO> userPOs) {
+    public int batchUpdate(List<User> userPOs) {
         int result = userDao.batchUpdate(userPOs);
-        for (UserPO userPO : userPOs) {
+        for (User userPO : userPOs) {
             RedisCacheUtils.del("user:" + userPO.getId());
         }
         return result;
@@ -178,16 +178,16 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public UserRolePO grantRole(String userId, String roleId) {
+    public UserRole grantRole(String userId, String roleId) {
 
-        UserPO userPO = userDao.selectById(userId);
-        RolePO rolePO = roleDao.selectById(roleId);
+        User userPO = userDao.selectById(userId);
+        Role rolePO = roleDao.selectById(roleId);
 
         if (userPO == null || rolePO == null) {
             return null;
         }
 
-        UserRolePO userRolePO = new UserRolePO();
+        UserRole userRolePO = new UserRole();
         userRolePO.setRoleId(roleId);
         userRolePO.setUserId(userId);
         userRoleDao.insert(userRolePO);
@@ -203,9 +203,9 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public UserRolePO revokeRole(String userId, String roleId) {
+    public UserRole revokeRole(String userId, String roleId) {
 
-        List<UserRolePO> userRolePOs = userRoleDao.selectByCondition(new HashMap<String, Object>() {{
+        List<UserRole> userRolePOs = userRoleDao.selectByCondition(new HashMap<String, Object>() {{
             put("userId", userId);
             put("roleId", roleId);
         }});
@@ -226,15 +226,15 @@ public class UserServiceImpl implements UserService {
      * @return 角色列表
      */
     @Override
-    public List<RolePO> getRoleByUserId(String userId) {
-        List<UserRolePO> userRolePOs = userRoleDao.selectByCondition(new HashMap<String, Object>() {{
+    public List<Role> getRoleByUserId(String userId) {
+        List<UserRole> userRolePOs = userRoleDao.selectByCondition(new HashMap<String, Object>() {{
             put("userId", userId);
         }});
-        List<RolePO> rolePOs = null;
+        List<Role> rolePOs = null;
         if ((null != userRolePOs) && (userRolePOs.size() != 0)) {
             rolePOs = new ArrayList<>();
-            for (UserRolePO userRolePO : userRolePOs) {
-                RolePO rolePO = roleDao.selectById(userRolePO.getId());
+            for (UserRole userRolePO : userRolePOs) {
+                Role rolePO = roleDao.selectById(userRolePO.getId());
                 rolePOs.add(rolePO);
             }
         }
@@ -248,21 +248,21 @@ public class UserServiceImpl implements UserService {
      * @return 权限列表
      */
     @Override
-    public List<PermissionPO> getPermissionByUserId(String userId) {
-        List<RolePO> rolePOs = getRoleByUserId(userId);
-        Map<String, PermissionPO> permissionMap = new HashMap<>();
-        for (RolePO rolePO : rolePOs) {
-            List<RolePermissionPO> rolePermissionPOs = rolePermissionDao.selectByCondition(new HashMap<String, Object>() {{
+    public List<Permission> getPermissionByUserId(String userId) {
+        List<Role> rolePOs = getRoleByUserId(userId);
+        Map<String, Permission> permissionMap = new HashMap<>();
+        for (Role rolePO : rolePOs) {
+            List<RolePermission> rolePermissionPOs = rolePermissionDao.selectByCondition(new HashMap<String, Object>() {{
                 put("roleId", rolePO.getId());
             }});
             if ((null != rolePermissionPOs) && (rolePermissionPOs.size() != 0)) {
-                for (RolePermissionPO rolePermissionPO : rolePermissionPOs) {
-                    PermissionPO permission = permissionDao.selectById(rolePermissionPO.getPermissionId());
+                for (RolePermission rolePermissionPO : rolePermissionPOs) {
+                    Permission permission = permissionDao.selectById(rolePermissionPO.getPermissionId());
                     permissionMap.put(permission.getId(), permission);
                 }
             }
         }
-        List<PermissionPO> permissionPOs = (List<PermissionPO>) permissionMap.values();
+        List<Permission> permissionPOs = (List<Permission>) permissionMap.values();
         return permissionPOs;
     }
 

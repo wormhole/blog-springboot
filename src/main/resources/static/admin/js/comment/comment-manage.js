@@ -40,33 +40,21 @@ layui.use(['table', 'jquery', 'layer'], function () {
         if (layEvent === 'del') {
             layer.confirm('确认删除该评论吗', function (index) {
                 var param = {
-                    data: {
-                        comment: [{
-                            id: data.id
-                        }]
-                    }
+                    id: data.id
                 };
                 deleteAjax(param);
                 layer.close(index);
             });
         } else if (layEvent === 'review') {
             var param = {
-                data: {
-                    comment: [{
-                        id: data.id,
-                        review: 1
-                    }]
-                }
+                id: data.id,
+                review: 1
             };
             reviewAjax(param);
         } else if (layEvent === 'unreview') {
             var param = {
-                data: {
-                    comment: [{
-                        id: data.id,
-                        review: 0
-                    }]
-                }
+                id: data.id,
+                review: 0
             };
             reviewAjax(param);
         }

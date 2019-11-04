@@ -3,8 +3,8 @@ package net.stackoverflow.blog.service;
 import net.stackoverflow.blog.common.Page;
 import net.stackoverflow.blog.dao.ArticleDao;
 import net.stackoverflow.blog.dao.CategoryDao;
-import net.stackoverflow.blog.pojo.po.ArticlePO;
-import net.stackoverflow.blog.pojo.po.CategoryPO;
+import net.stackoverflow.blog.pojo.entity.Article;
+import net.stackoverflow.blog.pojo.entity.Category;
 import net.stackoverflow.blog.util.RedisCacheUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,7 +35,7 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<CategoryPO> selectByPage(Page page) {
+    public List<Category> selectByPage(Page page) {
         return categoryDao.selectByPage(page);
     }
 
@@ -47,7 +47,7 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<CategoryPO> selectByCondition(Map<String, Object> searchMap) {
+    public List<Category> selectByCondition(Map<String, Object> searchMap) {
         return categoryDao.selectByCondition(searchMap);
     }
 
@@ -59,8 +59,8 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public CategoryPO selectById(String id) {
-        CategoryPO categoryPO = (CategoryPO) RedisCacheUtils.get("category:" + id);
+    public Category selectById(String id) {
+        Category categoryPO = (Category) RedisCacheUtils.get("category:" + id);
         if (categoryPO != null) {
             return categoryPO;
         } else {
@@ -80,7 +80,7 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public CategoryPO insert(CategoryPO categoryPO) {
+    public Category insert(Category categoryPO) {
         categoryDao.insert(categoryPO);
         RedisCacheUtils.set("category:" + categoryPO.getId(), categoryPO);
         return categoryPO;
@@ -94,7 +94,7 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchInsert(List<CategoryPO> categoryPOs) {
+    public int batchInsert(List<Category> categoryPOs) {
         return categoryDao.batchInsert(categoryPOs);
     }
 
@@ -106,19 +106,19 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public CategoryPO deleteById(String id) {
-        CategoryPO category = categoryDao.selectById(id);
+    public Category deleteById(String id) {
+        Category category = categoryDao.selectById(id);
 
         //将所有该分类的文章设成未分类
-        CategoryPO unCategoryPO = categoryDao.selectByCondition(new HashMap<String, Object>() {{
+        Category unCategoryPO = categoryDao.selectByCondition(new HashMap<String, Object>() {{
             put("code", "uncategory");
         }}).get(0);
-        List<ArticlePO> articlePOs = articleDao.selectByCondition(new HashMap<String, Object>() {{
+        List<Article> articlePOs = articleDao.selectByCondition(new HashMap<String, Object>() {{
             put("categoryId", category.getId());
         }});
 
         if (articlePOs != null && articlePOs.size() != 0) {
-            for (ArticlePO articlePO : articlePOs) {
+            for (Article articlePO : articlePOs) {
                 articlePO.setCategoryId(unCategoryPO.getId());
                 RedisCacheUtils.set("article:" + articlePO.getId(), articlePO);
                 RedisCacheUtils.set("article:" + articlePO.getUrl(), articlePO);
@@ -141,17 +141,17 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional(rollbackFor = Exception.class)
     public int batchDeleteById(List<String> ids) {
         for (String id : ids) {
-            CategoryPO categoryPO = categoryDao.selectById(id);
+            Category categoryPO = categoryDao.selectById(id);
 
             //将该分类下的文章都设成未分类
-            CategoryPO unCategoryPO = categoryDao.selectByCondition(new HashMap<String, Object>() {{
+            Category unCategoryPO = categoryDao.selectByCondition(new HashMap<String, Object>() {{
                 put("code", "uncategory");
             }}).get(0);
-            List<ArticlePO> articlePOs = articleDao.selectByCondition(new HashMap<String, Object>() {{
+            List<Article> articlePOs = articleDao.selectByCondition(new HashMap<String, Object>() {{
                 put("categoryId", categoryPO.getId());
             }});
             if (articlePOs != null && articlePOs.size() != 0) {
-                for (ArticlePO articlePO : articlePOs) {
+                for (Article articlePO : articlePOs) {
                     articlePO.setCategoryId(unCategoryPO.getId());
                     RedisCacheUtils.set("article:" + articlePO.getId(), articlePO);
                     RedisCacheUtils.set("article:" + articlePO.getUrl(), articlePO);
@@ -171,9 +171,9 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public CategoryPO update(CategoryPO categoryPO) {
+    public Category update(Category categoryPO) {
         categoryDao.update(categoryPO);
-        CategoryPO newCategoryPO = categoryDao.selectById(categoryPO.getId());
+        Category newCategoryPO = categoryDao.selectById(categoryPO.getId());
         RedisCacheUtils.set("category:" + newCategoryPO.getId(), newCategoryPO);
         return newCategoryPO;
     }
@@ -186,9 +186,9 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchUpdate(List<CategoryPO> categoryPOs) {
+    public int batchUpdate(List<Category> categoryPOs) {
         int result = categoryDao.batchUpdate(categoryPOs);
-        for (CategoryPO categoryPO : categoryPOs) {
+        for (Category categoryPO : categoryPOs) {
             RedisCacheUtils.del("category:" + categoryPO.getId());
         }
         return result;

@@ -5,7 +5,7 @@
 
 <mapper namespace="net.stackoverflow.blog.dao.ArticleDao">
 
-    <resultMap id="articleMap" type="articlePO">
+    <resultMap id="articleMap" type="article">
         <id property="id" column="id"></id>
         <result property="userId" column="userid"></result>
         <result property="title" column="title"></result>
@@ -20,7 +20,7 @@
         <result property="visible" column="visible"></result>
     </resultMap>
 
-    <select id="selectByPage" resultMap="articleMap" resultType="articlePO">
+    <select id="selectByPage" resultMap="articleMap" resultType="article">
         select * from article
         <where>
             <if test="searchMap != null">
@@ -62,7 +62,7 @@
         order by createdate desc limit #{start},#{limit}
     </select>
 
-    <select id="selectByCondition" resultMap="articleMap" resultType="articlePO">
+    <select id="selectByCondition" resultMap="articleMap" resultType="article">
         select * from article
         <where>
             <if test="userId != null">
@@ -102,15 +102,15 @@
         order by createdate desc
     </select>
 
-    <select id="selectById" resultMap="articleMap" resultType="articlePO">
+    <select id="selectById" resultMap="articleMap" resultType="article">
         select * from article where id = #{id}
     </select>
 
-    <select id="selectByUrl" resultMap="articleMap" resultType="articlePO">
+    <select id="selectByUrl" resultMap="articleMap" resultType="article">
         select * from article where url = #{url}
     </select>
 
-    <insert id="insert" parameterType="articlePO">
+    <insert id="insert" parameterType="article">
         <selectKey keyProperty="id" resultType="string" order="BEFORE">
             select uuid()
         </selectKey>
@@ -141,7 +141,7 @@
         </foreach>
     </delete>
 
-    <update id="update" parameterType="articlePO">
+    <update id="update" parameterType="article">
         update article
         <set>
             <if test="title != null">

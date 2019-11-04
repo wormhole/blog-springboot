@@ -1,7 +1,7 @@
 package net.stackoverflow.blog.service;
 
 import net.stackoverflow.blog.common.Page;
-import net.stackoverflow.blog.pojo.po.MenuPO;
+import net.stackoverflow.blog.pojo.entity.Menu;
 
 import java.util.List;
 import java.util.Map;
@@ -13,22 +13,22 @@ import java.util.Map;
  */
 public interface MenuService {
 
-    List<MenuPO> selectByPage(Page page);
+    List<Menu> selectByPage(Page page);
 
-    List<MenuPO> selectByCondition(Map<String, Object> searchMap);
+    List<Menu> selectByCondition(Map<String, Object> searchMap);
 
-    MenuPO selectById(String id);
+    Menu selectById(String id);
 
-    MenuPO insert(MenuPO menuPO);
+    Menu insert(Menu menuPO);
 
-    int batchInsert(List<MenuPO> menuPOs);
+    int batchInsert(List<Menu> menuPOs);
 
-    MenuPO deleteById(String id);
+    Menu deleteById(String id);
 
     int batchDeleteById(List<String> ids);
 
-    MenuPO update(MenuPO menuPO);
+    Menu update(Menu menuPO);
 
-    int batchUpdate(List<MenuPO> menuPOs);
+    int batchUpdate(List<Menu> menuPOs);
 
 }

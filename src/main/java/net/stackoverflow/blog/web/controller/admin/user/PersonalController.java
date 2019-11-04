@@ -1,34 +1,36 @@
 package net.stackoverflow.blog.web.controller.admin.user;
 
 import net.stackoverflow.blog.common.BaseController;
-import net.stackoverflow.blog.common.BaseDTO;
-import net.stackoverflow.blog.common.Response;
+import net.stackoverflow.blog.common.Result;
 import net.stackoverflow.blog.exception.BusinessException;
-import net.stackoverflow.blog.pojo.dto.UserDTO;
-import net.stackoverflow.blog.pojo.po.UserPO;
+import net.stackoverflow.blog.pojo.entity.User;
+import net.stackoverflow.blog.pojo.vo.UserVO;
 import net.stackoverflow.blog.service.UserService;
-import net.stackoverflow.blog.util.CollectionUtils;
 import net.stackoverflow.blog.util.PasswordUtils;
-import net.stackoverflow.blog.util.ValidationUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.data.redis.cache.RedisCacheManager;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
- * 个人信息维护接口
+ * 个人信息维护Controller
  *
  * @author 凉衫薄
  */
@@ -40,8 +42,6 @@ public class PersonalController extends BaseController {
     private UserService userService;
     @Autowired
     private RedisCacheManager redisCacheManager;
-    @Autowired
-    private ValidatorFactory validatorFactory;
 
     /**
      * 个人信息维护页面跳转
@@ -56,96 +56,119 @@ public class PersonalController extends BaseController {
     }
 
     /**
-     * 用户信息更新接口
+     * 更新用户基础信息接口
      *
-     * @param type    更新类型：1、base基础数据，2、password密码
-     * @param dto     公共dto对象
-     * @param session 会话对象
-     * @return 返回Response对象
+     * @param userVO
+     * @param errors
+     * @param session
+     * @return
      */
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    @RequestMapping(value = "/update_base", method = RequestMethod.POST)
     @ResponseBody
-    public Response updateUser(@RequestParam("type") String type, @RequestBody BaseDTO dto, HttpSession session) {
-        Response response = new Response();
+    public ResponseEntity updateBase(@Validated(UserVO.UpdateBaseGroup.class) @RequestBody UserVO userVO, Errors errors, HttpSession session) {
 
-        //从公共dto中获取userDTO
-        List<UserDTO> userDTOs = (List<UserDTO>) (Object) getDTO("user", UserDTO.class, dto);
-        if (CollectionUtils.isEmpty(userDTOs)) {
-            throw new BusinessException("找不到请求数据");
+        //校验数据
+        if (errors.hasErrors()) {
+            Map<String, String> errMap = new HashMap<>(10);
+            List<ObjectError> oes = errors.getAllErrors();
+            for (ObjectError oe : oes) {
+                if (oe instanceof FieldError) {
+                    FieldError fe = (FieldError) oe;
+                    errMap.put(fe.getField(), oe.getDefaultMessage());
+                } else {
+                    errMap.put(oe.getObjectName(), oe.getDefaultMessage());
+                }
+            }
+            throw new BusinessException("字段格式错误", errMap);
         }
-        UserDTO userDTO = userDTOs.get(0);
-        UserPO user = (UserPO) session.getAttribute("user");
 
-        if (type.equals("base")) {
-            //校验数据
-            Validator validator = validatorFactory.getValidator();
-            Set<ConstraintViolation<UserDTO>> violations = validator.validate(userDTO, UserDTO.UpdateBaseGroup.class);
-            Map<String, String> map = ValidationUtils.errorMap(violations);
-            if (!CollectionUtils.isEmpty(map)) {
-                throw new BusinessException("字段格式出错", map);
-            }
+        User user = (User) session.getAttribute("user");
 
-            //校验邮箱是否重复
-            if (!userDTO.getEmail().equals(user.getEmail()) && userService.selectByCondition(new HashMap<String, Object>() {{
-                put("email", userDTO.getEmail());
-            }}).size() != 0) {
-                throw new BusinessException("邮箱已经存在");
-            }
+        //校验邮箱是否重复
+        if (!userVO.getEmail().equals(user.getEmail()) && userService.selectByCondition(new HashMap<String, Object>(16) {{
+            put("email", userVO.getEmail());
+        }}).size() != 0) {
+            throw new BusinessException("邮箱已经存在");
+        }
 
-            UserPO updateUser = new UserPO();
-            BeanUtils.copyProperties(userDTO, updateUser);
-            updateUser.setId(user.getId());
+        User updateUser = new User();
+        BeanUtils.copyProperties(userVO, updateUser);
+        updateUser.setId(user.getId());
 
-            //删除缓存
-            if (!updateUser.getEmail().equals(user.getEmail())) {
-                Cache authenticationCache = redisCacheManager.getCache("authentication");
-                authenticationCache.evict("shiro:authentication:" + user.getEmail());
-                Cache authorizationCache = redisCacheManager.getCache("authorization");
-                authorizationCache.evict("shiro:authorization:" + user.getEmail());
-            }
-
-            //更新用户基础信息
-            UserPO newUser = userService.update(updateUser);
-            session.setAttribute("user", newUser);
-            response.setStatus(Response.SUCCESS);
-            response.setMessage("基础信息修改成功");
-
-        } else if (type.equals("password")) {
-            //校验数据
-            Validator validator = validatorFactory.getValidator();
-            Set<ConstraintViolation<UserDTO>> violations = validator.validate(userDTO, UserDTO.UpdatePasswordGroup.class);
-            Map<String, String> map = ValidationUtils.errorMap(violations);
-            if (!CollectionUtils.isEmpty(map)) {
-                throw new BusinessException("字段格式出错", map);
-            }
-
-            //检查是否与旧密码匹配
-            if (!user.getPassword().equals(PasswordUtils.encryptPassword(user.getSalt(), userDTO.getOldPassword()))) {
-                throw new BusinessException("旧密码不匹配");
-            }
-
-            UserPO updateUser = new UserPO();
-            BeanUtils.copyProperties(userDTO, updateUser);
-            updateUser.setId(user.getId());
-            updateUser.setEmail(user.getEmail());
-            updateUser.setSalt(PasswordUtils.getSalt());
-            updateUser.setPassword(PasswordUtils.encryptPassword(updateUser.getSalt(), updateUser.getPassword()));
-
-            //删除缓存
+        //删除缓存
+        if (!updateUser.getEmail().equals(user.getEmail())) {
             Cache authenticationCache = redisCacheManager.getCache("authentication");
             authenticationCache.evict("shiro:authentication:" + user.getEmail());
             Cache authorizationCache = redisCacheManager.getCache("authorization");
             authorizationCache.evict("shiro:authorization:" + user.getEmail());
-
-            UserPO newUser = userService.update(updateUser);
-            session.setAttribute("user", newUser);
-            response.setStatus(Response.SUCCESS);
-            response.setMessage("修改成功");
-
-        } else {
-            throw new BusinessException("未知请求参数type");
         }
 
-        return response;
+        //更新用户基础信息
+        User newUser = userService.update(updateUser);
+        session.setAttribute("user", newUser);
+
+        Result result = new Result();
+        result.setStatus(Result.SUCCESS);
+        result.setMessage("基础信息修改成功");
+        return new ResponseEntity(result, HttpStatus.OK);
+
     }
+
+    /**
+     * 更新用户密码接口
+     *
+     * @param userVO
+     * @param errors
+     * @param session
+     * @return
+     */
+    @RequestMapping(value = "/update_password", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity updatePassword(@Validated(UserVO.UpdatePasswordGroup.class) @RequestBody UserVO userVO, Errors errors, HttpSession session) {
+
+        //校验数据
+        if (errors.hasErrors()) {
+            Map<String, String> errMap = new HashMap<>(10);
+            List<ObjectError> oes = errors.getAllErrors();
+            for (ObjectError oe : oes) {
+                if (oe instanceof FieldError) {
+                    FieldError fe = (FieldError) oe;
+                    errMap.put(fe.getField(), oe.getDefaultMessage());
+                } else {
+                    errMap.put(oe.getObjectName(), oe.getDefaultMessage());
+                }
+            }
+            throw new BusinessException("字段格式错误", errMap);
+        }
+
+        User user = (User) session.getAttribute("user");
+
+        //检查是否与旧密码匹配
+        if (!user.getPassword().equals(PasswordUtils.encryptPassword(user.getSalt(), userVO.getOldPassword()))) {
+            throw new BusinessException("旧密码不匹配");
+        }
+
+        User updateUser = new User();
+        BeanUtils.copyProperties(userVO, updateUser);
+        updateUser.setId(user.getId());
+        updateUser.setEmail(user.getEmail());
+        updateUser.setSalt(PasswordUtils.getSalt());
+        updateUser.setPassword(PasswordUtils.encryptPassword(updateUser.getSalt(), updateUser.getPassword()));
+
+        //删除缓存
+        Cache authenticationCache = redisCacheManager.getCache("authentication");
+        authenticationCache.evict("shiro:authentication:" + user.getEmail());
+        Cache authorizationCache = redisCacheManager.getCache("authorization");
+        authorizationCache.evict("shiro:authorization:" + user.getEmail());
+
+        User newUser = userService.update(updateUser);
+        session.setAttribute("user", newUser);
+
+        Result result = new Result();
+        result.setStatus(Result.SUCCESS);
+        result.setMessage("修改成功");
+
+        return new ResponseEntity(result, HttpStatus.OK);
+    }
+
 }

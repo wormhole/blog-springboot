@@ -1,11 +1,12 @@
 package net.stackoverflow.blog.web.controller;
 
-import net.stackoverflow.blog.common.Response;
+import net.stackoverflow.blog.common.Result;
 import net.stackoverflow.blog.exception.BusinessException;
 import net.stackoverflow.blog.exception.ServerException;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -31,13 +32,13 @@ public class ExceptionController {
      */
     @ExceptionHandler(BusinessException.class)
     @ResponseBody
-    public Response handleBusinessException(BusinessException e, HttpServletRequest request) {
+    public ResponseEntity handleBusinessException(BusinessException e, HttpServletRequest request) {
         if (isAjaxRequest(request)) {
-            Response response = new Response();
-            response.setStatus(Response.FAILURE);
-            response.setMessage(e.getMessage());
-            response.setData(e.getData());
-            return response;
+            Result result = new Result();
+            result.setStatus(Result.FAILURE);
+            result.setMessage(e.getMessage());
+            result.setData(e.getData());
+            return new ResponseEntity(result, HttpStatus.OK);
         } else {
             throw new ServerException(e.getMessage());
         }
@@ -88,13 +89,13 @@ public class ExceptionController {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
-    public Response handleException(Exception e, HttpServletRequest request) {
+    public ResponseEntity handleException(Exception e, HttpServletRequest request) {
         if (isAjaxRequest(request)) {
-            Response response = new Response();
-            response.setStatus(Response.SERVER_ERROR);
-            response.setMessage(e.getMessage());
-            response.setData(e.getStackTrace());
-            return response;
+            Result result = new Result();
+            result.setStatus(Result.SERVER_ERROR);
+            result.setMessage(e.getMessage());
+            result.setData(e.getStackTrace());
+            return new ResponseEntity(result, HttpStatus.OK);
         } else {
             throw new ServerException(e.getClass().getName());
         }

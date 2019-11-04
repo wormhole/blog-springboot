@@ -1,7 +1,7 @@
 package net.stackoverflow.blog.dao;
 
 import net.stackoverflow.blog.common.Page;
-import net.stackoverflow.blog.pojo.po.CategoryPO;
+import net.stackoverflow.blog.pojo.entity.Category;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -15,22 +15,22 @@ import java.util.Map;
 @Mapper
 public interface CategoryDao {
 
-    List<CategoryPO> selectByPage(Page page);
+    List<Category> selectByPage(Page page);
 
-    List<CategoryPO> selectByCondition(Map<String, Object> searchMap);
+    List<Category> selectByCondition(Map<String, Object> searchMap);
 
-    CategoryPO selectById(String id);
+    Category selectById(String id);
 
-    int insert(CategoryPO category);
+    int insert(Category category);
 
-    int batchInsert(List<CategoryPO> list);
+    int batchInsert(List<Category> list);
 
     int deleteById(String id);
 
     int batchDeleteById(List<String> list);
 
-    int update(CategoryPO category);
+    int update(Category category);
 
-    int batchUpdate(List<CategoryPO> list);
+    int batchUpdate(List<Category> list);
 
 }

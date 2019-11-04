@@ -1,7 +1,7 @@
 package net.stackoverflow.blog.service;
 
 import net.stackoverflow.blog.common.Page;
-import net.stackoverflow.blog.pojo.po.CommentPO;
+import net.stackoverflow.blog.pojo.entity.Comment;
 
 import java.util.List;
 import java.util.Map;
@@ -13,22 +13,22 @@ import java.util.Map;
  */
 public interface CommentService {
 
-    List<CommentPO> selectByPage(Page page);
+    List<Comment> selectByPage(Page page);
 
-    List<CommentPO> selectByCondition(Map<String, Object> searchMap);
+    List<Comment> selectByCondition(Map<String, Object> searchMap);
 
-    CommentPO selectById(String id);
+    Comment selectById(String id);
 
-    CommentPO insert(CommentPO commentPO);
+    Comment insert(Comment commentPO);
 
-    int batchInsert(List<CommentPO> commentPOs);
+    int batchInsert(List<Comment> commentPOs);
 
-    CommentPO deleteById(String id);
+    Comment deleteById(String id);
 
     int batchDeleteById(List<String> ids);
 
-    CommentPO update(CommentPO commentPO);
+    Comment update(Comment commentPO);
 
-    int batchUpdate(List<CommentPO> commentPOs);
+    int batchUpdate(List<Comment> commentPOs);
 
 }

@@ -1,32 +1,30 @@
 package net.stackoverflow.blog.web.controller.admin.article;
 
 import net.stackoverflow.blog.common.BaseController;
-import net.stackoverflow.blog.common.BaseDTO;
 import net.stackoverflow.blog.common.Page;
-import net.stackoverflow.blog.common.Response;
+import net.stackoverflow.blog.common.Result;
 import net.stackoverflow.blog.exception.BusinessException;
-import net.stackoverflow.blog.pojo.dto.ArticleDTO;
-import net.stackoverflow.blog.pojo.po.ArticlePO;
+import net.stackoverflow.blog.pojo.entity.Article;
+import net.stackoverflow.blog.pojo.vo.ArticleVO;
 import net.stackoverflow.blog.service.ArticleService;
 import net.stackoverflow.blog.service.CategoryService;
 import net.stackoverflow.blog.service.CommentService;
 import net.stackoverflow.blog.service.UserService;
-import net.stackoverflow.blog.util.CollectionUtils;
 import net.stackoverflow.blog.util.DateUtils;
-import net.stackoverflow.blog.util.ValidationUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,8 +47,6 @@ public class ArticleController extends BaseController {
     private UserService userService;
     @Autowired
     private CommentService commentService;
-    @Autowired
-    private ValidatorFactory validatorFactory;
 
     /**
      * 文章管理页面跳转
@@ -86,55 +82,51 @@ public class ArticleController extends BaseController {
         return "/article" + DateUtils.getDatePath() + code;
     }
 
-    /**
-     * 更新文章
-     *
-     * @param dto 公共dto对象
-     * @return 返回Response对象
-     */
+
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
-    public Response update(@RequestBody BaseDTO dto) {
-        Response response = new Response();
+    public ResponseEntity update(@Validated(ArticleVO.UpdateGroup.class) @RequestBody ArticleVO articleVO, Errors errors) {
 
-        //从公共dto中提取articleDTO对象
-        List<ArticleDTO> articleDTOs = (List<ArticleDTO>) (Object) getDTO("article", ArticleDTO.class, dto);
-        if (CollectionUtils.isEmpty(articleDTOs)) {
-            throw new BusinessException("找不到请求数据");
+        //校验数据
+        if (errors.hasErrors()) {
+            Map<String, String> errMap = new HashMap<>(16);
+            List<ObjectError> oes = errors.getAllErrors();
+            for (ObjectError oe : oes) {
+                if (oe instanceof FieldError) {
+                    FieldError fe = (FieldError) oe;
+                    errMap.put(fe.getField(), oe.getDefaultMessage());
+                } else {
+                    errMap.put(oe.getObjectName(), oe.getDefaultMessage());
+                }
+            }
+            throw new BusinessException("字段格式错误", errMap);
         }
-        ArticleDTO articleDTO = articleDTOs.get(0);
 
-        //校验字段
-        Validator validator = validatorFactory.getValidator();
-        Set<ConstraintViolation<ArticleDTO>> violations = validator.validate(articleDTO, ArticleDTO.UpdateGroup.class);
-        Map<String, String> map = ValidationUtils.errorMap(violations);
-        if (!CollectionUtils.isEmpty(map)) {
-            throw new BusinessException("字段格式错误", map);
-        }
-
-        ArticlePO articlePO = articleService.selectById(articleDTO.getId());
-        if (articlePO == null) {
+        Article article = articleService.selectById(articleVO.getId());
+        if (article == null) {
             throw new BusinessException("未找到文章");
         }
 
         //校验url是否重复
-        String[] paths = articlePO.getUrl().split("/");
-        paths[paths.length - 1] = articleDTO.getArticleCode();
+        String[] paths = article.getUrl().split("/");
+        paths[paths.length - 1] = articleVO.getArticleCode();
         String url = String.join("/", paths);
 
-        if (!urlToCode(articlePO.getUrl()).equals(articleDTO.getArticleCode()) && (articleService.selectByUrl(url) != null)) {
+        if (!urlToCode(article.getUrl()).equals(articleVO.getArticleCode()) && (articleService.selectByUrl(url) != null)) {
             throw new BusinessException("url重复");
         }
 
-        ArticlePO updateArticlePO = new ArticlePO();
-        BeanUtils.copyProperties(articleDTO, updateArticlePO);
-        updateArticlePO.setModifyDate(new Date());
-        updateArticlePO.setUrl(url);
-        articleService.update(updateArticlePO);
-        response.setStatus(Response.SUCCESS);
-        response.setMessage("文章更新成功");
+        Article updateArticle = new Article();
+        BeanUtils.copyProperties(articleVO, updateArticle);
+        updateArticle.setModifyDate(new Date());
+        updateArticle.setUrl(url);
+        articleService.update(updateArticle);
 
-        return response;
+        Result result = new Result();
+        result.setStatus(Result.SUCCESS);
+        result.setMessage("文章更新成功");
+
+        return new ResponseEntity(result, HttpStatus.OK);
     }
 
     /**
@@ -146,125 +138,122 @@ public class ArticleController extends BaseController {
      */
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @ResponseBody
-    public Response list(@RequestParam(value = "page") String page, @RequestParam(value = "limit") String limit) {
-        Response response = new Response();
+    public ResponseEntity list(@RequestParam(value = "page") String page, @RequestParam(value = "limit") String limit) {
 
         Page pageParam = new Page(Integer.valueOf(page), Integer.valueOf(limit), null);
-        List<ArticlePO> articlePOs = articleService.selectByPage(pageParam);
+        List<Article> articles = articleService.selectByPage(pageParam);
 
         int count = articleService.selectByCondition(new HashMap<>()).size();
-        List<ArticleDTO> articleDTOs = new ArrayList<>();
+        List<ArticleVO> articleVOs = new ArrayList<>();
 
-        for (ArticlePO articlePO : articlePOs) {
-            ArticleDTO articleDTO = new ArticleDTO();
-            BeanUtils.copyProperties(articlePO, articleDTO);
-            articleDTO.setTitle(HtmlUtils.htmlEscape(articlePO.getTitle()));
-            articleDTO.setAuthor(HtmlUtils.htmlEscape(userService.selectById(articlePO.getUserId()).getNickname()));
-            articleDTO.setCategoryName(categoryService.selectById(articlePO.getCategoryId()).getName());
-            articleDTO.setCommentCount(commentService.selectByCondition(new HashMap<String, Object>() {{
-                put("articleId", articlePO.getId());
+        for (Article article : articles) {
+            ArticleVO articleVO = new ArticleVO();
+            BeanUtils.copyProperties(article, articleVO);
+            articleVO.setTitle(HtmlUtils.htmlEscape(article.getTitle()));
+            articleVO.setAuthor(HtmlUtils.htmlEscape(userService.selectById(article.getUserId()).getNickname()));
+            articleVO.setCategoryName(categoryService.selectById(article.getCategoryId()).getName());
+            articleVO.setCommentCount(commentService.selectByCondition(new HashMap<String, Object>(16) {{
+                put("articleId", article.getId());
             }}).size());
-            articleDTO.setUrl(articlePO.getUrl());
-            if (articlePO.getVisible() == 0) {
-                articleDTO.setVisibleTag("否");
+            articleVO.setUrl(article.getUrl());
+            if (article.getVisible() == 0) {
+                articleVO.setVisibleTag("否");
             } else {
-                articleDTO.setVisibleTag("是");
+                articleVO.setVisibleTag("是");
             }
-            articleDTOs.add(articleDTO);
+            articleVOs.add(articleVO);
         }
 
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(16);
         map.put("count", count);
-        map.put("items", articleDTOs);
-        response.setStatus(Response.SUCCESS);
-        response.setMessage("查询成功");
-        response.setData(map);
-        return response;
+        map.put("items", articleVOs);
+
+        Result result = new Result();
+        result.setStatus(Result.SUCCESS);
+        result.setMessage("查询成功");
+        result.setData(map);
+        return new ResponseEntity(result, HttpStatus.OK);
     }
 
-    /**
-     * 文章删除
-     *
-     * @param dto 公共dto对象
-     * @return
-     */
+
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ResponseBody
-    public Response delete(@RequestBody BaseDTO dto) {
-        Response response = new Response();
+    public ResponseEntity delete(@Validated(ArticleVO.DeleteGroup.class) @RequestBody ArticleVO[] articleVOs, Errors errors) {
 
-        List<ArticleDTO> articleDTOs = (List<ArticleDTO>) (Object) getDTO("article", ArticleDTO.class, dto);
-        if (CollectionUtils.isEmpty(articleDTOs)) {
-            throw new BusinessException("找不到请求数据");
-        }
-
-        //校验字段
-        for (ArticleDTO articleDTO : articleDTOs) {
-            Validator validator = validatorFactory.getValidator();
-            Set<ConstraintViolation<ArticleDTO>> violations = validator.validate(articleDTO, ArticleDTO.DeleteGroup.class);
-            Map<String, String> map = ValidationUtils.errorMap(violations);
-
-            if (!CollectionUtils.isEmpty(map)) {
-                throw new BusinessException("字段格式错误", map);
+        //校验数据
+        if (errors.hasErrors()) {
+            Map<String, String> errMap = new HashMap<>(16);
+            List<ObjectError> oes = errors.getAllErrors();
+            for (ObjectError oe : oes) {
+                if (oe instanceof FieldError) {
+                    FieldError fe = (FieldError) oe;
+                    errMap.put(fe.getField(), oe.getDefaultMessage());
+                } else {
+                    errMap.put(oe.getObjectName(), oe.getDefaultMessage());
+                }
             }
+            throw new BusinessException("字段格式错误", errMap);
         }
 
         //获取id
         List<String> ids = new ArrayList<>();
-        for (ArticleDTO articleDTO : articleDTOs) {
-            ids.add(articleDTO.getId());
+        for (ArticleVO articleVO : articleVOs) {
+            ids.add(articleVO.getId());
         }
         articleService.batchDeleteById(ids);
 
-        response.setStatus(Response.SUCCESS);
-        response.setMessage("删除成功");
-        return response;
+        Result result = new Result();
+        result.setStatus(Result.SUCCESS);
+        result.setMessage("删除成功");
+
+        return new ResponseEntity(result, HttpStatus.OK);
     }
 
     /**
-     * 设置文章是否显示
+     * 设置文章是否显示接口
      *
-     * @param dto 公共dto对象
-     * @return 返回Response对象
+     * @param articleVO
+     * @param errors
+     * @return
      */
     @RequestMapping(value = "/visible", method = RequestMethod.POST)
     @ResponseBody
-    public Response visible(@RequestBody BaseDTO dto) {
-        Response response = new Response();
+    public ResponseEntity visible(@Validated(ArticleVO.VisibleGroup.class) @RequestBody ArticleVO articleVO, Errors errors) {
 
-        //从公共dto中提取articleDTO对象
-        List<ArticleDTO> articleDTOs = (List<ArticleDTO>) (Object) getDTO("article", ArticleDTO.class, dto);
-        if (CollectionUtils.isEmpty(articleDTOs)) {
-            throw new BusinessException("找不到请求数据");
+        //校验数据
+        if (errors.hasErrors()) {
+            Map<String, String> errMap = new HashMap<>(16);
+            List<ObjectError> oes = errors.getAllErrors();
+            for (ObjectError oe : oes) {
+                if (oe instanceof FieldError) {
+                    FieldError fe = (FieldError) oe;
+                    errMap.put(fe.getField(), oe.getDefaultMessage());
+                } else {
+                    errMap.put(oe.getObjectName(), oe.getDefaultMessage());
+                }
+            }
+            throw new BusinessException("字段格式错误", errMap);
         }
-        ArticleDTO articleDTO = articleDTOs.get(0);
 
-        //校验字段
-        Validator validator = validatorFactory.getValidator();
-        Set<ConstraintViolation<ArticleDTO>> violations = validator.validate(articleDTO, ArticleDTO.VisibleGroup.class);
-        Map<String, String> map = ValidationUtils.errorMap(violations);
-        if (!CollectionUtils.isEmpty(map)) {
-            throw new BusinessException("字段格式错误", map);
-        }
+        Article article = new Article();
+        BeanUtils.copyProperties(articleVO, article);
 
-        ArticlePO articlePO = new ArticlePO();
-        BeanUtils.copyProperties(articleDTO, articlePO);
-
-        if (articleService.update(articlePO) != null) {
-            response.setStatus(Response.SUCCESS);
-            if (articlePO.getVisible() == 0) {
-                response.setMessage("隐藏成功");
+        Result result = new Result();
+        if (articleService.update(article) != null) {
+            result.setStatus(Result.SUCCESS);
+            if (article.getVisible() == 0) {
+                result.setMessage("隐藏成功");
             } else {
-                response.setMessage("显示成功");
+                result.setMessage("显示成功");
             }
         } else {
-            if (articlePO.getVisible() == 0) {
+            if (article.getVisible() == 0) {
                 throw new BusinessException("隐藏失败");
             } else {
                 throw new BusinessException("显示失败");
             }
         }
-        return response;
+        return new ResponseEntity(result, HttpStatus.OK);
     }
 
     /**
@@ -277,11 +266,11 @@ public class ArticleController extends BaseController {
     @RequestMapping(value = "/export", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<byte[]> export(@RequestParam("id") String id) throws IOException {
-        ArticlePO articlePO = articleService.selectById(id);
-        String filename = articlePO.getTitle() + ".md";
+        Article article = articleService.selectById(id);
+        String filename = article.getTitle() + ".md";
         filename = new String(filename.getBytes("UTF-8"), "ISO-8859-1");
 
-        InputStream is = new ByteArrayInputStream(articlePO.getArticleMd().getBytes("UTF-8"));
+        InputStream is = new ByteArrayInputStream(article.getArticleMd().getBytes("UTF-8"));
         byte[] body = new byte[is.available()];
         is.read(body);
 

@@ -1,27 +1,30 @@
 package net.stackoverflow.blog.web.controller.admin.comment;
 
 import net.stackoverflow.blog.common.BaseController;
-import net.stackoverflow.blog.common.BaseDTO;
 import net.stackoverflow.blog.common.Page;
-import net.stackoverflow.blog.common.Response;
+import net.stackoverflow.blog.common.Result;
 import net.stackoverflow.blog.exception.BusinessException;
-import net.stackoverflow.blog.pojo.dto.CommentDTO;
-import net.stackoverflow.blog.pojo.po.CommentPO;
+import net.stackoverflow.blog.pojo.entity.Comment;
+import net.stackoverflow.blog.pojo.vo.CommentVO;
 import net.stackoverflow.blog.service.ArticleService;
 import net.stackoverflow.blog.service.CommentService;
-import net.stackoverflow.blog.util.CollectionUtils;
-import net.stackoverflow.blog.util.ValidationUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 评论管理接口
@@ -36,8 +39,6 @@ public class CommentController extends BaseController {
     private CommentService commentService;
     @Autowired
     private ArticleService articleService;
-    @Autowired
-    private ValidatorFactory validatorFactory;
 
     /**
      * 评论管理页面跳转
@@ -56,126 +57,128 @@ public class CommentController extends BaseController {
      *
      * @param page  分页参数
      * @param limit 每页数量
-     * @return 返回Response对象
+     * @return
      */
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @ResponseBody
-    public Response list(@RequestParam(value = "page") String page, @RequestParam(value = "limit") String limit) {
-        Response response = new Response();
+    public ResponseEntity list(@RequestParam(value = "page") String page, @RequestParam(value = "limit") String limit) {
 
         //分页查询
         Page pageParam = new Page(Integer.valueOf(page), Integer.valueOf(limit), null);
-        List<CommentPO> commentPOs = commentService.selectByPage(pageParam);
-        int count = commentService.selectByCondition(new HashMap<>()).size();
-        List<CommentDTO> commentDTOs = new ArrayList<>();
+        List<Comment> comments = commentService.selectByPage(pageParam);
+        int count = commentService.selectByCondition(new HashMap<>(16)).size();
+        List<CommentVO> commentVOs = new ArrayList<>();
 
-        //po转dto
-        for (CommentPO commentPO : commentPOs) {
-            CommentDTO commentDTO = new CommentDTO();
-            BeanUtils.copyProperties(commentPO, commentDTO);
-            commentDTO.setNickname(HtmlUtils.htmlEscape(commentPO.getNickname()));
-            commentDTO.setEmail(HtmlUtils.htmlEscape(commentPO.getEmail()));
-            commentDTO.setContent(HtmlUtils.htmlEscape(commentPO.getContent()));
-            commentDTO.setArticleTitle(HtmlUtils.htmlEscape(articleService.selectById(commentPO.getArticleId()).getTitle()));
-            if (commentPO.getReview() == 0) {
-                commentDTO.setReviewTag("否");
+        for (Comment comment : comments) {
+            CommentVO commentVO = new CommentVO();
+            BeanUtils.copyProperties(comment, commentVO);
+            commentVO.setNickname(HtmlUtils.htmlEscape(comment.getNickname()));
+            commentVO.setEmail(HtmlUtils.htmlEscape(comment.getEmail()));
+            commentVO.setContent(HtmlUtils.htmlEscape(comment.getContent()));
+            commentVO.setArticleTitle(HtmlUtils.htmlEscape(articleService.selectById(comment.getArticleId()).getTitle()));
+            if (comment.getReview() == 0) {
+                commentVO.setReviewTag("否");
             } else {
-                commentDTO.setReviewTag("是");
+                commentVO.setReviewTag("是");
             }
-            if (commentPO.getReplyTo() != null) {
-                commentDTO.setReplyTo(HtmlUtils.htmlEscape(commentPO.getReplyTo()));
+            if (comment.getReplyTo() != null) {
+                commentVO.setReplyTo(HtmlUtils.htmlEscape(comment.getReplyTo()));
             }
-            commentDTOs.add(commentDTO);
+            commentVOs.add(commentVO);
         }
 
         Map<String, Object> map = new HashMap<>();
         map.put("count", count);
-        map.put("items", commentDTOs);
-        response.setStatus(Response.SUCCESS);
-        response.setMessage("查询成功");
-        response.setData(map);
-        return response;
+        map.put("items", commentVOs);
+
+        Result result = new Result();
+        result.setStatus(Result.SUCCESS);
+        result.setMessage("查询成功");
+        result.setData(map);
+        return new ResponseEntity(result, HttpStatus.OK);
     }
 
     /**
      * 评论删除接口
      *
-     * @param dto 公共dto对象
-     * @return 返回Response对象
+     * @param commentVO
+     * @param errors
+     * @return
      */
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ResponseBody
-    public Response delete(@RequestBody BaseDTO dto) {
-        Response response = new Response();
+    public ResponseEntity delete(@Validated(CommentVO.DeleteGroup.class) @RequestBody CommentVO commentVO, Errors errors) {
 
-        //从公共dto中提取commentDTO
-        List<CommentDTO> commentDTOs = (List<CommentDTO>) (Object) getDTO("comment", CommentDTO.class, dto);
-        if (CollectionUtils.isEmpty(commentDTOs)) {
-            throw new BusinessException("找不到请求数据");
+        //校验数据
+        if (errors.hasErrors()) {
+            Map<String, String> errMap = new HashMap<>(10);
+            List<ObjectError> oes = errors.getAllErrors();
+            for (ObjectError oe : oes) {
+                if (oe instanceof FieldError) {
+                    FieldError fe = (FieldError) oe;
+                    errMap.put(fe.getField(), oe.getDefaultMessage());
+                } else {
+                    errMap.put(oe.getObjectName(), oe.getDefaultMessage());
+                }
+            }
+            throw new BusinessException("字段格式错误", errMap);
         }
-        CommentDTO commentDTO = commentDTOs.get(0);
 
-        //校验字段
-        Validator validator = validatorFactory.getValidator();
-        Set<ConstraintViolation<CommentDTO>> violations = validator.validate(commentDTO, CommentDTO.DeleteGroup.class);
-        Map<String, String> map = ValidationUtils.errorMap(violations);
-        if (!CollectionUtils.isEmpty(map)) {
-            throw new BusinessException("字段格式出错", map);
-        }
-
-        if (commentService.deleteById(commentDTO.getId()) != null) {
-            response.setStatus(Response.SUCCESS);
-            response.setMessage("评论删除成功");
+        Result result = new Result();
+        if (commentService.deleteById(commentVO.getId()) != null) {
+            result.setStatus(Result.SUCCESS);
+            result.setMessage("评论删除成功");
         } else {
             throw new BusinessException("评论删除失败,找不到该评论");
         }
 
-        return response;
+        return new ResponseEntity(result, HttpStatus.OK);
     }
 
     /**
-     * 评论审核接口
+     * 审核评论接口
      *
-     * @param dto 公共dto对象
-     * @return 返回Response对象
+     * @param commentVO
+     * @param errors
+     * @return
      */
     @RequestMapping(value = "/review", method = RequestMethod.POST)
     @ResponseBody
-    public Response review(@RequestBody BaseDTO dto) {
-        Response response = new Response();
+    public ResponseEntity review(@Validated(CommentVO.ReviewGroup.class) @RequestBody CommentVO commentVO, Errors errors) {
 
-        //从公共DTO中提取commentDTO
-        List<CommentDTO> commentDTOs = (List<CommentDTO>) (Object) getDTO("comment", CommentDTO.class, dto);
-        if (CollectionUtils.isEmpty(commentDTOs)) {
-            throw new BusinessException("找不到请求数据");
+        //校验数据
+        if (errors.hasErrors()) {
+            Map<String, String> errMap = new HashMap<>(16);
+            List<ObjectError> oes = errors.getAllErrors();
+            for (ObjectError oe : oes) {
+                if (oe instanceof FieldError) {
+                    FieldError fe = (FieldError) oe;
+                    errMap.put(fe.getField(), oe.getDefaultMessage());
+                } else {
+                    errMap.put(oe.getObjectName(), oe.getDefaultMessage());
+                }
+            }
+            throw new BusinessException("字段格式错误", errMap);
         }
-        CommentDTO commentDTO = commentDTOs.get(0);
 
-        //校验字段
-        Validator validator = validatorFactory.getValidator();
-        Set<ConstraintViolation<CommentDTO>> violations = validator.validate(commentDTO, CommentDTO.ReviewGroup.class);
-        Map<String, String> map = ValidationUtils.errorMap(violations);
-        if (!CollectionUtils.isEmpty(map)) {
-            throw new BusinessException("字段格式出错", map);
-        }
+        Comment comment = new Comment();
+        BeanUtils.copyProperties(commentVO, comment);
 
-        CommentPO commentPO = new CommentPO();
-        BeanUtils.copyProperties(commentDTO, commentPO);
-
-        if (commentService.update(commentPO) != null) {
-            response.setStatus(Response.SUCCESS);
-            if (commentPO.getReview() == 1) {
-                response.setMessage("审核成功");
+        Result result = new Result();
+        if (commentService.update(comment) != null) {
+            result.setStatus(Result.SUCCESS);
+            if (comment.getReview() == 1) {
+                result.setMessage("审核成功");
             } else {
-                response.setMessage("撤回成功");
+                result.setMessage("撤回成功");
             }
         } else {
-            if (commentPO.getReview() == 1) {
+            if (comment.getReview() == 1) {
                 throw new BusinessException("审核失败");
             } else {
                 throw new BusinessException("撤回失败");
             }
         }
-        return response;
+        return new ResponseEntity(result, HttpStatus.OK);
     }
 }

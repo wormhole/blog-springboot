@@ -4,9 +4,9 @@ import net.stackoverflow.blog.common.Page;
 import net.stackoverflow.blog.dao.PermissionDao;
 import net.stackoverflow.blog.dao.RoleDao;
 import net.stackoverflow.blog.dao.RolePermissionDao;
-import net.stackoverflow.blog.pojo.po.PermissionPO;
-import net.stackoverflow.blog.pojo.po.RolePO;
-import net.stackoverflow.blog.pojo.po.RolePermissionPO;
+import net.stackoverflow.blog.pojo.entity.Permission;
+import net.stackoverflow.blog.pojo.entity.Role;
+import net.stackoverflow.blog.pojo.entity.RolePermission;
 import net.stackoverflow.blog.util.RedisCacheUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,7 +40,7 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<RolePO> selectByPage(Page page) {
+    public List<Role> selectByPage(Page page) {
         return roleDao.selectByPage(page);
     }
 
@@ -52,7 +52,7 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<RolePO> selectByCondition(Map<String, Object> searchMap) {
+    public List<Role> selectByCondition(Map<String, Object> searchMap) {
         return roleDao.selectByCondition(searchMap);
     }
 
@@ -64,8 +64,8 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public RolePO selectById(String id) {
-        RolePO rolePO = (RolePO) RedisCacheUtils.get("role:" + id);
+    public Role selectById(String id) {
+        Role rolePO = (Role) RedisCacheUtils.get("role:" + id);
         if (rolePO != null) {
             return rolePO;
         } else {
@@ -85,7 +85,7 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public RolePO insert(RolePO rolePO) {
+    public Role insert(Role rolePO) {
         roleDao.insert(rolePO);
         RedisCacheUtils.set("role:" + rolePO.getId(), rolePO);
         return rolePO;
@@ -99,7 +99,7 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchInsert(List<RolePO> rolePOs) {
+    public int batchInsert(List<Role> rolePOs) {
         return roleDao.batchInsert(rolePOs);
     }
 
@@ -111,8 +111,8 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public RolePO deleteById(String id) {
-        RolePO rolePO = roleDao.selectById(id);
+    public Role deleteById(String id) {
+        Role rolePO = roleDao.selectById(id);
         roleDao.deleteById(id);
         RedisCacheUtils.del("role:" + id);
         return rolePO;
@@ -142,9 +142,9 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public RolePO update(RolePO rolePO) {
+    public Role update(Role rolePO) {
         roleDao.update(rolePO);
-        RolePO newRolePO = roleDao.selectById(rolePO.getId());
+        Role newRolePO = roleDao.selectById(rolePO.getId());
         RedisCacheUtils.set("role:" + newRolePO.getId(), newRolePO);
         return newRolePO;
     }
@@ -157,9 +157,9 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchUpdate(List<RolePO> rolePOs) {
+    public int batchUpdate(List<Role> rolePOs) {
         int result = roleDao.batchUpdate(rolePOs);
-        for (RolePO rolePO : rolePOs) {
+        for (Role rolePO : rolePOs) {
             RedisCacheUtils.del("role:" + rolePO.getId());
         }
         return result;
@@ -174,15 +174,15 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public RolePermissionPO grantPermission(String roleId, String permissionId) {
-        RolePO rolePO = roleDao.selectById(roleId);
-        PermissionPO permissionPO = permissionDao.selectById(permissionId);
+    public RolePermission grantPermission(String roleId, String permissionId) {
+        Role rolePO = roleDao.selectById(roleId);
+        Permission permissionPO = permissionDao.selectById(permissionId);
 
         if (rolePO == null || permissionPO == null) {
             return null;
         }
 
-        RolePermissionPO rolePermissionPO = new RolePermissionPO();
+        RolePermission rolePermissionPO = new RolePermission();
         rolePermissionPO.setRoleId(roleId);
         rolePermissionPO.setPermissionId(permissionId);
         rolePermissionDao.insert(rolePermissionPO);
@@ -199,9 +199,9 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public RolePermissionPO revokePermission(String roleId, String permissionId) {
+    public RolePermission revokePermission(String roleId, String permissionId) {
 
-        List<RolePermissionPO> rolePermissionPOs = rolePermissionDao.selectByCondition(new HashMap<String, Object>() {{
+        List<RolePermission> rolePermissionPOs = rolePermissionDao.selectByCondition(new HashMap<String, Object>() {{
             put("roleId", roleId);
             put("permissionId", permissionId);
         }});
@@ -221,16 +221,16 @@ public class RoleServiceImpl implements RoleService {
      * @return 权限列表
      */
     @Override
-    public List<PermissionPO> getPermissionByRoleId(String roleId) {
-        List<PermissionPO> permissionPOs = null;
+    public List<Permission> getPermissionByRoleId(String roleId) {
+        List<Permission> permissionPOs = null;
 
-        List<RolePermissionPO> rolePermissionPOs = rolePermissionDao.selectByCondition(new HashMap<String, Object>() {{
+        List<RolePermission> rolePermissionPOs = rolePermissionDao.selectByCondition(new HashMap<String, Object>() {{
             put("roleId", roleId);
         }});
         if ((null != rolePermissionPOs) && (rolePermissionPOs.size() != 0)) {
             permissionPOs = new ArrayList<>();
-            for (RolePermissionPO rolePermissionPO : rolePermissionPOs) {
-                PermissionPO permissionPO = permissionDao.selectById(rolePermissionPO.getPermissionId());
+            for (RolePermission rolePermissionPO : rolePermissionPOs) {
+                Permission permissionPO = permissionDao.selectById(rolePermissionPO.getPermissionId());
                 permissionPOs.add(permissionPO);
             }
         }

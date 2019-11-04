@@ -1,7 +1,7 @@
 package net.stackoverflow.blog.dao;
 
 import net.stackoverflow.blog.common.Page;
-import net.stackoverflow.blog.pojo.po.PermissionPO;
+import net.stackoverflow.blog.pojo.entity.Permission;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -15,22 +15,22 @@ import java.util.Map;
 @Mapper
 public interface PermissionDao {
 
-    List<PermissionPO> selectByPage(Page page);
+    List<Permission> selectByPage(Page page);
 
-    List<PermissionPO> selectByCondition(Map<String, Object> searchMap);
+    List<Permission> selectByCondition(Map<String, Object> searchMap);
 
-    PermissionPO selectById(String id);
+    Permission selectById(String id);
 
-    int insert(PermissionPO permission);
+    int insert(Permission permission);
 
-    int batchInsert(List<PermissionPO> permissions);
+    int batchInsert(List<Permission> permissions);
 
     int deleteById(String id);
 
     int batchDeleteById(List<String> ids);
 
-    int update(PermissionPO permission);
+    int update(Permission permission);
 
-    int batchUpdate(List<PermissionPO> permissions);
+    int batchUpdate(List<Permission> permissions);
 
 }

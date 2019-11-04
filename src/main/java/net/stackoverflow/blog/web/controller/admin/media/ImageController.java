@@ -1,6 +1,6 @@
 package net.stackoverflow.blog.web.controller.admin.media;
 
-import net.stackoverflow.blog.common.Response;
+import net.stackoverflow.blog.common.Result;
 import net.stackoverflow.blog.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -54,13 +54,13 @@ public class ImageController {
      */
     @RequestMapping(value = "/image/delete", method = RequestMethod.POST)
     @ResponseBody
-    public Response delete(@RequestParam("url") String url) {
-        Response response = new Response();
+    public Result delete(@RequestParam("url") String url) {
+        Result response = new Result();
         url = url.replaceFirst("/upload", "");
         File file = new File(path, url);
         if (file.exists()) {
             file.delete();
-            response.setStatus(Response.SUCCESS);
+            response.setStatus(Result.SUCCESS);
             response.setMessage("图片删除成功");
         } else {
             throw new BusinessException("图片删除失败");

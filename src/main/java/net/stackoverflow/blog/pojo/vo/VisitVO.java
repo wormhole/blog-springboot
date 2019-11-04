@@ -1,16 +1,10 @@
-package net.stackoverflow.blog.pojo.dto;
+package net.stackoverflow.blog.pojo.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import java.io.Serializable;
 import java.util.Date;
 
-/**
- * 访问量VO类
- *
- * @author 凉衫薄
- */
-public class VisitDTO implements Serializable {
+public class VisitVO {
 
     private String id;
     private String url;

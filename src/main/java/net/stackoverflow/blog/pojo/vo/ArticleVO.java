@@ -1,4 +1,4 @@
-package net.stackoverflow.blog.pojo.dto;
+package net.stackoverflow.blog.pojo.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.hibernate.validator.constraints.Length;
@@ -7,42 +7,39 @@ import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 文章VO
+ * 文章VO类
  *
  * @author 凉衫薄
  */
-public class ArticleDTO implements Serializable {
+public class ArticleVO {
 
-    @NotNull(message = "缺少主键字段", groups = {UpdateGroup.class, DeleteGroup.class, VisibleGroup.class})
+    @NotNull(message = "缺少主键字段", groups = {ArticleVO.UpdateGroup.class, ArticleVO.DeleteGroup.class, ArticleVO.VisibleGroup.class})
     private String id;
 
-    private String userId;
-
-    @NotNull(message = "缺少标题字段", groups = {UpdateGroup.class, InsertGroup.class})
-    @Length(min = 1, max = 100, message = "标题长度只能在1到100之内", groups = {UpdateGroup.class, InsertGroup.class})
+    @NotNull(message = "缺少标题字段", groups = {ArticleVO.UpdateGroup.class, ArticleVO.InsertGroup.class})
+    @Length(min = 1, max = 100, message = "标题长度只能在1到100之内", groups = {ArticleVO.UpdateGroup.class, ArticleVO.InsertGroup.class})
     private String title;
 
-    @NotNull(message = "缺少文章md字段", groups = {UpdateGroup.class, InsertGroup.class})
-    @Length(min = 1, message = "文章长度要大于等于1", groups = {UpdateGroup.class, InsertGroup.class})
+    @NotNull(message = "缺少文章md字段", groups = {ArticleVO.UpdateGroup.class, ArticleVO.InsertGroup.class})
+    @Length(min = 1, message = "文章长度要大于等于1", groups = {ArticleVO.UpdateGroup.class, ArticleVO.InsertGroup.class})
     private String articleMd;
 
-    @NotNull(message = "缺少文章html字段", groups = {UpdateGroup.class, InsertGroup.class})
-    @Length(min = 1, message = "文章长度要大于等于1", groups = {UpdateGroup.class, InsertGroup.class})
+    @NotNull(message = "缺少文章html字段", groups = {ArticleVO.UpdateGroup.class, ArticleVO.InsertGroup.class})
+    @Length(min = 1, message = "文章长度要大于等于1", groups = {ArticleVO.UpdateGroup.class, ArticleVO.InsertGroup.class})
     private String articleHtml;
 
-    @NotNull(message = "缺少分类字段", groups = {UpdateGroup.class, InsertGroup.class})
+    @NotNull(message = "缺少分类字段", groups = {ArticleVO.UpdateGroup.class, ArticleVO.InsertGroup.class})
     private String categoryId;
 
-    @NotNull(message = "缺少可视化标志字段", groups = {VisibleGroup.class})
-    @DecimalMax(value = "1", message = "可视化标志只能为1或0", groups = {VisibleGroup.class})
-    @DecimalMin(value = "0", message = "可视化标志只能为1或0", groups = {VisibleGroup.class})
+    @NotNull(message = "缺少可视化标志字段", groups = {ArticleVO.VisibleGroup.class})
+    @DecimalMax(value = "1", message = "可视化标志只能为1或0", groups = {ArticleVO.VisibleGroup.class})
+    @DecimalMin(value = "0", message = "可视化标志只能为1或0", groups = {ArticleVO.VisibleGroup.class})
     private Integer visible;
 
-    @NotNull(message = "缺少url字段", groups = {LikeGroup.class})
+    @NotNull(message = "缺少url字段", groups = {ArticleVO.LikeGroup.class})
     private String url;
 
     private Date createDate;
@@ -51,9 +48,9 @@ public class ArticleDTO implements Serializable {
     private Integer likes;
 
     //以下为扩展字段
-    @NotNull(message = "缺少文章编码字段", groups = {UpdateGroup.class, InsertGroup.class})
-    @Length(min = 1, max = 100, message = "编码长度只能在1到100之间", groups = {UpdateGroup.class, InsertGroup.class})
-    @Pattern(regexp = "^[a-zA-Z0-9_]+$", message = "编码只能为字母数字下划线", groups = {UpdateGroup.class, InsertGroup.class})
+    @NotNull(message = "缺少文章编码字段", groups = {ArticleVO.UpdateGroup.class, ArticleVO.InsertGroup.class})
+    @Length(min = 1, max = 100, message = "编码长度只能在1到100之间", groups = {ArticleVO.UpdateGroup.class, ArticleVO.InsertGroup.class})
+    @Pattern(regexp = "^[a-zA-Z0-9_]+$", message = "编码只能为字母数字下划线", groups = {ArticleVO.UpdateGroup.class, ArticleVO.InsertGroup.class})
     private String articleCode;
 
     private String preview;
@@ -83,14 +80,6 @@ public class ArticleDTO implements Serializable {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
     }
 
     public String getTitle() {

@@ -2,7 +2,7 @@ package net.stackoverflow.blog.service;
 
 import net.stackoverflow.blog.common.Page;
 import net.stackoverflow.blog.dao.SettingDao;
-import net.stackoverflow.blog.pojo.po.SettingPO;
+import net.stackoverflow.blog.pojo.entity.Setting;
 import net.stackoverflow.blog.util.CollectionUtils;
 import net.stackoverflow.blog.util.RedisCacheUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ public class SettingServiceImpl implements SettingService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<SettingPO> selectByPage(Page page) {
+    public List<Setting> selectByPage(Page page) {
         return dao.selectByPage(page);
     }
 
@@ -44,7 +44,7 @@ public class SettingServiceImpl implements SettingService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<SettingPO> selectByCondition(Map<String, Object> searchMap) {
+    public List<Setting> selectByCondition(Map<String, Object> searchMap) {
         return dao.selectByCondition(searchMap);
     }
 
@@ -56,8 +56,8 @@ public class SettingServiceImpl implements SettingService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public SettingPO selectById(String id) {
-        SettingPO settingPO = (SettingPO) RedisCacheUtils.get("setting:" + id);
+    public Setting selectById(String id) {
+        Setting settingPO = (Setting) RedisCacheUtils.get("setting:" + id);
         if (settingPO != null) {
             return settingPO;
         } else {
@@ -77,7 +77,7 @@ public class SettingServiceImpl implements SettingService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public SettingPO insert(SettingPO settingPO) {
+    public Setting insert(Setting settingPO) {
         dao.insert(settingPO);
         RedisCacheUtils.set("setting:" + settingPO.getId(), settingPO);
         return settingPO;
@@ -91,7 +91,7 @@ public class SettingServiceImpl implements SettingService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchInsert(List<SettingPO> settingPOs) {
+    public int batchInsert(List<Setting> settingPOs) {
         return dao.batchInsert(settingPOs);
     }
 
@@ -103,8 +103,8 @@ public class SettingServiceImpl implements SettingService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public SettingPO deleteById(String id) {
-        SettingPO settingPO = dao.selectById(id);
+    public Setting deleteById(String id) {
+        Setting settingPO = dao.selectById(id);
         dao.deleteById(id);
         RedisCacheUtils.del("setting:" + id);
         return settingPO;
@@ -134,9 +134,9 @@ public class SettingServiceImpl implements SettingService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public SettingPO update(SettingPO settingPO) {
+    public Setting update(Setting settingPO) {
         dao.update(settingPO);
-        List<SettingPO> settingPOs = dao.selectByCondition(new HashMap<String, Object>() {{
+        List<Setting> settingPOs = dao.selectByCondition(new HashMap<String, Object>() {{
             put("name", settingPO.getName());
         }});
         if (!CollectionUtils.isEmpty(settingPOs)) {
@@ -155,10 +155,10 @@ public class SettingServiceImpl implements SettingService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchUpdate(List<SettingPO> settingPOs) {
+    public int batchUpdate(List<Setting> settingPOs) {
         int result = dao.batchUpdate(settingPOs);
-        for (SettingPO settingPO : settingPOs) {
-            List<SettingPO> settingPOList = dao.selectByCondition(new HashMap<String, Object>() {{
+        for (Setting settingPO : settingPOs) {
+            List<Setting> settingPOList = dao.selectByCondition(new HashMap<String, Object>() {{
                 put("name", settingPO.getName());
             }});
             if (!CollectionUtils.isEmpty(settingPOList)) {

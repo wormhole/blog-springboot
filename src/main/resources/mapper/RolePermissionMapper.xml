@@ -5,13 +5,13 @@
 
 <mapper namespace="net.stackoverflow.blog.dao.RolePermissionDao">
 
-    <resultMap id="rolePermissionMap" type="rolePermissionPO">
+    <resultMap id="rolePermissionMap" type="rolePermission">
         <id property="id" column="id"></id>
         <result property="roleId" column="roleid"></result>
         <result property="permissionId" column="permissionid"></result>
     </resultMap>
 
-    <select id="selectByPage" resultMap="rolePermissionMap" resultType="rolePermissionPO">
+    <select id="selectByPage" resultMap="rolePermissionMap" resultType="rolePermission">
         select * from role_permission
         <where>
             <if test="searchMap != null">
@@ -26,7 +26,7 @@
         limit #{start},#{limit}
     </select>
 
-    <select id="selectByCondition" resultMap="rolePermissionMap" resultType="rolePermissionPO">
+    <select id="selectByCondition" resultMap="rolePermissionMap" resultType="rolePermission">
         select * from role_permission
         <where>
             <if test="roleId != null">
@@ -38,11 +38,11 @@
         </where>
     </select>
 
-    <select id="selectById" resultMap="rolePermissionMap" resultType="rolePermissionPO">
+    <select id="selectById" resultMap="rolePermissionMap" resultType="rolePermission">
         select * from role_permission where id = #{id}
     </select>
 
-    <insert id="insert" parameterType="rolePermissionPO" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insert" parameterType="rolePermission" useGeneratedKeys="true" keyProperty="id">
         <selectKey keyProperty="id" resultType="string" order="BEFORE">
             select uuid()
         </selectKey>
@@ -69,7 +69,7 @@
         </foreach>
     </delete>
 
-    <update id="update" parameterType="rolePermissionPO">
+    <update id="update" parameterType="rolePermission">
         update role_permission
         <set>
             <if test="roleId != null">

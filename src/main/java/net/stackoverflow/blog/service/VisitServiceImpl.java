@@ -2,7 +2,7 @@ package net.stackoverflow.blog.service;
 
 import net.stackoverflow.blog.common.Page;
 import net.stackoverflow.blog.dao.VisitDao;
-import net.stackoverflow.blog.pojo.po.VisitPO;
+import net.stackoverflow.blog.pojo.entity.Visit;
 import net.stackoverflow.blog.util.RedisCacheUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,7 +31,7 @@ public class VisitServiceImpl implements VisitService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<VisitPO> selectByPage(Page page) {
+    public List<Visit> selectByPage(Page page) {
         return dao.selectByPage(page);
     }
 
@@ -43,7 +43,7 @@ public class VisitServiceImpl implements VisitService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<VisitPO> selectByCondition(Map<String, Object> searchMap) {
+    public List<Visit> selectByCondition(Map<String, Object> searchMap) {
         return dao.selectByCondition(searchMap);
     }
 
@@ -55,8 +55,8 @@ public class VisitServiceImpl implements VisitService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public VisitPO selectById(String id) {
-        VisitPO visitPO = (VisitPO) RedisCacheUtils.get("visit:" + id);
+    public Visit selectById(String id) {
+        Visit visitPO = (Visit) RedisCacheUtils.get("visit:" + id);
         if (visitPO != null) {
             return visitPO;
         } else {
@@ -76,7 +76,7 @@ public class VisitServiceImpl implements VisitService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public VisitPO insert(VisitPO visitPO) {
+    public Visit insert(Visit visitPO) {
         dao.insert(visitPO);
         RedisCacheUtils.set("visit:" + visitPO.getId(), visitPO);
         return visitPO;
@@ -90,7 +90,7 @@ public class VisitServiceImpl implements VisitService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchInsert(List<VisitPO> visitPOs) {
+    public int batchInsert(List<Visit> visitPOs) {
         return dao.batchInsert(visitPOs);
     }
 
@@ -102,8 +102,8 @@ public class VisitServiceImpl implements VisitService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public VisitPO deleteById(String id) {
-        VisitPO visitPO = dao.selectById(id);
+    public Visit deleteById(String id) {
+        Visit visitPO = dao.selectById(id);
         dao.deleteById(id);
         RedisCacheUtils.del("visit:" + id);
         return visitPO;
@@ -133,9 +133,9 @@ public class VisitServiceImpl implements VisitService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public VisitPO update(VisitPO visitPO) {
+    public Visit update(Visit visitPO) {
         dao.update(visitPO);
-        VisitPO newVisitPO = dao.selectById(visitPO.getId());
+        Visit newVisitPO = dao.selectById(visitPO.getId());
         RedisCacheUtils.set("visit:" + visitPO.getId(), newVisitPO);
         return newVisitPO;
     }
@@ -148,9 +148,9 @@ public class VisitServiceImpl implements VisitService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchUpdate(List<VisitPO> visitPOs) {
+    public int batchUpdate(List<Visit> visitPOs) {
         int result = dao.batchUpdate(visitPOs);
-        for (VisitPO visitPO : visitPOs) {
+        for (Visit visitPO : visitPOs) {
             RedisCacheUtils.del("visit:" + visitPO.getId());
         }
         return result;
@@ -165,7 +165,7 @@ public class VisitServiceImpl implements VisitService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<VisitPO> selectByDate(Date startDate, Date endDate) {
+    public List<Visit> selectByDate(Date startDate, Date endDate) {
         return dao.selectByDate(startDate, endDate);
     }
 

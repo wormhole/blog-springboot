@@ -39,13 +39,7 @@ $(function () {
             data['replyTo'] = viewModel.replyRef();
         }
 
-        var param = {
-            data: {
-                comment: [data]
-            }
-        };
-
-        commentAjax(param);
+        commentAjax(data);
     });
 });
 
@@ -103,15 +97,10 @@ function likeAjax(url) {
     var data = {
         url: url
     };
-    var param = {
-        data: {
-            article: [data]
-        }
-    };
     $.ajax({
         url: "/like",
         type: "post",
-        data: JSON.stringify(param),
+        data: JSON.stringify(data),
         dataType: "json",
         contentType: "application/json; charset=utf-8",
         success: function (response) {

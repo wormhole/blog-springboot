@@ -1,8 +1,8 @@
 package net.stackoverflow.blog.web.controller.front;
 
 import net.stackoverflow.blog.common.Page;
-import net.stackoverflow.blog.pojo.dto.ArticleDTO;
-import net.stackoverflow.blog.pojo.po.ArticlePO;
+import net.stackoverflow.blog.pojo.entity.Article;
+import net.stackoverflow.blog.pojo.vo.ArticleVO;
 import net.stackoverflow.blog.service.ArticleService;
 import net.stackoverflow.blog.service.CategoryService;
 import net.stackoverflow.blog.service.CommentService;
@@ -49,7 +49,7 @@ public class IndexPageController {
      * @param request HttpServletRequest对象
      * @return 返回ModelAndView对象
      */
-    @RequestMapping(value = "/index", method = RequestMethod.GET)
+    @RequestMapping(value = {"/index", "/"}, method = RequestMethod.GET)
     public ModelAndView index(@RequestParam(value = "page", required = false, defaultValue = "1") String page, HttpServletRequest request) {
         ModelAndView mv = new ModelAndView();
         ServletContext application = request.getServletContext();
@@ -88,22 +88,22 @@ public class IndexPageController {
         pageParam.setSearchMap(new HashMap<String, Object>() {{
             put("visible", 1);
         }});
-        List<ArticlePO> articlePOs = articleService.selectByPage(pageParam);
-        List<ArticleDTO> articleDTOs = new ArrayList<>();
-        for (ArticlePO article : articlePOs) {
-            ArticleDTO dto = new ArticleDTO();
-            BeanUtils.copyProperties(article, dto);
-            dto.setTitle(HtmlUtils.htmlEscape(article.getTitle()));
-            dto.setAuthor(HtmlUtils.htmlEscape(userService.selectById(article.getUserId()).getNickname()));
-            dto.setCategoryName(categoryService.selectById(article.getCategoryId()).getName());
-            dto.setCommentCount(commentService.selectByCondition(new HashMap<String, Object>() {{
+        List<Article> articles = articleService.selectByPage(pageParam);
+        List<ArticleVO> articleVOs = new ArrayList<>();
+        for (Article article : articles) {
+            ArticleVO vo = new ArticleVO();
+            BeanUtils.copyProperties(article, vo);
+            vo.setTitle(HtmlUtils.htmlEscape(article.getTitle()));
+            vo.setAuthor(HtmlUtils.htmlEscape(userService.selectById(article.getUserId()).getNickname()));
+            vo.setCategoryName(categoryService.selectById(article.getCategoryId()).getName());
+            vo.setCommentCount(commentService.selectByCondition(new HashMap<String, Object>() {{
                 put("articleId", article.getId());
             }}).size());
-            dto.setPreview(HtmlUtils.htmlEscape(Jsoup.parse(article.getArticleHtml()).text()));
-            articleDTOs.add(dto);
+            vo.setPreview(HtmlUtils.htmlEscape(Jsoup.parse(article.getArticleHtml()).text()));
+            articleVOs.add(vo);
         }
 
-        mv.addObject("articleList", articleDTOs);
+        mv.addObject("articleList", articleVOs);
         mv.addObject("start", start);
         mv.addObject("end", end);
         mv.addObject("page", p);
@@ -115,17 +115,5 @@ public class IndexPageController {
 
         mv.setViewName("/index");
         return mv;
-    }
-
-    /**
-     * 主页跳转
-     *
-     * @param page    页码参数
-     * @param request HttpServletRequest对象
-     * @return 返回ModelAndView
-     */
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ModelAndView root(@RequestParam(value = "page", required = false, defaultValue = "1") String page, HttpServletRequest request) {
-        return index(page, request);
     }
 }

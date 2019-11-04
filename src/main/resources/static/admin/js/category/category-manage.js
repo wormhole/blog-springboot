@@ -45,12 +45,8 @@ layui.use(['table', 'jquery', 'layer'], function () {
                     var data = {};
                     data['code'] = categoryCode;
                     data['name'] = categoryName;
-                    var param = {
-                        data: {
-                            category: [data]
-                        }
-                    };
-                    insertCategoryAjax(param);
+
+                    insertCategoryAjax(data);
                     layer.close(index);
 
                 }
@@ -65,9 +61,7 @@ layui.use(['table', 'jquery', 'layer'], function () {
         if (layEvent === 'del') {
             layer.confirm('确认删除该分类吗', function (index) {
                 var param = {
-                    data: {
-                        category: [{id: data.id}]
-                    }
+                    id: data.id
                 };
                 deleteCategoryAjax(param);
                 layer.close(index);
@@ -82,12 +76,7 @@ layui.use(['table', 'jquery', 'layer'], function () {
             code: obj.data.code,
             name: obj.data.name
         };
-        var param = {
-            data: {
-                category: [data]
-            }
-        };
-        updateCategoryAjax(param);
+        updateCategoryAjax(data);
 
     });
 

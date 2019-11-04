@@ -5,13 +5,13 @@
 
 <mapper namespace="net.stackoverflow.blog.dao.PermissionDao">
 
-    <resultMap id="permissionMap" type="permissionPO">
+    <resultMap id="permissionMap" type="permission">
         <id property="id" column="id"></id>
         <result property="name" column="name"></result>
         <result property="code" column="code"></result>
     </resultMap>
 
-    <select id="selectByPage" resultMap="permissionMap" resultType="permissionPO">
+    <select id="selectByPage" resultMap="permissionMap" resultType="permission">
         select * from permission
         <where>
             <if test="searchMap != null">
@@ -26,7 +26,7 @@
         order by lower(code) limit #{start},#{limit}
     </select>
 
-    <select id="selectByCondition" resultMap="permissionMap" resultType="permissionPO">
+    <select id="selectByCondition" resultMap="permissionMap" resultType="permission">
         select * from permission
         <where>
             <if test="name != null">
@@ -39,11 +39,11 @@
         order by lower(code)
     </select>
 
-    <select id="selectById" resultMap="permissionMap" resultType="permissionPO">
+    <select id="selectById" resultMap="permissionMap" resultType="permission">
         select * from permission where id = #{id}
     </select>
 
-    <insert id="insert" parameterType="permissionPO">
+    <insert id="insert" parameterType="permission">
         <selectKey keyProperty="id" resultType="string" order="BEFORE">
             select uuid()
         </selectKey>
@@ -70,7 +70,7 @@
         </foreach>
     </delete>
 
-    <update id="update" parameterType="permissionPO">
+    <update id="update" parameterType="permission">
         update permission
         <set>
             <if test="name != null">

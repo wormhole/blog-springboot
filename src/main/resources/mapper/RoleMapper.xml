@@ -5,13 +5,13 @@
 
 <mapper namespace="net.stackoverflow.blog.dao.RoleDao">
 
-    <resultMap id="roleMap" type="rolePO">
+    <resultMap id="roleMap" type="role">
         <id property="id" column="id"></id>
         <result property="name" column="name"></result>
         <result property="code" column="code"></result>
     </resultMap>
 
-    <select id="selectByPage" resultMap="roleMap" resultType="rolePO">
+    <select id="selectByPage" resultMap="roleMap" resultType="role">
         select * from role
         <where>
             <if test="searchMap != null">
@@ -26,7 +26,7 @@
         order by lower(code) limit #{start},#{limit}
     </select>
 
-    <select id="selectByCondition" resultMap="roleMap" resultType="rolePO">
+    <select id="selectByCondition" resultMap="roleMap" resultType="role">
         select * from role
         <where>
             <if test="name != null">
@@ -38,11 +38,11 @@
         </where>
     </select>
 
-    <select id="selectById" resultMap="roleMap" resultType="rolePO">
+    <select id="selectById" resultMap="roleMap" resultType="role">
         select * from role where id = #{id}
     </select>
 
-    <insert id="insert" parameterType="rolePO" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insert" parameterType="role" useGeneratedKeys="true" keyProperty="id">
         <selectKey keyProperty="id" resultType="string" order="BEFORE">
             select uuid()
         </selectKey>
@@ -69,7 +69,7 @@
         </foreach>
     </delete>
 
-    <update id="update" parameterType="rolePO">
+    <update id="update" parameterType="role">
         update role
         <set>
             <if test="name != null">

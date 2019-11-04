@@ -1,7 +1,7 @@
 package net.stackoverflow.blog.service;
 
 import net.stackoverflow.blog.common.Page;
-import net.stackoverflow.blog.pojo.po.VisitPO;
+import net.stackoverflow.blog.pojo.entity.Visit;
 
 import java.util.Date;
 import java.util.List;
@@ -14,24 +14,24 @@ import java.util.Map;
  */
 public interface VisitService {
 
-    List<VisitPO> selectByPage(Page page);
+    List<Visit> selectByPage(Page page);
 
-    List<VisitPO> selectByCondition(Map<String, Object> searchMap);
+    List<Visit> selectByCondition(Map<String, Object> searchMap);
 
-    VisitPO selectById(String id);
+    Visit selectById(String id);
 
-    VisitPO insert(VisitPO visitPO);
+    Visit insert(Visit visitPO);
 
-    int batchInsert(List<VisitPO> visitPOs);
+    int batchInsert(List<Visit> visitPOs);
 
-    VisitPO deleteById(String id);
+    Visit deleteById(String id);
 
     int batchDeleteById(List<String> ids);
 
-    VisitPO update(VisitPO visitPO);
+    Visit update(Visit visitPO);
 
-    int batchUpdate(List<VisitPO> visitPOs);
+    int batchUpdate(List<Visit> visitPOs);
 
-    List<VisitPO> selectByDate(Date startDate, Date endDate);
+    List<Visit> selectByDate(Date startDate, Date endDate);
 
 }

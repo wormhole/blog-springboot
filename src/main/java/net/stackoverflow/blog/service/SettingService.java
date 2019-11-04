@@ -1,7 +1,7 @@
 package net.stackoverflow.blog.service;
 
 import net.stackoverflow.blog.common.Page;
-import net.stackoverflow.blog.pojo.po.SettingPO;
+import net.stackoverflow.blog.pojo.entity.Setting;
 
 import java.util.List;
 import java.util.Map;
@@ -13,22 +13,22 @@ import java.util.Map;
  */
 public interface SettingService {
 
-    List<SettingPO> selectByPage(Page page);
+    List<Setting> selectByPage(Page page);
 
-    List<SettingPO> selectByCondition(Map<String, Object> searchMap);
+    List<Setting> selectByCondition(Map<String, Object> searchMap);
 
-    SettingPO selectById(String id);
+    Setting selectById(String id);
 
-    SettingPO insert(SettingPO settingPO);
+    Setting insert(Setting settingPO);
 
-    int batchInsert(List<SettingPO> settingPOs);
+    int batchInsert(List<Setting> settingPOs);
 
-    SettingPO deleteById(String id);
+    Setting deleteById(String id);
 
     int batchDeleteById(List<String> ids);
 
-    SettingPO update(SettingPO settingPO);
+    Setting update(Setting settingPO);
 
-    int batchUpdate(List<SettingPO> settingPOs);
+    int batchUpdate(List<Setting> settingPOs);
 
 }

@@ -126,20 +126,10 @@ layui.use(['form', 'layer'], function () {
         };
 
         if (id == null) {
-            var param = {
-                data: {
-                    article: [data]
-                }
-            };
-            saveArticleAjax(param);
+            saveArticleAjax(data);
         } else {
             data['id'] = id;
-            var param = {
-                data: {
-                    article: [data]
-                }
-            };
-            updateArticleAjax(param);
+            updateArticleAjax(data);
         }
     });
 });

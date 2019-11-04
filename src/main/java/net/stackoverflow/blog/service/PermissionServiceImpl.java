@@ -2,7 +2,7 @@ package net.stackoverflow.blog.service;
 
 import net.stackoverflow.blog.common.Page;
 import net.stackoverflow.blog.dao.PermissionDao;
-import net.stackoverflow.blog.pojo.po.PermissionPO;
+import net.stackoverflow.blog.pojo.entity.Permission;
 import net.stackoverflow.blog.util.RedisCacheUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ public class PermissionServiceImpl implements PermissionService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<PermissionPO> selectByPage(Page page) {
+    public List<Permission> selectByPage(Page page) {
         return dao.selectByPage(page);
     }
 
@@ -42,7 +42,7 @@ public class PermissionServiceImpl implements PermissionService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<PermissionPO> selectByCondition(Map<String, Object> searchMap) {
+    public List<Permission> selectByCondition(Map<String, Object> searchMap) {
         return dao.selectByCondition(searchMap);
     }
 
@@ -54,8 +54,8 @@ public class PermissionServiceImpl implements PermissionService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PermissionPO selectById(String id) {
-        PermissionPO permissionPO = (PermissionPO) RedisCacheUtils.get("permission:" + id);
+    public Permission selectById(String id) {
+        Permission permissionPO = (Permission) RedisCacheUtils.get("permission:" + id);
         if (permissionPO != null) {
             return permissionPO;
         } else {
@@ -75,7 +75,7 @@ public class PermissionServiceImpl implements PermissionService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PermissionPO insert(PermissionPO permissionPO) {
+    public Permission insert(Permission permissionPO) {
         dao.insert(permissionPO);
         RedisCacheUtils.set("permission:" + permissionPO.getId(), permissionPO);
         return permissionPO;
@@ -89,7 +89,7 @@ public class PermissionServiceImpl implements PermissionService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchInsert(List<PermissionPO> permissionPOs) {
+    public int batchInsert(List<Permission> permissionPOs) {
         return dao.batchInsert(permissionPOs);
     }
 
@@ -101,8 +101,8 @@ public class PermissionServiceImpl implements PermissionService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PermissionPO deleteById(String id) {
-        PermissionPO permissionPO = dao.selectById(id);
+    public Permission deleteById(String id) {
+        Permission permissionPO = dao.selectById(id);
         dao.deleteById(id);
         RedisCacheUtils.del("permission:" + id);
         return permissionPO;
@@ -132,9 +132,9 @@ public class PermissionServiceImpl implements PermissionService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PermissionPO update(PermissionPO permissionPO) {
+    public Permission update(Permission permissionPO) {
         dao.update(permissionPO);
-        PermissionPO newPermissionPO = dao.selectById(permissionPO.getId());
+        Permission newPermissionPO = dao.selectById(permissionPO.getId());
         RedisCacheUtils.set("permission" + newPermissionPO.getId(), newPermissionPO);
         return newPermissionPO;
     }
@@ -147,9 +147,9 @@ public class PermissionServiceImpl implements PermissionService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchUpdate(List<PermissionPO> permissionPOs) {
+    public int batchUpdate(List<Permission> permissionPOs) {
         int result = dao.batchUpdate(permissionPOs);
-        for (PermissionPO permissionPO : permissionPOs) {
+        for (Permission permissionPO : permissionPOs) {
             RedisCacheUtils.del("permission:" + permissionPO.getId());
         }
         return result;

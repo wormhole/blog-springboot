@@ -1,10 +1,10 @@
 package net.stackoverflow.blog.web.controller.front;
 
 import net.stackoverflow.blog.common.Page;
-import net.stackoverflow.blog.pojo.dto.ArticleDTO;
-import net.stackoverflow.blog.pojo.dto.CategoryDTO;
-import net.stackoverflow.blog.pojo.po.ArticlePO;
-import net.stackoverflow.blog.pojo.po.CategoryPO;
+import net.stackoverflow.blog.pojo.entity.Article;
+import net.stackoverflow.blog.pojo.entity.Category;
+import net.stackoverflow.blog.pojo.vo.ArticleVO;
+import net.stackoverflow.blog.pojo.vo.CategoryVO;
 import net.stackoverflow.blog.service.ArticleService;
 import net.stackoverflow.blog.service.CategoryService;
 import net.stackoverflow.blog.service.CommentService;
@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 分类页面跳转
+ * 分类页面Controller
  *
  * @author 凉衫薄
  */
@@ -54,20 +54,20 @@ public class CategoryPageController {
     public ModelAndView categoryPage() {
         ModelAndView mv = new ModelAndView();
 
-        //查询所有分类，并放入dto
-        List<CategoryPO> categoryPOs = categoryService.selectByCondition(new HashMap<>());
-        List<CategoryDTO> categoryDTOs = new ArrayList<>();
-        for (CategoryPO categoryPO : categoryPOs) {
-            CategoryDTO categoryDTO = new CategoryDTO();
-            BeanUtils.copyProperties(categoryPO, categoryDTO);
-            categoryDTO.setArticleCount(articleService.selectByCondition(new HashMap<String, Object>() {{
+        //查询所有分类，并放入VO
+        List<Category> categorys = categoryService.selectByCondition(new HashMap<>());
+        List<CategoryVO> categoryVOs = new ArrayList<>();
+        for (Category category : categorys) {
+            CategoryVO categoryVO = new CategoryVO();
+            BeanUtils.copyProperties(category, categoryVO);
+            categoryVO.setArticleCount(articleService.selectByCondition(new HashMap<String, Object>() {{
                 put("visible", 1);
-                put("categoryId", categoryPO.getId());
+                put("categoryId", category.getId());
             }}).size());
-            categoryDTOs.add(categoryDTO);
+            categoryVOs.add(categoryVO);
         }
 
-        mv.addObject("categoryList", categoryDTOs);
+        mv.addObject("categoryList", categoryVOs);
         mv.addObject("select", "/category");
         mv.setViewName("/category");
         return mv;
@@ -88,15 +88,15 @@ public class CategoryPageController {
         Map<String, Object> settingMap = (Map<String, Object>) application.getAttribute("setting");
         int limit = Integer.valueOf((String) settingMap.get("limit"));
 
-        List<CategoryPO> categoryPOs = categoryService.selectByCondition(new HashMap<String, Object>() {{
+        List<Category> categorys = categoryService.selectByCondition(new HashMap<String, Object>() {{
             put("code", categoryCode);
         }});
         //如果查找到有该分类，则获取所有该分类文章，否则返回404
-        if (categoryPOs.size() != 0) {
-            CategoryPO categoryPO = categoryPOs.get(0);
+        if (categorys.size() != 0) {
+            Category category = categorys.get(0);
             int count = articleService.selectByCondition(new HashMap<String, Object>() {{
                 put("visible", 1);
-                put("categoryId", categoryPO.getId());
+                put("categoryId", category.getId());
             }}).size();
             int pageCount = (count % limit == 0) ? count / limit : count / limit + 1;
             pageCount = pageCount == 0 ? 1 : pageCount;
@@ -122,36 +122,36 @@ public class CategoryPageController {
                 start = (end - 4 < 1) ? 1 : end - 4;
             }
 
-            //查询该分类的所有文章，并放入dto
+            //查询该分类的所有文章，并放入VO
             Page pageParam = new Page(p, limit, null);
-            pageParam.setSearchMap(new HashMap<String, Object>() {{
+            pageParam.setSearchMap(new HashMap<String, Object>(2) {{
                 put("visible", 1);
-                put("categoryId", categoryPO.getId());
+                put("categoryId", category.getId());
             }});
-            List<ArticlePO> articlePOs = articleService.selectByPage(pageParam);
-            List<ArticleDTO> articleDTOs = new ArrayList<>();
-            for (ArticlePO articlePO : articlePOs) {
-                ArticleDTO articleDTO = new ArticleDTO();
-                BeanUtils.copyProperties(articlePO, articleDTO);
-                articleDTO.setTitle(HtmlUtils.htmlEscape(articlePO.getTitle()));
-                articleDTO.setAuthor(HtmlUtils.htmlEscape(userService.selectById(articlePO.getUserId()).getNickname()));
-                articleDTO.setCategoryName(categoryService.selectById(articlePO.getCategoryId()).getName());
-                articleDTO.setCommentCount(commentService.selectByCondition(new HashMap<String, Object>() {{
-                    put("articleId", articlePO.getId());
+            List<Article> articles = articleService.selectByPage(pageParam);
+            List<ArticleVO> articleVOs = new ArrayList<>();
+            for (Article article : articles) {
+                ArticleVO articleVO = new ArticleVO();
+                BeanUtils.copyProperties(article, articleVO);
+                articleVO.setTitle(HtmlUtils.htmlEscape(article.getTitle()));
+                articleVO.setAuthor(HtmlUtils.htmlEscape(userService.selectById(article.getUserId()).getNickname()));
+                articleVO.setCategoryName(categoryService.selectById(article.getCategoryId()).getName());
+                articleVO.setCommentCount(commentService.selectByCondition(new HashMap<String, Object>() {{
+                    put("articleId", article.getId());
                 }}).size());
-                articleDTO.setPreview(Jsoup.parse(articlePO.getArticleHtml()).text());
-                articleDTOs.add(articleDTO);
+                articleVO.setPreview(Jsoup.parse(article.getArticleHtml()).text());
+                articleVOs.add(articleVO);
             }
 
             //设置Model
-            mv.addObject("articleList", articleDTOs);
+            mv.addObject("articleList", articleVOs);
             mv.addObject("start", start);
             mv.addObject("end", end);
             mv.addObject("page", p);
             mv.addObject("pageCount", pageCount);
             mv.addObject("path", "/category/" + categoryCode);
             mv.addObject("select", "/category");
-            mv.addObject("header", categoryPO.getName());
+            mv.addObject("header", category.getName());
             mv.addObject("index", false);
             mv.setViewName("/index");
         } else {

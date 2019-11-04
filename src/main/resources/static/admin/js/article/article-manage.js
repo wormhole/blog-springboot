@@ -42,22 +42,14 @@ layui.use(['table', 'jquery', 'layer'], function () {
 
         if (layEvent === 'show') {
             var param = {
-                data: {
-                    article: [{
-                        id: data.id,
-                        visible: 1
-                    }]
-                }
+                id: data.id,
+                visible: 1
             };
             showHiddenAjax(param);
         } else if (layEvent === 'hidden') {
             var param = {
-                data: {
-                    article: [{
-                        id: data.id,
-                        visible: 0
-                    }]
-                }
+                id: data.id,
+                visible: 0
             };
             showHiddenAjax(param);
         } else if (layEvent === 'export') {
@@ -128,12 +120,7 @@ layui.use(['table', 'jquery', 'layer'], function () {
                         };
                         data.push(item);
                     }
-                    var param = {
-                        data: {
-                            article: data
-                        }
-                    };
-                    deleteArticleAjax(param);
+                    deleteArticleAjax(data);
                     layer.close(index);
                 });
             }

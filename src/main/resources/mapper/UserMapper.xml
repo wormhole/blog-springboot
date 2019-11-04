@@ -5,7 +5,7 @@
 
 <mapper namespace="net.stackoverflow.blog.dao.UserDao">
 
-    <resultMap id="userMap" type="userPO">
+    <resultMap id="userMap" type="user">
         <id property="id" column="id"></id>
         <result property="email" column="email"></result>
         <result property="nickname" column="nickname"></result>
@@ -14,7 +14,7 @@
         <result property="deleteAble" column="deleteable"></result>
     </resultMap>
 
-    <select id="selectByPage" resultMap="userMap" resultType="userPO">
+    <select id="selectByPage" resultMap="userMap" resultType="user">
         select * from user
         <where>
             <if test="searchMap != null">
@@ -38,7 +38,7 @@
         order by lower(nickname) limit #{start},#{limit}
     </select>
 
-    <select id="selectByCondition" resultMap="userMap" resultType="userPO">
+    <select id="selectByCondition" resultMap="userMap" resultType="user">
         select * from user
         <where>
             <if test="email != null">
@@ -60,11 +60,11 @@
         order by lower(nickname)
     </select>
 
-    <select id="selectById" resultMap="userMap" resultType="userPO">
+    <select id="selectById" resultMap="userMap" resultType="user">
         select * from user where id = #{id}
     </select>
 
-    <insert id="insert" parameterType="userPO">
+    <insert id="insert" parameterType="user">
         <selectKey keyProperty="id" resultType="string" order="BEFORE">
             select uuid()
         </selectKey>
@@ -91,7 +91,7 @@
         </foreach>
     </delete>
 
-    <update id="update" parameterType="userPO">
+    <update id="update" parameterType="user">
         update user
         <set>
             <if test="nickname!=null">

@@ -8,7 +8,7 @@ import lombok.Setter;
 import java.io.Serializable;
 
 /**
- * 响应信息
+ * 通用返回结果
  *
  * @author 凉衫薄
  */
@@ -16,7 +16,7 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Response implements Serializable {
+public class Result implements Serializable {
 
     public final static Integer SUCCESS = 0;
     public final static Integer FAILURE = 1;

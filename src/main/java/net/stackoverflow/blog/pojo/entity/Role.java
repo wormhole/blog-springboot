@@ -1,4 +1,4 @@
-package net.stackoverflow.blog.pojo.po;
+package net.stackoverflow.blog.pojo.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -6,23 +6,20 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
- * 分类实体类
+ * 角色实体类
  *
  * @author 凉衫薄
  */
-@Setter
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CategoryPO implements Serializable {
+public class Role implements Serializable {
 
     private String id;
     private String name;
     private String code;
-    private Integer deleteAble;
-    private Date date;
 
 }

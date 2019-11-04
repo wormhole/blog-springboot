@@ -1,7 +1,7 @@
 package net.stackoverflow.blog.dao;
 
 import net.stackoverflow.blog.common.Page;
-import net.stackoverflow.blog.pojo.po.VisitPO;
+import net.stackoverflow.blog.pojo.entity.Visit;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.Date;
@@ -16,24 +16,24 @@ import java.util.Map;
 @Mapper
 public interface VisitDao {
 
-    List<VisitPO> selectByPage(Page page);
+    List<Visit> selectByPage(Page page);
 
-    List<VisitPO> selectByCondition(Map<String, Object> searchMap);
+    List<Visit> selectByCondition(Map<String, Object> searchMap);
 
-    VisitPO selectById(String id);
+    Visit selectById(String id);
 
-    int insert(VisitPO visit);
+    int insert(Visit visit);
 
-    int batchInsert(List<VisitPO> list);
+    int batchInsert(List<Visit> list);
 
     int deleteById(String id);
 
     int batchDeleteById(List<String> list);
 
-    int update(VisitPO visit);
+    int update(Visit visit);
 
-    int batchUpdate(List<VisitPO> list);
+    int batchUpdate(List<Visit> list);
 
-    List<VisitPO> selectByDate(Date startDate, Date endDate);
+    List<Visit> selectByDate(Date startDate, Date endDate);
 
 }

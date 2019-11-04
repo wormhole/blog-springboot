@@ -1,6 +1,6 @@
 package net.stackoverflow.blog.web.listener;
 
-import net.stackoverflow.blog.pojo.po.MenuPO;
+import net.stackoverflow.blog.pojo.entity.Menu;
 import org.apache.ibatis.io.Resources;
 
 import javax.servlet.ServletContext;
@@ -54,11 +54,11 @@ public class InitListener implements ServletContextListener {
                 map.put(rs.getString("name"), rs.getObject("value"));
             }
 
-            List<MenuPO> list = new ArrayList<>();
+            List<Menu> list = new ArrayList<>();
             ps = conn.prepareStatement(sql2);
             rs = ps.executeQuery();
             while (rs.next()) {
-                MenuPO menu = new MenuPO();
+                Menu menu = new Menu();
                 menu.setId(rs.getString("id"));
                 menu.setName(rs.getString("name"));
                 menu.setUrl(rs.getString("url"));

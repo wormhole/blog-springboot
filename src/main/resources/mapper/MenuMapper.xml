@@ -5,7 +5,7 @@
 
 <mapper namespace="net.stackoverflow.blog.dao.MenuDao">
 
-    <resultMap id="menuMap" type="menuPO">
+    <resultMap id="menuMap" type="menu">
         <id property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="url" column="url"/>
@@ -13,7 +13,7 @@
         <result property="date" column="date" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
     </resultMap>
 
-    <select id="selectByPage" resultMap="menuMap" resultType="menuPO">
+    <select id="selectByPage" resultMap="menuMap" resultType="menu">
         select * from menu
         <where>
             <if test="searchMap != null">
@@ -34,7 +34,7 @@
         order by date limit #{start},#{limit}
     </select>
 
-    <select id="selectByCondition" resultMap="menuMap" resultType="menuPO">
+    <select id="selectByCondition" resultMap="menuMap" resultType="menu">
         select * from menu
         <where>
             <if test="name != null">
@@ -53,11 +53,11 @@
         order by date
     </select>
 
-    <select id="selectById" resultMap="menuMap" resultType="menuPO">
+    <select id="selectById" resultMap="menuMap" resultType="menu">
         select * from menu where id = #{id}
     </select>
 
-    <insert id="insert" parameterType="menuPO">
+    <insert id="insert" parameterType="menu">
         <selectKey keyProperty="id" resultType="string" order="BEFORE">
             select uuid()
         </selectKey>
@@ -84,7 +84,7 @@
         </foreach>
     </delete>
 
-    <update id="update" parameterType="menuPO">
+    <update id="update" parameterType="menu">
         update menu
         <set>
             <if test="name != null">

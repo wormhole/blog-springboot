@@ -1,33 +1,36 @@
 package net.stackoverflow.blog.web.controller.admin.article;
 
 import net.stackoverflow.blog.common.BaseController;
-import net.stackoverflow.blog.common.BaseDTO;
-import net.stackoverflow.blog.common.Response;
+import net.stackoverflow.blog.common.Result;
 import net.stackoverflow.blog.exception.BusinessException;
-import net.stackoverflow.blog.pojo.dto.ArticleDTO;
-import net.stackoverflow.blog.pojo.po.ArticlePO;
-import net.stackoverflow.blog.pojo.po.CategoryPO;
-import net.stackoverflow.blog.pojo.po.UserPO;
+import net.stackoverflow.blog.pojo.entity.Article;
+import net.stackoverflow.blog.pojo.entity.Category;
+import net.stackoverflow.blog.pojo.entity.User;
+import net.stackoverflow.blog.pojo.vo.ArticleVO;
 import net.stackoverflow.blog.service.ArticleService;
 import net.stackoverflow.blog.service.CategoryService;
-import net.stackoverflow.blog.util.CollectionUtils;
 import net.stackoverflow.blog.util.DateUtils;
-import net.stackoverflow.blog.util.ValidationUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 文章编辑接口
@@ -42,8 +45,6 @@ public class EditorController extends BaseController {
     private ArticleService articleService;
     @Autowired
     private CategoryService categoryService;
-    @Autowired
-    private ValidatorFactory validatorFactory;
     @Value("${server.upload.path}")
     private String path;
 
@@ -78,75 +79,77 @@ public class EditorController extends BaseController {
     public ModelAndView article(@RequestParam(value = "id", required = false) String id) {
         ModelAndView mv = new ModelAndView();
 
-        List<CategoryPO> categoryPOs = categoryService.selectByCondition(new HashMap<>());
+        List<Category> categorys = categoryService.selectByCondition(new HashMap<>(16));
 
         //判断是否是从文章管理页面跳转过来的
         if (id != null) {
-            ArticlePO articlePO = articleService.selectById(id);
-            ArticleDTO articleDTO = new ArticleDTO();
-            BeanUtils.copyProperties(articlePO, articleDTO);
-            articleDTO.setArticleCode(urlToCode(articlePO.getUrl()));
-            mv.addObject("selected", articlePO.getCategoryId());
-            mv.addObject("article", articleDTO);
+            Article article = articleService.selectById(id);
+            ArticleVO articleVO = new ArticleVO();
+            BeanUtils.copyProperties(article, articleVO);
+            articleVO.setArticleCode(urlToCode(article.getUrl()));
+            mv.addObject("selected", article.getCategoryId());
+            mv.addObject("article", articleVO);
         } else {
-            mv.addObject("selected", categoryService.selectByCondition(new HashMap<String, Object>() {{
+            mv.addObject("selected", categoryService.selectByCondition(new HashMap<String, Object>(16) {{
                 put("code", "uncategory");
             }}).get(0).getId());
         }
 
-        mv.addObject("categoryList", categoryPOs);
+        mv.addObject("categoryList", categorys);
         mv.setViewName("/admin/article/article-edit");
 
         return mv;
     }
 
     /**
-     * 保存文章
+     * 保存文章接口
      *
-     * @param dto     公共dto参数
-     * @param session 会话对象
-     * @return 返回Response对象
+     * @param articleVO
+     * @param errors
+     * @param session
+     * @return
      */
     @RequestMapping(value = "/insert", method = RequestMethod.POST)
     @ResponseBody
-    public Response save(@RequestBody BaseDTO dto, HttpSession session) {
-        Response response = new Response();
+    public ResponseEntity save(@Validated(ArticleVO.InsertGroup.class) @RequestBody ArticleVO articleVO, Errors errors, HttpSession session) {
 
-        //从公共dto中提取articleDTO对象
-        List<ArticleDTO> articleDTOs = (List<ArticleDTO>) (Object) getDTO("article", ArticleDTO.class, dto);
-        if (CollectionUtils.isEmpty(articleDTOs)) {
-            throw new BusinessException("找不到请求数据");
-        }
-        ArticleDTO articleDTO = articleDTOs.get(0);
-
-        //校验字段
-        Validator validator = validatorFactory.getValidator();
-        Set<ConstraintViolation<ArticleDTO>> violations = validator.validate(articleDTO, ArticleDTO.InsertGroup.class);
-        Map<String, String> map = ValidationUtils.errorMap(violations);
-        if (!CollectionUtils.isEmpty(map)) {
-            throw new BusinessException("字段格式错误", map);
+        //校验数据
+        if (errors.hasErrors()) {
+            Map<String, String> errMap = new HashMap<>(16);
+            List<ObjectError> oes = errors.getAllErrors();
+            for (ObjectError oe : oes) {
+                if (oe instanceof FieldError) {
+                    FieldError fe = (FieldError) oe;
+                    errMap.put(fe.getField(), oe.getDefaultMessage());
+                } else {
+                    errMap.put(oe.getObjectName(), oe.getDefaultMessage());
+                }
+            }
+            throw new BusinessException("字段格式错误", errMap);
         }
 
         //检验url是否重复
-        articleDTO.setUrl(codeToUrl(articleDTO.getArticleCode()));
-        if (articleService.selectByUrl(articleDTO.getUrl()) != null) {
+        articleVO.setUrl(codeToUrl(articleVO.getArticleCode()));
+        if (articleService.selectByUrl(articleVO.getUrl()) != null) {
             throw new BusinessException("url重复");
         }
 
-        UserPO userPO = (UserPO) session.getAttribute("user");
-        ArticlePO article = new ArticlePO();
-        BeanUtils.copyProperties(articleDTO, article);
+        User user = (User) session.getAttribute("user");
+        Article article = new Article();
+        BeanUtils.copyProperties(articleVO, article);
         article.setCreateDate(new Date());
         article.setModifyDate(new Date());
-        article.setUserId(userPO.getId());
+        article.setUserId(user.getId());
         article.setHits(0);
         article.setLikes(0);
         article.setVisible(1);
         articleService.insert(article);
-        response.setStatus(Response.SUCCESS);
-        response.setMessage("保存成功");
 
-        return response;
+        Result result = new Result();
+        result.setStatus(Result.SUCCESS);
+        result.setMessage("保存成功");
+
+        return new ResponseEntity(result, HttpStatus.OK);
     }
 
     /**
@@ -157,7 +160,7 @@ public class EditorController extends BaseController {
      */
     @RequestMapping(value = "/image", method = RequestMethod.POST)
     @ResponseBody
-    public Map image(@RequestParam("editormd-image-file") MultipartFile multipartFile) {
+    public ResponseEntity image(@RequestParam("editormd-image-file") MultipartFile multipartFile) {
         Map<String, Object> result = new HashMap<>();
 
         String fileName = multipartFile.getOriginalFilename();
@@ -176,13 +179,13 @@ public class EditorController extends BaseController {
         } catch (IOException e) {
             result.put("success", 0);
             result.put("message", "上传失败");
-            return result;
+            return new ResponseEntity(result, HttpStatus.OK);
         }
 
         String url = "/upload" + dataPath + fileName;
         result.put("success", 1);
         result.put("message", "上传成功");
         result.put("url", url);
-        return result;
+        return new ResponseEntity(result, HttpStatus.OK);
     }
 }

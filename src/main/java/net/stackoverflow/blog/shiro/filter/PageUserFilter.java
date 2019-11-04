@@ -1,6 +1,6 @@
 package net.stackoverflow.blog.shiro.filter;
 
-import net.stackoverflow.blog.pojo.po.UserPO;
+import net.stackoverflow.blog.pojo.entity.User;
 import net.stackoverflow.blog.service.UserService;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authc.UserFilter;
@@ -37,7 +37,7 @@ public class PageUserFilter extends UserFilter {
         Subject subject = this.getSubject(request, response);
         if (subject.getPrincipal() != null) {
             String email = (String) subject.getPrincipal();
-            List<UserPO> users = userService.selectByCondition(new HashMap<String, Object>() {{
+            List<User> users = userService.selectByCondition(new HashMap<String, Object>() {{
                 put("email", email);
             }});
             if (users.size() != 0) {

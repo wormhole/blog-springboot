@@ -1,9 +1,9 @@
 package net.stackoverflow.blog.service;
 
 import net.stackoverflow.blog.common.Page;
-import net.stackoverflow.blog.pojo.po.PermissionPO;
-import net.stackoverflow.blog.pojo.po.RolePO;
-import net.stackoverflow.blog.pojo.po.RolePermissionPO;
+import net.stackoverflow.blog.pojo.entity.Permission;
+import net.stackoverflow.blog.pojo.entity.Role;
+import net.stackoverflow.blog.pojo.entity.RolePermission;
 
 import java.util.List;
 import java.util.Map;
@@ -15,28 +15,28 @@ import java.util.Map;
  */
 public interface RoleService {
 
-    List<RolePO> selectByPage(Page page);
+    List<Role> selectByPage(Page page);
 
-    List<RolePO> selectByCondition(Map<String, Object> searchMap);
+    List<Role> selectByCondition(Map<String, Object> searchMap);
 
-    RolePO selectById(String id);
+    Role selectById(String id);
 
-    RolePO insert(RolePO rolePO);
+    Role insert(Role rolePO);
 
-    int batchInsert(List<RolePO> rolePOs);
+    int batchInsert(List<Role> rolePOs);
 
-    RolePO deleteById(String id);
+    Role deleteById(String id);
 
     int batchDeleteById(List<String> ids);
 
-    RolePO update(RolePO rolePO);
+    Role update(Role rolePO);
 
-    int batchUpdate(List<RolePO> rolePOs);
+    int batchUpdate(List<Role> rolePOs);
 
-    RolePermissionPO grantPermission(String roleId, String permissionId);
+    RolePermission grantPermission(String roleId, String permissionId);
 
-    RolePermissionPO revokePermission(String roleId, String permissionId);
+    RolePermission revokePermission(String roleId, String permissionId);
 
-    List<PermissionPO> getPermissionByRoleId(String roleId);
+    List<Permission> getPermissionByRoleId(String roleId);
 
 }

@@ -1,24 +1,24 @@
 package net.stackoverflow.blog.web.controller.admin.category;
 
 import net.stackoverflow.blog.common.BaseController;
-import net.stackoverflow.blog.common.BaseDTO;
 import net.stackoverflow.blog.common.Page;
-import net.stackoverflow.blog.common.Response;
+import net.stackoverflow.blog.common.Result;
 import net.stackoverflow.blog.exception.BusinessException;
-import net.stackoverflow.blog.pojo.dto.CategoryDTO;
-import net.stackoverflow.blog.pojo.po.CategoryPO;
+import net.stackoverflow.blog.pojo.entity.Category;
+import net.stackoverflow.blog.pojo.vo.CategoryVO;
 import net.stackoverflow.blog.service.CategoryService;
-import net.stackoverflow.blog.util.CollectionUtils;
-import net.stackoverflow.blog.util.ValidationUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import java.util.*;
 
 /**
@@ -32,8 +32,6 @@ public class CategoryController extends BaseController {
 
     @Autowired
     private CategoryService categoryService;
-    @Autowired
-    private ValidatorFactory validatorFactory;
 
     /**
      * 分类管理页面跳转
@@ -48,53 +46,55 @@ public class CategoryController extends BaseController {
     }
 
     /**
-     * 新增分类
+     * 新增分类接口
      *
-     * @param dto 公共dto对象
-     * @return 返回Response对象
+     * @param categoryVO
+     * @param errors
+     * @return
      */
     @RequestMapping(value = "/insert", method = RequestMethod.POST)
     @ResponseBody
-    public Response insert(@RequestBody BaseDTO dto) {
-        Response response = new Response();
+    public ResponseEntity insert(@Validated(CategoryVO.InsertGroup.class) @RequestBody CategoryVO categoryVO, Errors errors) {
 
-        //从公共dto中提取categoryDTO对象
-        List<CategoryDTO> categoryDTOs = (List<CategoryDTO>) (Object) getDTO("category", CategoryDTO.class, dto);
-        if (CollectionUtils.isEmpty(categoryDTOs)) {
-            throw new BusinessException("找不到请求数据");
+        //校验数据
+        if (errors.hasErrors()) {
+            Map<String, String> errMap = new HashMap<>(16);
+            List<ObjectError> oes = errors.getAllErrors();
+            for (ObjectError oe : oes) {
+                if (oe instanceof FieldError) {
+                    FieldError fe = (FieldError) oe;
+                    errMap.put(fe.getField(), oe.getDefaultMessage());
+                } else {
+                    errMap.put(oe.getObjectName(), oe.getDefaultMessage());
+                }
+            }
+            throw new BusinessException("字段格式错误", errMap);
         }
-        CategoryDTO categoryDTO = categoryDTOs.get(0);
 
-        //校验字段
-        Validator validator = validatorFactory.getValidator();
-        Set<ConstraintViolation<CategoryDTO>> violations = validator.validate(categoryDTO, CategoryDTO.InsertGroup.class);
-        Map<String, String> map = ValidationUtils.errorMap(violations);
-        if (!CollectionUtils.isEmpty(map)) {
-            throw new BusinessException("字段格式错误", map);
-        }
-
-        CategoryPO categoryPO = new CategoryPO();
-        BeanUtils.copyProperties(categoryDTO, categoryPO);
+        Category category = new Category();
+        BeanUtils.copyProperties(categoryVO, category);
 
         //检验名称和编码是否已经存在
-        if (categoryService.selectByCondition(new HashMap<String, Object>() {{
-            put("name", categoryPO.getName());
+        if (categoryService.selectByCondition(new HashMap<String, Object>(16) {{
+            put("name", category.getName());
         }}).size() != 0) {
             throw new BusinessException("分类名已经存在");
         }
-        if (categoryService.selectByCondition(new HashMap<String, Object>() {{
-            put("code", categoryPO.getCode());
+        if (categoryService.selectByCondition(new HashMap<String, Object>(16) {{
+            put("code", category.getCode());
         }}).size() != 0) {
             throw new BusinessException("分类编码已经存在");
         }
 
-        categoryPO.setDate(new Date());
-        categoryPO.setDeleteAble(1);
-        categoryService.insert(categoryPO);
-        response.setStatus(Response.SUCCESS);
-        response.setMessage("分类添加成功");
+        category.setDate(new Date());
+        category.setDeleteAble(1);
+        categoryService.insert(category);
 
-        return response;
+        Result result = new Result();
+        result.setStatus(Result.SUCCESS);
+        result.setMessage("分类添加成功");
+
+        return new ResponseEntity(result, HttpStatus.OK);
     }
 
     /**
@@ -106,129 +106,128 @@ public class CategoryController extends BaseController {
      */
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @ResponseBody
-    public Response list(@RequestParam(value = "page") String page, @RequestParam(value = "limit") String limit) {
-        Response response = new Response();
+    public ResponseEntity list(@RequestParam(value = "page") String page, @RequestParam(value = "limit") String limit) {
 
         Page pageParam = new Page(Integer.valueOf(page), Integer.valueOf(limit), null);
-        List<CategoryPO> categoryPOs = categoryService.selectByPage(pageParam);
+        List<Category> categorys = categoryService.selectByPage(pageParam);
         int count = categoryService.selectByCondition(new HashMap<>()).size();
 
-        List<CategoryDTO> categoryDTOs = new ArrayList<>();
-        for (CategoryPO categoryPO : categoryPOs) {
-            CategoryDTO categoryDTO = new CategoryDTO();
-            BeanUtils.copyProperties(categoryPO, categoryDTO);
-            if (categoryPO.getDeleteAble() == 0) {
-                categoryDTO.setDeleteTag("否");
+        List<CategoryVO> categoryVOs = new ArrayList<>();
+        for (Category category : categorys) {
+            CategoryVO categoryVO = new CategoryVO();
+            BeanUtils.copyProperties(category, categoryVO);
+            if (category.getDeleteAble() == 0) {
+                categoryVO.setDeleteTag("否");
             } else {
-                categoryDTO.setDeleteTag("是");
+                categoryVO.setDeleteTag("是");
             }
-            categoryDTOs.add(categoryDTO);
+            categoryVOs.add(categoryVO);
         }
 
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(16);
         map.put("count", count);
-        map.put("items", categoryDTOs);
-        response.setStatus(Response.SUCCESS);
-        response.setMessage("查询成功");
-        response.setData(map);
-        return response;
+        map.put("items", categoryVOs);
+
+        Result result = new Result();
+        result.setStatus(Result.SUCCESS);
+        result.setMessage("查询成功");
+        result.setData(map);
+        return new ResponseEntity(result, HttpStatus.OK);
     }
 
-    /**
-     * 删除分类
-     *
-     * @param dto 公共dto对象
-     * @return 返回Response对象
-     */
+
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ResponseBody
-    public Response delete(@RequestBody BaseDTO dto) {
-        Response response = new Response();
+    public ResponseEntity delete(@Validated(CategoryVO.DeleteGroup.class) @RequestBody CategoryVO categoryVO, Errors errors) {
 
-        //从公共dto中获取categoryDTO对象
-        List<CategoryDTO> categoryDTOs = (List<CategoryDTO>) (Object) getDTO("category", CategoryDTO.class, dto);
-        if (CollectionUtils.isEmpty(categoryDTOs)) {
-            throw new BusinessException("找不到请求数据");
-        }
-        CategoryDTO categoryDTO = categoryDTOs.get(0);
-
-        //校验字段
-        Validator validator = validatorFactory.getValidator();
-        Set<ConstraintViolation<CategoryDTO>> violations = validator.validate(categoryDTO, CategoryDTO.DeleteGroup.class);
-        Map<String, String> map = ValidationUtils.errorMap(violations);
-        if (!CollectionUtils.isEmpty(map)) {
-            throw new BusinessException("字段格式错误", map);
+        //校验数据
+        if (errors.hasErrors()) {
+            Map<String, String> errMap = new HashMap<>(16);
+            List<ObjectError> oes = errors.getAllErrors();
+            for (ObjectError oe : oes) {
+                if (oe instanceof FieldError) {
+                    FieldError fe = (FieldError) oe;
+                    errMap.put(fe.getField(), oe.getDefaultMessage());
+                } else {
+                    errMap.put(oe.getObjectName(), oe.getDefaultMessage());
+                }
+            }
+            throw new BusinessException("字段格式错误", errMap);
         }
 
         //校验分类是否可以被删除
-        CategoryPO categoryPO = categoryService.selectById(categoryDTO.getId());
-        if (categoryPO == null) {
+        Category category = categoryService.selectById(categoryVO.getId());
+        if (category == null) {
             throw new BusinessException("未找到该分类");
         }
-        if (categoryPO.getDeleteAble() == 0) {
+        if (category.getDeleteAble() == 0) {
             throw new BusinessException("该分类不允许删除");
         }
 
-        categoryService.deleteById(categoryPO.getId());
-        response.setStatus(Response.SUCCESS);
-        response.setMessage("分类删除成功");
+        categoryService.deleteById(category.getId());
 
-        return response;
+        Result result = new Result();
+        result.setStatus(Result.SUCCESS);
+        result.setMessage("分类删除成功");
+
+        return new ResponseEntity(result, HttpStatus.OK);
     }
 
     /**
-     * 分类更新
+     * 更新分类接口
      *
-     * @param dto 公共dto对象
-     * @return 返回Response对象
+     * @param categoryVO
+     * @param errors
+     * @return
      */
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
-    public Response update(@RequestBody BaseDTO dto) {
-        Response response = new Response();
+    public ResponseEntity update(@Validated(CategoryVO.UpdateGroup.class) @RequestBody CategoryVO categoryVO, Errors errors) {
 
-        //从公共dto中提取categoryDTO对象
-        List<CategoryDTO> categoryDTOs = (List<CategoryDTO>) (Object) getDTO("category", CategoryDTO.class, dto);
-        if (CollectionUtils.isEmpty(categoryDTOs)) {
-            throw new BusinessException("找不到请求数据");
-        }
-        CategoryDTO categoryDTO = categoryDTOs.get(0);
-
-        //校验字段
-        Validator validator = validatorFactory.getValidator();
-        Set<ConstraintViolation<CategoryDTO>> violations = validator.validate(categoryDTO, CategoryDTO.UpdateGroup.class);
-        Map<String, String> map = ValidationUtils.errorMap(violations);
-        if (!CollectionUtils.isEmpty(map)) {
-            throw new BusinessException("字段格式错误", map);
+        //校验数据
+        if (errors.hasErrors()) {
+            Map<String, String> errMap = new HashMap<>(16);
+            List<ObjectError> oes = errors.getAllErrors();
+            for (ObjectError oe : oes) {
+                if (oe instanceof FieldError) {
+                    FieldError fe = (FieldError) oe;
+                    errMap.put(fe.getField(), oe.getDefaultMessage());
+                } else {
+                    errMap.put(oe.getObjectName(), oe.getDefaultMessage());
+                }
+            }
+            throw new BusinessException("字段格式错误", errMap);
         }
 
         //校验分类是否可被更新
-        CategoryPO oldCategoryPO = categoryService.selectById(categoryDTO.getId());
-        if (oldCategoryPO == null) {
+        Category oldCategory = categoryService.selectById(categoryVO.getId());
+        if (oldCategory == null) {
             throw new BusinessException("未找到该分类");
         }
-        if (oldCategoryPO.getDeleteAble() == 0) {
+        if (oldCategory.getDeleteAble() == 0) {
             throw new BusinessException("该分类不允许修改");
         }
 
         //校验名称和编码是否重复
-        if (!oldCategoryPO.getName().equals(categoryDTO.getName()) && categoryService.selectByCondition(new HashMap<String, Object>() {{
-            put("name", categoryDTO.getName());
+        if (!oldCategory.getName().equals(categoryVO.getName()) && categoryService.selectByCondition(new HashMap<String, Object>(16) {{
+            put("name", categoryVO.getName());
         }}).size() != 0) {
             throw new BusinessException("新分类名已经存在");
         }
-        if (!oldCategoryPO.getCode().equals(categoryDTO.getCode()) && categoryService.selectByCondition(new HashMap<String, Object>() {{
-            put("code", categoryDTO.getCode());
+        if (!oldCategory.getCode().equals(categoryVO.getCode()) && categoryService.selectByCondition(new HashMap<String, Object>(16) {{
+            put("code", categoryVO.getCode());
         }}).size() != 0) {
             throw new BusinessException("新分类编码已经存在");
         }
 
-        CategoryPO categoryPO = new CategoryPO();
-        BeanUtils.copyProperties(categoryDTO, categoryPO);
-        categoryService.update(categoryPO);
-        response.setStatus(Response.SUCCESS);
-        response.setMessage("更新成功");
+        Category category = new Category();
+        BeanUtils.copyProperties(categoryVO, category);
+        categoryService.update(category);
 
-        return response;
+        Result result = new Result();
+        result.setStatus(Result.SUCCESS);
+        result.setMessage("更新成功");
+
+        return new ResponseEntity(result, HttpStatus.OK);
     }
 }

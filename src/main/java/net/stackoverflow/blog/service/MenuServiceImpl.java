@@ -2,7 +2,7 @@ package net.stackoverflow.blog.service;
 
 import net.stackoverflow.blog.common.Page;
 import net.stackoverflow.blog.dao.MenuDao;
-import net.stackoverflow.blog.pojo.po.MenuPO;
+import net.stackoverflow.blog.pojo.entity.Menu;
 import net.stackoverflow.blog.util.RedisCacheUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ public class MenuServiceImpl implements MenuService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<MenuPO> selectByPage(Page page) {
+    public List<Menu> selectByPage(Page page) {
         return dao.selectByPage(page);
     }
 
@@ -42,7 +42,7 @@ public class MenuServiceImpl implements MenuService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<MenuPO> selectByCondition(Map<String, Object> searchMap) {
+    public List<Menu> selectByCondition(Map<String, Object> searchMap) {
         return dao.selectByCondition(searchMap);
     }
 
@@ -54,8 +54,8 @@ public class MenuServiceImpl implements MenuService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public MenuPO selectById(String id) {
-        MenuPO menuPO = (MenuPO) RedisCacheUtils.get("menu:" + id);
+    public Menu selectById(String id) {
+        Menu menuPO = (Menu) RedisCacheUtils.get("menu:" + id);
         if (menuPO != null) {
             return menuPO;
         } else {
@@ -75,7 +75,7 @@ public class MenuServiceImpl implements MenuService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public MenuPO insert(MenuPO menuPO) {
+    public Menu insert(Menu menuPO) {
         dao.insert(menuPO);
         RedisCacheUtils.set("menu:" + menuPO.getId(), menuPO);
         return menuPO;
@@ -89,7 +89,7 @@ public class MenuServiceImpl implements MenuService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchInsert(List<MenuPO> menuPOs) {
+    public int batchInsert(List<Menu> menuPOs) {
         return dao.batchInsert(menuPOs);
     }
 
@@ -101,8 +101,8 @@ public class MenuServiceImpl implements MenuService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public MenuPO deleteById(String id) {
-        MenuPO menuPO = dao.selectById(id);
+    public Menu deleteById(String id) {
+        Menu menuPO = dao.selectById(id);
         dao.deleteById(id);
         RedisCacheUtils.del("menu:" + id);
         return menuPO;
@@ -132,9 +132,9 @@ public class MenuServiceImpl implements MenuService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public MenuPO update(MenuPO menuPO) {
+    public Menu update(Menu menuPO) {
         dao.update(menuPO);
-        MenuPO newMenuPO = dao.selectById(menuPO.getId());
+        Menu newMenuPO = dao.selectById(menuPO.getId());
         RedisCacheUtils.set("menu:" + newMenuPO.getId(), newMenuPO);
         return newMenuPO;
     }
@@ -147,9 +147,9 @@ public class MenuServiceImpl implements MenuService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchUpdate(List<MenuPO> menuPOs) {
+    public int batchUpdate(List<Menu> menuPOs) {
         int result = dao.batchUpdate(menuPOs);
-        for (MenuPO menuPO : menuPOs) {
+        for (Menu menuPO : menuPOs) {
             RedisCacheUtils.del("menu:" + menuPO.getId());
         }
         return result;
