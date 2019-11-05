@@ -3,12 +3,14 @@ package net.stackoverflow.blog.web.controller;
 import net.stackoverflow.blog.common.Result;
 import net.stackoverflow.blog.exception.BusinessException;
 import net.stackoverflow.blog.exception.ServerException;
+import net.stackoverflow.blog.validator.SettingVOValidator;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
@@ -20,8 +22,18 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author 凉衫薄
  */
-@ControllerAdvice
+//@ControllerAdvice
 public class ExceptionController {
+
+    /**
+     * 绑定自定义校验器
+     *
+     * @param binder
+     */
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setValidator(new SettingVOValidator());
+    }
 
     /**
      * 处理业务异常

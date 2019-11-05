@@ -1,21 +1,21 @@
 package net.stackoverflow.blog.web.controller.admin.system;
 
 import net.stackoverflow.blog.common.BaseController;
-import net.stackoverflow.blog.common.BaseDTO;
 import net.stackoverflow.blog.common.Result;
 import net.stackoverflow.blog.exception.BusinessException;
-import net.stackoverflow.blog.pojo.dto.SettingDTO;
 import net.stackoverflow.blog.pojo.entity.Setting;
+import net.stackoverflow.blog.pojo.vo.SettingVO;
 import net.stackoverflow.blog.service.SettingService;
-import net.stackoverflow.blog.util.CollectionUtils;
 import net.stackoverflow.blog.util.DateUtils;
-import net.stackoverflow.blog.validator.SettingValidator;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,6 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -43,8 +44,6 @@ public class SettingController extends BaseController {
 
     @Autowired
     private SettingService settingService;
-    @Autowired
-    private SettingValidator settingValidator;
     @Value("${server.upload.path}")
     private String path;
 
@@ -63,47 +62,51 @@ public class SettingController extends BaseController {
     /**
      * 更新基本设置
      *
-     * @param dto     公共dto对象
-     * @param request HttpServletRequest请求对象
-     * @return 返回Response
+     * @param settingVOs
+     * @param errors
+     * @param request
+     * @return
      */
     @RequestMapping(value = "/setting/update", method = RequestMethod.POST)
     @ResponseBody
-    public Result update(@RequestBody BaseDTO dto, HttpServletRequest request) {
-        Result response = new Result();
+    public ResponseEntity update(@Valid @RequestBody SettingVO[] settingVOs, Errors errors, HttpServletRequest request) {
+
         ServletContext application = request.getServletContext();
 
-        //从公共DTO中提取settingDTO
-        List<SettingDTO> settingDTOs = (List<SettingDTO>) (Object) getDTO("setting", SettingDTO.class, dto);
-        if (CollectionUtils.isEmpty(settingDTOs)) {
-            throw new BusinessException("找不到请求数据");
+        //校验数据
+        if (errors.hasErrors()) {
+            Map<String, String> errMap = new HashMap<>(16);
+            List<ObjectError> oes = errors.getAllErrors();
+            for (ObjectError oe : oes) {
+                if (oe instanceof FieldError) {
+                    FieldError fe = (FieldError) oe;
+                    errMap.put(fe.getField(), oe.getDefaultMessage());
+                } else {
+                    errMap.put(oe.getObjectName(), oe.getDefaultMessage());
+                }
+            }
+            throw new BusinessException("字段格式错误", errMap);
         }
-        SettingDTO[] settingDTOArray = settingDTOs.toArray(new SettingDTO[0]);
 
-        //校验字段
-        Map<String, String> map = settingValidator.validate(settingDTOArray);
-        if (!CollectionUtils.isEmpty(map)) {
-            throw new BusinessException("字段格式错误", map);
-        }
-
-        for (SettingDTO settingDTO : settingDTOArray) {
-            Setting settingPO = new Setting();
-            BeanUtils.copyProperties(settingDTO, settingPO);
-            settingService.update(settingPO);
+        for (SettingVO settingVO : settingVOs) {
+            Setting setting = new Setting();
+            BeanUtils.copyProperties(settingVO, setting);
+            settingService.update(setting);
         }
 
         //更新ServletContext中的属性
-        List<Setting> settingPOs = settingService.selectByCondition(new HashMap<>());
+        List<Setting> settings = settingService.selectByCondition(new HashMap<>());
         Map<String, Object> settingMap = new HashMap<>();
-        for (Setting settingPO : settingPOs) {
-            settingMap.put(settingPO.getName(), settingPO.getValue());
+        for (Setting setting : settings) {
+            settingMap.put(setting.getName(), setting.getValue());
         }
         application.setAttribute("setting", settingMap);
 
-        response.setStatus(Result.SUCCESS);
-        response.setMessage("配置更改成功");
+        Result result = new Result();
+        result.setStatus(Result.SUCCESS);
+        result.setMessage("配置更改成功");
 
-        return response;
+        return new ResponseEntity(result, HttpStatus.OK);
     }
 
     /**

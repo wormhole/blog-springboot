@@ -202,13 +202,7 @@ layui.use(['layer', 'jquery'], function () {
         data.push({name: 'description', value: description});
         data.push({name: 'copyright', value: copyright});
 
-        var param = {
-            data: {
-                setting: data
-            }
-        };
-
-        updateSEOAjax(param);
+        updateSEOAjax(data);
     });
 
     $('#base-btn').click(function () {
@@ -219,13 +213,7 @@ layui.use(['layer', 'jquery'], function () {
         data.push({name: 'name', value: name});
         data.push({name: 'signature', value: signature});
 
-        var param = {
-            data: {
-                setting: data
-            }
-        };
-
-        updateBaseAjax(param);
+        updateBaseAjax(data);
     });
 
     $('#article-btn').click(function () {
@@ -234,13 +222,7 @@ layui.use(['layer', 'jquery'], function () {
         var data = [];
         data.push({name: 'limit', value: limit});
 
-        var param = {
-            data: {
-                setting: data
-            }
-        };
-
-        updateLimitAjax(param);
+        updateLimitAjax(data);
     });
 
     $('#head-btn').click(function () {

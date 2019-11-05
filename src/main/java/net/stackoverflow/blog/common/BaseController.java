@@ -7,20 +7,20 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 /**
- * 控制器基类
+ * Controller基类
  *
  * @author 凉衫薄
  */
 public class BaseController {
 
     /**
-     * DTO转VO
+     * vo转po
      *
      * @param clazzMap
      * @param dto
      * @return
      */
-    protected Map<String, List<Object>> getDTO(Map<String, Class> clazzMap, BaseDTO dto) {
+    protected Map<String, List<Object>> vo2po(Map<String, Class> clazzMap, BaseVO dto) {
 
         Map<String, List<Object>> map = new HashMap<>();
         Set<String> key = clazzMap.keySet();
@@ -32,7 +32,7 @@ public class BaseController {
 
             if (data.containsKey(name)) {
                 Field[] fields = clazzMap.get(name).getDeclaredFields();
-                List<Object> vos = new ArrayList<>();
+                List<Object> pos = new ArrayList<>();
 
                 for (int i = 0; i < data.get(name).length; i++) {
                     try {
@@ -43,12 +43,12 @@ public class BaseController {
                             Method method = clazzMap.get(name).getMethod("set" + upName, field.getType());
                             method.invoke(vo, data.get(name)[i].get(attr));
                         }
-                        vos.add(vo);
+                        pos.add(vo);
                     } catch (Exception e) {
-                        throw new ServerException("dto2vo转换错误");
+                        throw new ServerException("vo2po转换错误");
                     }
                 }
-                map.put(name, vos);
+                map.put(name, pos);
             }
         }
 
@@ -56,18 +56,18 @@ public class BaseController {
     }
 
     /**
-     * DTO转VO
+     * vo2po
      *
      * @param name
      * @param clazz
-     * @param dto
+     * @param vo
      * @return
      */
-    protected List<Object> getDTO(String name, Class clazz, BaseDTO dto) {
+    protected List<Object> vo2po(String name, Class clazz, BaseVO vo) {
         Map<String, Class> classMap = new HashMap<String, Class>() {{
             put(name, clazz);
         }};
-        Map<String, List<Object>> voMap = getDTO(classMap, dto);
+        Map<String, List<Object>> voMap = vo2po(classMap, vo);
         return voMap.get(name);
     }
 }

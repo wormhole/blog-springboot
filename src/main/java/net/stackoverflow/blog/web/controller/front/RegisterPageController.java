@@ -67,7 +67,7 @@ public class RegisterPageController extends BaseController {
 
         //校验数据
         if (errors.hasErrors()) {
-            Map<String, String> errMap = new HashMap<>();
+            Map<String, String> errMap = new HashMap<>(16);
             List<ObjectError> oes = errors.getAllErrors();
             for (ObjectError oe : oes) {
                 if (oe instanceof FieldError) {

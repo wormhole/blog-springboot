@@ -1,13 +1,11 @@
-package net.stackoverflow.blog.pojo.dto;
-
-import java.io.Serializable;
+package net.stackoverflow.blog.pojo.vo;
 
 /**
- * 博客配置信息VO类
+ * 基础配置信息VO类
  *
  * @author 凉衫薄
  */
-public class SettingDTO implements Serializable {
+public class SettingVO {
 
     private String id;
     private String name;

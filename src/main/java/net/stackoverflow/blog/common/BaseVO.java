@@ -4,20 +4,20 @@ import java.io.Serializable;
 import java.util.Map;
 
 /**
- * 公共DTO类
+ * 公共VO类
  *
  * @author 凉衫薄
  */
-public class BaseDTO implements Serializable {
+public class BaseVO implements Serializable {
 
     private Page page;
 
     private Map<String, Map<String, Object>[]> data;
 
-    public BaseDTO() {
+    public BaseVO() {
     }
 
-    public BaseDTO(Page page, Map<String, Map<String, Object>[]> data) {
+    public BaseVO(Page page, Map<String, Map<String, Object>[]> data) {
         this.page = page;
         this.data = data;
     }
