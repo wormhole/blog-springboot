@@ -7,15 +7,13 @@ import net.stackoverflow.blog.pojo.entity.Setting;
 import net.stackoverflow.blog.pojo.vo.SettingVO;
 import net.stackoverflow.blog.service.SettingService;
 import net.stackoverflow.blog.util.DateUtils;
+import net.stackoverflow.blog.validator.SettingVOValidator;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,7 +24,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -63,28 +60,19 @@ public class SettingController extends BaseController {
      * 更新基本设置
      *
      * @param settingVOs
-     * @param errors
      * @param request
      * @return
      */
     @RequestMapping(value = "/setting/update", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity update(@Valid @RequestBody SettingVO[] settingVOs, Errors errors, HttpServletRequest request) {
+    public ResponseEntity update(@RequestBody SettingVO[] settingVOs, HttpServletRequest request) {
 
         ServletContext application = request.getServletContext();
 
         //校验数据
-        if (errors.hasErrors()) {
-            Map<String, String> errMap = new HashMap<>(16);
-            List<ObjectError> oes = errors.getAllErrors();
-            for (ObjectError oe : oes) {
-                if (oe instanceof FieldError) {
-                    FieldError fe = (FieldError) oe;
-                    errMap.put(fe.getField(), oe.getDefaultMessage());
-                } else {
-                    errMap.put(oe.getObjectName(), oe.getDefaultMessage());
-                }
-            }
+        SettingVOValidator validator = new SettingVOValidator();
+        Map<String, String> errMap = validator.validate(settingVOs);
+        if (errMap != null) {
             throw new BusinessException("字段格式错误", errMap);
         }
 

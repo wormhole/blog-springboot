@@ -1,9 +1,9 @@
 package net.stackoverflow.blog.validator;
 
 import net.stackoverflow.blog.pojo.vo.SettingVO;
-import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
  *
  * @author 凉衫薄
  */
-public class SettingVOValidator implements Validator {
+public class SettingVOValidator {
 
     Pattern numPattern = Pattern.compile("^[0-9]+$");
 
@@ -115,54 +115,53 @@ public class SettingVOValidator implements Validator {
         }
     }
 
-    @Override
-    public boolean supports(Class<?> aClass) {
-        return aClass.equals(SettingVO[].class);
-    }
-
-    @Override
-    public void validate(Object o, Errors errors) {
-        SettingVO[] settingVOs = (SettingVO[]) o;
+    public Map<String, String> validate(SettingVO[] settingVOs) {
+        Map<String, String> errMap = new HashMap<>(16);
         for (SettingVO settingVO : settingVOs) {
             switch (settingVO.getName()) {
                 case "title":
                     if (!validateTitle(settingVO.getValue())) {
-                        errors.rejectValue("title", null, "标题长度应该在1到100之间");
+                        errMap.put("title", "标题长度应该在1到100之间");
                     }
                     break;
                 case "keywords":
                     if (!validateKeywords(settingVO.getValue())) {
-                        errors.rejectValue("keywords", null, "关键字长度应该在1到100之间");
+                        errMap.put("keywords", "关键字长度应该在1到100之间");
                     }
                     break;
                 case "description":
                     if (!validateDescription(settingVO.getValue())) {
-                        errors.rejectValue("description", null, "描述长度应该在1到100之间");
+                        errMap.put("description", "描述长度应该在1到100之间");
                     }
                     break;
                 case "copyright":
                     if (!validateCopyright(settingVO.getValue())) {
-                        errors.rejectValue("copyright", null, "版权长度应该在1到100之间");
+                        errMap.put("copyright", "版权长度应该在1到100之间");
                     }
                     break;
                 case "name":
                     if (!validateNickname(settingVO.getValue())) {
-                        errors.rejectValue("name", null, "网站名长度应该在1到100之间");
+                        errMap.put("name", "网站名长度应该在1到100之间");
                     }
                     break;
                 case "signature":
                     if (!validateSignature(settingVO.getValue())) {
-                        errors.rejectValue("signature", null, "签名长度应该在1到100之间");
+                        errMap.put("signature", "签名长度应该在1到100之间");
                     }
                     break;
                 case "limit":
                     if (!validateItems(settingVO.getValue())) {
-                        errors.rejectValue("limit", null, "每页显示的文章数只能为数字");
+                        errMap.put("limit", "每页显示的文章数只能为数字");
                     }
                     break;
                 default:
                     break;
             }
+        }
+        if (errMap.size() == 0) {
+            return null;
+        } else {
+            return errMap;
         }
     }
 }
