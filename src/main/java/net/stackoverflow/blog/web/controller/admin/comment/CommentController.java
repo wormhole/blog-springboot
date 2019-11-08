@@ -45,10 +45,10 @@ public class CommentController extends BaseController {
      *
      * @return
      */
-    @RequestMapping(value = "/comment-manage", method = RequestMethod.GET)
+    @RequestMapping(value = "/comment_manage", method = RequestMethod.GET)
     public ModelAndView management() {
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("/admin/comment/comment-manage");
+        mv.setViewName("/admin/comment/comment_manage");
         return mv;
     }
 
@@ -87,7 +87,7 @@ public class CommentController extends BaseController {
             commentVOs.add(commentVO);
         }
 
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(16);
         map.put("count", count);
         map.put("items", commentVOs);
 
