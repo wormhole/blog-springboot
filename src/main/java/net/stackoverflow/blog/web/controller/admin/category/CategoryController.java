@@ -38,10 +38,10 @@ public class CategoryController extends BaseController {
      *
      * @return 返回ModelAndView对象
      */
-    @RequestMapping(value = "/category-manage", method = RequestMethod.GET)
+    @RequestMapping(value = "/category_manage", method = RequestMethod.GET)
     public ModelAndView category() {
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("/admin/category/category-manage");
+        mv.setViewName("/admin/category/category_manage");
         return mv;
     }
 
@@ -102,7 +102,7 @@ public class CategoryController extends BaseController {
      *
      * @param page  分页参数
      * @param limit 每页数量
-     * @return 返回Response对象
+     * @return
      */
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @ResponseBody
@@ -110,7 +110,7 @@ public class CategoryController extends BaseController {
 
         Page pageParam = new Page(Integer.valueOf(page), Integer.valueOf(limit), null);
         List<Category> categorys = categoryService.selectByPage(pageParam);
-        int count = categoryService.selectByCondition(new HashMap<>()).size();
+        int count = categoryService.selectByCondition(new HashMap<>(16)).size();
 
         List<CategoryVO> categoryVOs = new ArrayList<>();
         for (Category category : categorys) {
@@ -135,7 +135,13 @@ public class CategoryController extends BaseController {
         return new ResponseEntity(result, HttpStatus.OK);
     }
 
-
+    /**
+     * 删除分类接口
+     *
+     * @param categoryVO
+     * @param errors
+     * @return
+     */
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity delete(@Validated(CategoryVO.DeleteGroup.class) @RequestBody CategoryVO categoryVO, Errors errors) {
