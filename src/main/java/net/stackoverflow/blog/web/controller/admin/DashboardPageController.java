@@ -25,7 +25,7 @@ import java.util.*;
  * @author 凉衫薄
  */
 @Controller
-@RequestMapping("/admin")
+@RequestMapping("/admin/dashboard")
 public class DashboardPageController {
 
     @Autowired
@@ -36,7 +36,7 @@ public class DashboardPageController {
      *
      * @return 返回ModelAndView
      */
-    @RequestMapping(value = "/dashboard", method = RequestMethod.GET)
+    @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView dashboard() {
         ModelAndView mv = new ModelAndView();
         mv.setViewName("/admin/dashboard");
@@ -48,7 +48,7 @@ public class DashboardPageController {
      *
      * @return 返回Response对象
      */
-    @RequestMapping(value = "/dashboard/visit/chart", method = RequestMethod.GET)
+    @RequestMapping(value = "/visit_chart", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity flow() {
 
@@ -89,7 +89,7 @@ public class DashboardPageController {
      * @param limit 每页数量
      * @return
      */
-    @RequestMapping(value = "/dashboard/visit/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/visit_list", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity today(@RequestParam(value = "page") String page, @RequestParam(value = "limit") String limit) {
 
@@ -120,7 +120,7 @@ public class DashboardPageController {
      *
      * @return
      */
-    @RequestMapping(value = "/dashboard/visit/count", method = RequestMethod.GET)
+    @RequestMapping(value = "/visit_count", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity count() {
 
