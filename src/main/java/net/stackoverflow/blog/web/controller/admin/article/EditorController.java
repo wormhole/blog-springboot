@@ -75,7 +75,7 @@ public class EditorController extends BaseController {
      * @param id 文章id
      * @return 返回ModelAndView对象
      */
-    @RequestMapping(value = "/article_edit", method = RequestMethod.GET)
+    @RequestMapping(value = "/article_editor", method = RequestMethod.GET)
     public ModelAndView article(@RequestParam(value = "id", required = false) String id) {
         ModelAndView mv = new ModelAndView();
 
@@ -96,7 +96,7 @@ public class EditorController extends BaseController {
         }
 
         mv.addObject("categoryList", categorys);
-        mv.setViewName("/admin/article/article_edit");
+        mv.setViewName("/admin/article/article_editor");
 
         return mv;
     }
@@ -158,7 +158,7 @@ public class EditorController extends BaseController {
      * @param multipartFile multipartFile对象
      * @return 返回Map对象
      */
-    @RequestMapping(value = "/image", method = RequestMethod.POST)
+    @RequestMapping(value = "/upload_image", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity image(@RequestParam("editormd-image-file") MultipartFile multipartFile) {
         Map<String, Object> result = new HashMap<>(16);

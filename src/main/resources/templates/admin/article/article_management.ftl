@@ -4,7 +4,7 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
     <link rel="stylesheet" href="/static/plugins/layui/css/layui.css"/>
-    <link rel="stylesheet" href="/static/admin/css/article/article-manage.css"/>
+    <link rel="stylesheet" href="/static/admin/css/article/article_management.css"/>
     <script src="/static/plugins/layui/layui.js"></script>
     <meta name="keywords" content="${Application.setting.keywords}"/>
     <meta name="description" content="${Application.setting.description}"/>
@@ -24,6 +24,6 @@
     <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="export"><i class="layui-icon layui-icon-file"/>导出</a>
     <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"/>编辑</a>
 </script>
-<script type="text/javascript" src="/static/admin/js/article/article-manage.js"></script>
+<script type="text/javascript" src="/static/admin/js/article/article_management.js"></script>
 </body>
 </html>

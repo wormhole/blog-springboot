@@ -62,7 +62,7 @@ layui.use(['table', 'jquery', 'layer'], function () {
                 shade: 0.8,
                 area: ['90%', '90%'],
                 maxmin: true,
-                content: '/admin/article/article-edit?id=' + data.id,
+                content: '/admin/article/article-editor?id=' + data.id,
                 cancel: function (index, layero) {
                     tableIns.reload(parameter);
                 }
@@ -80,7 +80,7 @@ layui.use(['table', 'jquery', 'layer'], function () {
                 shade: 0.8,
                 area: ['90%', '90%'],
                 maxmin: true,
-                content: '/admin/article/article-edit',
+                content: '/admin/article/article-editor',
                 cancel: function (index, layero) {
                     tableIns.reload(parameter);
                 }
@@ -94,7 +94,7 @@ layui.use(['table', 'jquery', 'layer'], function () {
                     shade: 0.8,
                     area: ['90%', '90%'],
                     maxmin: true,
-                    content: '/admin/article/article-edit?id=' + checkStatus.data[0].id,
+                    content: '/admin/article/article-editor?id=' + checkStatus.data[0].id,
                     cancel: function (index, layero) {
                         tableIns.reload(parameter);
                     }

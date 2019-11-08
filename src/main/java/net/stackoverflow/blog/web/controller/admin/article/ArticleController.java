@@ -53,11 +53,11 @@ public class ArticleController extends BaseController {
      *
      * @return 返回ModelAndView对象
      */
-    @RequestMapping(value = "/article_manage", method = RequestMethod.GET)
+    @RequestMapping(value = "/article_management", method = RequestMethod.GET)
     @ResponseBody
     public ModelAndView management() {
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("/admin/article/article_manage");
+        mv.setViewName("/admin/article/article_management");
         return mv;
     }
 

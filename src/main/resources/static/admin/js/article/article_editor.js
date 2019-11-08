@@ -14,7 +14,7 @@ layui.use(['form', 'layer'], function () {
             saveHTMLToTextarea: true,
             imageUpload: true,
             imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
-            imageUploadURL: "/admin/article/image",
+            imageUploadURL: "/admin/article/upload_image",
             htmlDecode: true
         });
     });

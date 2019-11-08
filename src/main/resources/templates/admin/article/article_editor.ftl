@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
     <link rel="stylesheet" href="/static/plugins/editor.md/css/editormd.css"/>
     <link rel="stylesheet" href="/static/plugins/layui/css/layui.css"/>
-    <link rel="stylesheet" href="/static/admin/css/article/article-edit.css"/>
+    <link rel="stylesheet" href="/static/admin/css/article/article_editor.css"/>
     <script src="/static/plugins/jquery/jquery.min.js"></script>
     <script src="/static/plugins/layui/layui.js"></script>
     <script src="/static/plugins/editor.md/editormd.min.js"></script>
@@ -40,6 +40,6 @@
         <textarea style="display:none;">${(article.articleMd)!}</textarea>
     </div>
 </div>
-<script src="/static/admin/js/article/article-edit.js"></script>
+<script src="/static/admin/js/article/article_editor.js"></script>
 </body>
 </html>
