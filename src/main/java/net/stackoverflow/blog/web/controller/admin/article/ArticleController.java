@@ -53,11 +53,11 @@ public class ArticleController extends BaseController {
      *
      * @return 返回ModelAndView对象
      */
-    @RequestMapping(value = "/article-manage", method = RequestMethod.GET)
+    @RequestMapping(value = "/article_manage", method = RequestMethod.GET)
     @ResponseBody
     public ModelAndView management() {
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("/admin/article/article-manage");
+        mv.setViewName("/admin/article/article_manage");
         return mv;
     }
 
@@ -83,6 +83,13 @@ public class ArticleController extends BaseController {
     }
 
 
+    /**
+     * 更新文章接口
+     *
+     * @param articleVO
+     * @param errors
+     * @return
+     */
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity update(@Validated(ArticleVO.UpdateGroup.class) @RequestBody ArticleVO articleVO, Errors errors) {
@@ -143,7 +150,7 @@ public class ArticleController extends BaseController {
         Page pageParam = new Page(Integer.valueOf(page), Integer.valueOf(limit), null);
         List<Article> articles = articleService.selectByPage(pageParam);
 
-        int count = articleService.selectByCondition(new HashMap<>()).size();
+        int count = articleService.selectByCondition(new HashMap<>(16)).size();
         List<ArticleVO> articleVOs = new ArrayList<>();
 
         for (Article article : articles) {
@@ -175,7 +182,12 @@ public class ArticleController extends BaseController {
         return new ResponseEntity(result, HttpStatus.OK);
     }
 
-
+    /**
+     * 删除文章接口
+     *
+     * @param articleVOs
+     * @return
+     */
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity delete(@RequestBody ArticleVO[] articleVOs) {
