@@ -48,10 +48,10 @@ public class PersonalController extends BaseController {
      *
      * @return
      */
-    @RequestMapping(value = "/personal", method = RequestMethod.GET)
+    @RequestMapping(value = "/personal_manage", method = RequestMethod.GET)
     public ModelAndView personal() {
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("/admin/user/personal");
+        mv.setViewName("/admin/user/personal_manage");
         return mv;
     }
 
