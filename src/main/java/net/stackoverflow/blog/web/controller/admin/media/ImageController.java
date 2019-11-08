@@ -3,6 +3,8 @@ package net.stackoverflow.blog.web.controller.admin.media;
 import net.stackoverflow.blog.common.Result;
 import net.stackoverflow.blog.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,7 +35,7 @@ public class ImageController {
      *
      * @return 返回ModelAndView对象
      */
-    @RequestMapping(value = "/image", method = RequestMethod.GET)
+    @RequestMapping(value = "/image_manage", method = RequestMethod.GET)
     public ModelAndView image() {
         ModelAndView mv = new ModelAndView();
 
@@ -42,7 +44,7 @@ public class ImageController {
         //遍历上传路径，存储在imageMap
         traverseFolder(path, imageMap);
         mv.addObject("map", imageMap);
-        mv.setViewName("/admin/media/image");
+        mv.setViewName("/admin/media/image_manage");
         return mv;
     }
 
@@ -52,20 +54,20 @@ public class ImageController {
      * @param url 图片url
      * @return
      */
-    @RequestMapping(value = "/image/delete", method = RequestMethod.POST)
+    @RequestMapping(value = "/delete_image", method = RequestMethod.POST)
     @ResponseBody
-    public Result delete(@RequestParam("url") String url) {
-        Result response = new Result();
+    public ResponseEntity delete(@RequestParam("url") String url) {
+        Result result = new Result();
         url = url.replaceFirst("/upload", "");
         File file = new File(path, url);
         if (file.exists()) {
             file.delete();
-            response.setStatus(Result.SUCCESS);
-            response.setMessage("图片删除成功");
+            result.setStatus(Result.SUCCESS);
+            result.setMessage("图片删除成功");
         } else {
             throw new BusinessException("图片删除失败");
         }
-        return response;
+        return new ResponseEntity(result, HttpStatus.OK);
     }
 
     /**
