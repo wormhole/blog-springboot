@@ -41,10 +41,10 @@ public class MenuController extends BaseController {
      *
      * @return 返回ModelAndView对象
      */
-    @RequestMapping(value = "/menu", method = RequestMethod.GET)
+    @RequestMapping(value = "/menu_manage", method = RequestMethod.GET)
     public ModelAndView management() {
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("/admin/system/menu");
+        mv.setViewName("/admin/system/menu_manage");
         return mv;
     }
 
@@ -55,7 +55,7 @@ public class MenuController extends BaseController {
      * @param limit 每页数量
      * @return
      */
-    @RequestMapping(value = "/menu/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/list_menu", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity list(@RequestParam(value = "page") String page, @RequestParam(value = "limit") String limit) {
 
@@ -96,7 +96,7 @@ public class MenuController extends BaseController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/menu/delete", method = RequestMethod.POST)
+    @RequestMapping(value = "/delete_menu", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity delete(@Validated(MenuVO.DeleteGroup.class) @RequestBody MenuVO menuVO, Errors errors, HttpServletRequest request) {
 
@@ -146,7 +146,7 @@ public class MenuController extends BaseController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/menu/insert", method = RequestMethod.POST)
+    @RequestMapping(value = "/insert_menu", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity insert(@Validated(MenuVO.InsertGroup.class) @RequestBody MenuVO menuVO, Errors errors, HttpServletRequest request) {
 
@@ -191,7 +191,7 @@ public class MenuController extends BaseController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/menu/update", method = RequestMethod.POST)
+    @RequestMapping(value = "/update_menu", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity update(@Validated(MenuVO.UpdateGroup.class) @RequestBody MenuVO menuVO, Errors errors, HttpServletRequest request) {
 

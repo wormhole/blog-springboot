@@ -43,10 +43,10 @@ public class BackupController {
      *
      * @return 返回ModelAndView对象
      */
-    @RequestMapping(value = "/backup", method = RequestMethod.GET)
+    @RequestMapping(value = "/backup_manage", method = RequestMethod.GET)
     public ModelAndView backup() {
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("/admin/system/backup");
+        mv.setViewName("/admin/system/backup_manage");
         return mv;
     }
 
@@ -56,7 +56,7 @@ public class BackupController {
      * @return 返回ResponseEntity对象
      * @throws IOException
      */
-    @RequestMapping(value = "/backup/db", method = RequestMethod.GET)
+    @RequestMapping(value = "/backup_db", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<byte[]> exportSql() throws IOException {
         String filename = "blog.sql";

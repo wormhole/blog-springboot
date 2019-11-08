@@ -49,10 +49,10 @@ public class SettingController extends BaseController {
      *
      * @return
      */
-    @RequestMapping(value = "/setting", method = RequestMethod.GET)
+    @RequestMapping(value = "/setting_manage", method = RequestMethod.GET)
     public ModelAndView setting() {
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("/admin/system/setting");
+        mv.setViewName("/admin/system/setting_manage");
         return mv;
     }
 
@@ -63,7 +63,7 @@ public class SettingController extends BaseController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/setting/update", method = RequestMethod.POST)
+    @RequestMapping(value = "/update_setting", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity update(@RequestBody SettingVO[] settingVOs, HttpServletRequest request) {
 
@@ -103,7 +103,7 @@ public class SettingController extends BaseController {
      * @param request HttpServletRequest对象
      * @return
      */
-    @RequestMapping(value = "/setting/head", method = RequestMethod.POST)
+    @RequestMapping(value = "/update_head", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity updateHead(HttpServletRequest request) {
         ServletContext application = request.getServletContext();
