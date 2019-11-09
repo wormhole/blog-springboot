@@ -45,10 +45,10 @@ public class CommentController extends BaseController {
      *
      * @return
      */
-    @RequestMapping(value = "/comment_manage", method = RequestMethod.GET)
+    @RequestMapping(value = "/comment_management", method = RequestMethod.GET)
     public ModelAndView management() {
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("/admin/comment/comment_manage");
+        mv.setViewName("/admin/comment/comment_management");
         return mv;
     }
 
