@@ -23,9 +23,9 @@ public interface MenuService {
 
     int batchInsert(List<Menu> menuPOs);
 
-    Menu deleteById(String id);
+    Menu delete(String id);
 
-    int batchDeleteById(List<String> ids);
+    int batchDelete(List<String> ids);
 
     Menu update(Menu menuPO);
 
