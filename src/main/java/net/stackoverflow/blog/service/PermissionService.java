@@ -23,9 +23,9 @@ public interface PermissionService {
 
     int batchInsert(List<Permission> permissionPOs);
 
-    Permission deleteById(String id);
+    Permission delete(String id);
 
-    int batchDeleteById(List<String> ids);
+    int batchDelete(List<String> ids);
 
     Permission update(Permission permissionPO);
 
