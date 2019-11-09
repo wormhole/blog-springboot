@@ -25,7 +25,7 @@ import java.util.Random;
 public class VCodeController {
 
     /**
-     * 获取验证码 /api/vcode
+     * 获取验证码 /vcode
      *
      * @param response http响应对象
      * @param session  会话对象
