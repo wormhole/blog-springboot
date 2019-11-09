@@ -26,9 +26,9 @@ public interface UserService {
 
     int batchInsert(List<User> userPOs);
 
-    User deleteById(String id);
+    User delete(String id);
 
-    int batchDeleteById(List<String> ids);
+    int batchDelete(List<String> ids);
 
     User update(User userPO);
 

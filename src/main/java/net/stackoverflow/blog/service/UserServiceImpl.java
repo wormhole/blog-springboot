@@ -59,52 +59,52 @@ public class UserServiceImpl implements UserService {
      * 根据主键查询
      *
      * @param id 用户主键
-     * @return 用户实体类
+     * @return 用户实体类对象
      */
     @Override
     public User selectById(String id) {
-        User userPO = (User) RedisCacheUtils.get("user:" + id);
-        if (userPO != null) {
-            return userPO;
+        User user = (User) RedisCacheUtils.get("user:" + id);
+        if (user != null) {
+            return user;
         } else {
-            userPO = userDao.selectById(id);
-            if (userPO != null) {
-                RedisCacheUtils.set("user:" + id, userPO);
+            user = userDao.selectById(id);
+            if (user != null) {
+                RedisCacheUtils.set("user:" + id, user, 1800);
             }
-            return userPO;
+            return user;
         }
     }
 
     /**
      * 新增用户
      *
-     * @param userPO 用户实体类
+     * @param user 用户实体类对象
      * @return 新增后的用户
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public User insert(User userPO) {
-        userPO.setSalt(PasswordUtils.getSalt());
-        userPO.setPassword(PasswordUtils.encryptPassword(userPO.getSalt(), userPO.getPassword()));
-        userDao.insert(userPO);
-        RedisCacheUtils.set("user:" + userPO.getId(), userPO);
-        return userDao.selectById(userPO.getId());
+    public User insert(User user) {
+        user.setSalt(PasswordUtils.getSalt());
+        user.setPassword(PasswordUtils.encryptPassword(user.getSalt(), user.getPassword()));
+        userDao.insert(user);
+        RedisCacheUtils.set("user:" + user.getId(), user, 1800);
+        return userDao.selectById(user.getId());
     }
 
     /**
      * 批量新增用户
      *
-     * @param userPOs 用户列表
+     * @param users 用户列表
      * @return 新增记录数
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchInsert(List<User> userPOs) {
-        for (User userPO : userPOs) {
-            userPO.setSalt(PasswordUtils.getSalt());
-            userPO.setPassword(PasswordUtils.encryptPassword(userPO.getSalt(), userPO.getPassword()));
+    public int batchInsert(List<User> users) {
+        for (User user : users) {
+            user.setSalt(PasswordUtils.getSalt());
+            user.setPassword(PasswordUtils.encryptPassword(user.getSalt(), user.getPassword()));
         }
-        return userDao.batchInsert(userPOs);
+        return userDao.batchInsert(users);
     }
 
     /**
@@ -115,9 +115,9 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public User deleteById(String id) {
+    public User delete(String id) {
         User userPO = userDao.selectById(id);
-        userDao.deleteById(id);
+        userDao.delete(id);
         RedisCacheUtils.del("user:" + id);
         return userPO;
     }
@@ -130,8 +130,8 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchDeleteById(List<String> ids) {
-        int result = userDao.batchDeleteById(ids);
+    public int batchDelete(List<String> ids) {
+        int result = userDao.batchDelete(ids);
         for (String id : ids) {
             RedisCacheUtils.del("user:" + id);
         }
@@ -141,30 +141,30 @@ public class UserServiceImpl implements UserService {
     /**
      * 更新用户
      *
-     * @param userPO 用户实体类
+     * @param user 用户实体类
      * @return 更新后的用户实体类
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public User update(User userPO) {
-        userDao.update(userPO);
-        User newUserPO = userDao.selectById(userPO.getId());
-        RedisCacheUtils.set("user:" + newUserPO.getId(), newUserPO);
-        return newUserPO;
+    public User update(User user) {
+        userDao.update(user);
+        User newUser = userDao.selectById(user.getId());
+        RedisCacheUtils.set("user:" + newUser.getId(), newUser, 1800);
+        return newUser;
     }
 
     /**
      * 批量更新用户
      *
-     * @param userPOs 用户列表
+     * @param users 用户列表
      * @return 更新的记录数
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchUpdate(List<User> userPOs) {
-        int result = userDao.batchUpdate(userPOs);
-        for (User userPO : userPOs) {
-            RedisCacheUtils.del("user:" + userPO.getId());
+    public int batchUpdate(List<User> users) {
+        int result = userDao.batchUpdate(users);
+        for (User user : users) {
+            RedisCacheUtils.del("user:" + user.getId());
         }
         return result;
     }
@@ -180,18 +180,18 @@ public class UserServiceImpl implements UserService {
     @Transactional(rollbackFor = Exception.class)
     public UserRole grantRole(String userId, String roleId) {
 
-        User userPO = userDao.selectById(userId);
-        Role rolePO = roleDao.selectById(roleId);
+        User user = userDao.selectById(userId);
+        Role role = roleDao.selectById(roleId);
 
-        if (userPO == null || rolePO == null) {
+        if (user == null || role == null) {
             return null;
         }
 
-        UserRole userRolePO = new UserRole();
-        userRolePO.setRoleId(roleId);
-        userRolePO.setUserId(userId);
-        userRoleDao.insert(userRolePO);
-        return userRolePO;
+        UserRole userRole = new UserRole();
+        userRole.setRoleId(roleId);
+        userRole.setUserId(userId);
+        userRoleDao.insert(userRole);
+        return userRole;
     }
 
     /**
@@ -205,17 +205,17 @@ public class UserServiceImpl implements UserService {
     @Transactional(rollbackFor = Exception.class)
     public UserRole revokeRole(String userId, String roleId) {
 
-        List<UserRole> userRolePOs = userRoleDao.selectByCondition(new HashMap<String, Object>() {{
+        List<UserRole> userRoles = userRoleDao.selectByCondition(new HashMap<String, Object>(16) {{
             put("userId", userId);
             put("roleId", roleId);
         }});
 
-        if (userRolePOs.size() == 0) {
+        if (userRoles.size() == 0) {
             return null;
         }
 
-        userRoleDao.deleteById(userRolePOs.get(0).getId());
-        return userRolePOs.get(0);
+        userRoleDao.deleteById(userRoles.get(0).getId());
+        return userRoles.get(0);
 
     }
 
@@ -227,18 +227,18 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public List<Role> getRoleByUserId(String userId) {
-        List<UserRole> userRolePOs = userRoleDao.selectByCondition(new HashMap<String, Object>() {{
+        List<UserRole> userRoles = userRoleDao.selectByCondition(new HashMap<String, Object>(16) {{
             put("userId", userId);
         }});
-        List<Role> rolePOs = null;
-        if ((null != userRolePOs) && (userRolePOs.size() != 0)) {
-            rolePOs = new ArrayList<>();
-            for (UserRole userRolePO : userRolePOs) {
-                Role rolePO = roleDao.selectById(userRolePO.getId());
-                rolePOs.add(rolePO);
+        List<Role> roles = null;
+        if ((null != userRoles) && (userRoles.size() != 0)) {
+            roles = new ArrayList<>();
+            for (UserRole userRole : userRoles) {
+                Role role = roleDao.selectById(userRole.getId());
+                roles.add(role);
             }
         }
-        return rolePOs;
+        return roles;
     }
 
     /**
@@ -249,21 +249,21 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public List<Permission> getPermissionByUserId(String userId) {
-        List<Role> rolePOs = getRoleByUserId(userId);
-        Map<String, Permission> permissionMap = new HashMap<>();
-        for (Role rolePO : rolePOs) {
-            List<RolePermission> rolePermissionPOs = rolePermissionDao.selectByCondition(new HashMap<String, Object>() {{
-                put("roleId", rolePO.getId());
+        List<Role> roles = getRoleByUserId(userId);
+        Map<String, Permission> permissionMap = new HashMap<>(16);
+        for (Role role : roles) {
+            List<RolePermission> rolePermissions = rolePermissionDao.selectByCondition(new HashMap<String, Object>(16) {{
+                put("roleId", role.getId());
             }});
-            if ((null != rolePermissionPOs) && (rolePermissionPOs.size() != 0)) {
-                for (RolePermission rolePermissionPO : rolePermissionPOs) {
-                    Permission permission = permissionDao.selectById(rolePermissionPO.getPermissionId());
+            if ((null != rolePermissions) && (rolePermissions.size() != 0)) {
+                for (RolePermission rolePermission : rolePermissions) {
+                    Permission permission = permissionDao.selectById(rolePermission.getPermissionId());
                     permissionMap.put(permission.getId(), permission);
                 }
             }
         }
-        List<Permission> permissionPOs = (List<Permission>) permissionMap.values();
-        return permissionPOs;
+        List<Permission> permissions = (List<Permission>) permissionMap.values();
+        return permissions;
     }
 
 }
