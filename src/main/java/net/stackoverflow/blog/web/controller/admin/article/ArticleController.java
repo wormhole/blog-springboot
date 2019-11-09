@@ -1,5 +1,8 @@
 package net.stackoverflow.blog.web.controller.admin.article;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import net.stackoverflow.blog.common.BaseController;
 import net.stackoverflow.blog.common.Page;
 import net.stackoverflow.blog.common.Result;
@@ -34,6 +37,7 @@ import java.util.*;
  *
  * @author 凉衫薄
  */
+@Api(value = "文章管理接口")
 @Controller
 @RequestMapping(value = "/admin/article")
 public class ArticleController extends BaseController {
@@ -52,6 +56,7 @@ public class ArticleController extends BaseController {
      *
      * @return ModelAndView对象
      */
+    @ApiOperation(value = "文章管理页面跳转")
     @RequestMapping(value = "/article_management", method = RequestMethod.GET)
     public ModelAndView management() {
         ModelAndView mv = new ModelAndView();
@@ -85,12 +90,13 @@ public class ArticleController extends BaseController {
      * 更新文章
      *
      * @param articleVO 文章VO对象
-     * @param errors 错误信息
+     * @param errors    错误信息
      * @return ResponseEntity对象
      */
+    @ApiOperation(value = "文章更新接口", response = Result.class)
     @RequestMapping(value = "/update_article", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity update(@Validated(ArticleVO.UpdateGroup.class) @RequestBody ArticleVO articleVO, Errors errors) {
+    public ResponseEntity update(@ApiParam(name = "articleVO", value = "文章VO对象") @Validated(ArticleVO.UpdateGroup.class) @RequestBody ArticleVO articleVO, Errors errors) {
 
         //校验数据
         checkErrors(errors);
@@ -195,7 +201,7 @@ public class ArticleController extends BaseController {
      * 设置文章是否显示
      *
      * @param articleVO 文章VO对象
-     * @param errors 错误信息
+     * @param errors    错误信息
      * @return ResponseEntity对象
      */
     @RequestMapping(value = "/visible_article", method = RequestMethod.POST)

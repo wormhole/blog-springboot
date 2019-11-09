@@ -144,7 +144,7 @@ public class CategoryController extends BaseController {
             throw new BusinessException("该分类不允许删除");
         }
 
-        categoryService.deleteById(category.getId());
+        categoryService.delete(category.getId());
 
         Result result = new Result();
         result.setStatus(Result.SUCCESS);

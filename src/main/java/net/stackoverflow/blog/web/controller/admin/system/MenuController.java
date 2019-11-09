@@ -111,7 +111,7 @@ public class MenuController extends BaseController {
         }
 
         //删除菜单，并更新ServletContext中的属性
-        menuService.deleteById(menuVO.getId());
+        menuService.delete(menuVO.getId());
 
         ServletContext application = request.getServletContext();
         List<Menu> menus = menuService.selectByCondition(new HashMap<>(16));

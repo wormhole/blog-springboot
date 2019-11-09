@@ -8,7 +8,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.io.IOException;
@@ -17,7 +16,7 @@ import java.sql.*;
 import java.util.Properties;
 
 @SpringBootApplication
-@MapperScan(basePackages = {"net.stackoverflow.blog.dao.*"}, sqlSessionFactoryRef = "sqlSessionFactory", annotationClass = Repository.class)
+@MapperScan(basePackages = {"net.stackoverflow.blog.dao.*"}, sqlSessionFactoryRef = "sqlSessionFactory")
 @EnableCaching
 @EnableTransactionManagement
 @EnableScheduling

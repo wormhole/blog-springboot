@@ -207,7 +207,7 @@ public class RoleServiceImpl implements RoleService {
             return null;
         }
 
-        rolePermissionDao.deleteById(rolePermissions.get(0).getId());
+        rolePermissionDao.delete(rolePermissions.get(0).getId());
         return rolePermissions.get(0);
     }
 

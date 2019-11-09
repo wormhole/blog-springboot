@@ -111,7 +111,7 @@ public class CommentController extends BaseController {
         checkErrors(errors);
 
         Result result = new Result();
-        if (commentService.deleteById(commentVO.getId()) != null) {
+        if (commentService.delete(commentVO.getId()) != null) {
             result.setStatus(Result.SUCCESS);
             result.setMessage("评论删除成功");
         } else {
