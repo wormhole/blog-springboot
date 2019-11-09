@@ -214,7 +214,7 @@ public class UserServiceImpl implements UserService {
             return null;
         }
 
-        userRoleDao.deleteById(userRoles.get(0).getId());
+        userRoleDao.delete(userRoles.get(0).getId());
         return userRoles.get(0);
 
     }
