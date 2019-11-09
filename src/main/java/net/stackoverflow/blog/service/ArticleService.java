@@ -25,9 +25,9 @@ public interface ArticleService {
 
     int batchInsert(List<Article> articlePOs);
 
-    Article deleteById(String id);
+    Article delete(String id);
 
-    int batchDeleteById(List<String> ids);
+    int batchDelete(List<String> ids);
 
     Article update(Article articlePO);
 
