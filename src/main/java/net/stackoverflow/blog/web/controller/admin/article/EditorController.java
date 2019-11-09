@@ -17,8 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -114,19 +112,7 @@ public class EditorController extends BaseController {
     public ResponseEntity insert(@Validated(ArticleVO.InsertGroup.class) @RequestBody ArticleVO articleVO, Errors errors, HttpSession session) {
 
         //校验数据
-        if (errors.hasErrors()) {
-            Map<String, String> errMap = new HashMap<>(16);
-            List<ObjectError> oes = errors.getAllErrors();
-            for (ObjectError oe : oes) {
-                if (oe instanceof FieldError) {
-                    FieldError fe = (FieldError) oe;
-                    errMap.put(fe.getField(), oe.getDefaultMessage());
-                } else {
-                    errMap.put(oe.getObjectName(), oe.getDefaultMessage());
-                }
-            }
-            throw new BusinessException("字段格式错误", errMap);
-        }
+        checkErrors(errors);
 
         //检验url是否重复
         articleVO.setUrl(codeToUrl(articleVO.getArticleCode()));

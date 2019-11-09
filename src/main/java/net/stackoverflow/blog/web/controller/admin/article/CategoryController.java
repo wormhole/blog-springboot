@@ -13,8 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -57,19 +55,7 @@ public class CategoryController extends BaseController {
     public ResponseEntity insert(@Validated(CategoryVO.InsertGroup.class) @RequestBody CategoryVO categoryVO, Errors errors) {
 
         //校验数据
-        if (errors.hasErrors()) {
-            Map<String, String> errMap = new HashMap<>(16);
-            List<ObjectError> oes = errors.getAllErrors();
-            for (ObjectError oe : oes) {
-                if (oe instanceof FieldError) {
-                    FieldError fe = (FieldError) oe;
-                    errMap.put(fe.getField(), oe.getDefaultMessage());
-                } else {
-                    errMap.put(oe.getObjectName(), oe.getDefaultMessage());
-                }
-            }
-            throw new BusinessException("字段格式错误", errMap);
-        }
+        checkErrors(errors);
 
         Category category = new Category();
         BeanUtils.copyProperties(categoryVO, category);
@@ -147,19 +133,7 @@ public class CategoryController extends BaseController {
     public ResponseEntity delete(@Validated(CategoryVO.DeleteGroup.class) @RequestBody CategoryVO categoryVO, Errors errors) {
 
         //校验数据
-        if (errors.hasErrors()) {
-            Map<String, String> errMap = new HashMap<>(16);
-            List<ObjectError> oes = errors.getAllErrors();
-            for (ObjectError oe : oes) {
-                if (oe instanceof FieldError) {
-                    FieldError fe = (FieldError) oe;
-                    errMap.put(fe.getField(), oe.getDefaultMessage());
-                } else {
-                    errMap.put(oe.getObjectName(), oe.getDefaultMessage());
-                }
-            }
-            throw new BusinessException("字段格式错误", errMap);
-        }
+        checkErrors(errors);
 
         //校验分类是否可以被删除
         Category category = categoryService.selectById(categoryVO.getId());
@@ -191,19 +165,7 @@ public class CategoryController extends BaseController {
     public ResponseEntity update(@Validated(CategoryVO.UpdateGroup.class) @RequestBody CategoryVO categoryVO, Errors errors) {
 
         //校验数据
-        if (errors.hasErrors()) {
-            Map<String, String> errMap = new HashMap<>(16);
-            List<ObjectError> oes = errors.getAllErrors();
-            for (ObjectError oe : oes) {
-                if (oe instanceof FieldError) {
-                    FieldError fe = (FieldError) oe;
-                    errMap.put(fe.getField(), oe.getDefaultMessage());
-                } else {
-                    errMap.put(oe.getObjectName(), oe.getDefaultMessage());
-                }
-            }
-            throw new BusinessException("字段格式错误", errMap);
-        }
+        checkErrors(errors);
 
         //校验分类是否可被更新
         Category oldCategory = categoryService.selectById(categoryVO.getId());

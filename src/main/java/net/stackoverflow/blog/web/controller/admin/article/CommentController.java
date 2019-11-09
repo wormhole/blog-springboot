@@ -14,8 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -110,19 +108,7 @@ public class CommentController extends BaseController {
     public ResponseEntity delete(@Validated(CommentVO.DeleteGroup.class) @RequestBody CommentVO commentVO, Errors errors) {
 
         //校验数据
-        if (errors.hasErrors()) {
-            Map<String, String> errMap = new HashMap<>(10);
-            List<ObjectError> oes = errors.getAllErrors();
-            for (ObjectError oe : oes) {
-                if (oe instanceof FieldError) {
-                    FieldError fe = (FieldError) oe;
-                    errMap.put(fe.getField(), oe.getDefaultMessage());
-                } else {
-                    errMap.put(oe.getObjectName(), oe.getDefaultMessage());
-                }
-            }
-            throw new BusinessException("字段格式错误", errMap);
-        }
+        checkErrors(errors);
 
         Result result = new Result();
         if (commentService.deleteById(commentVO.getId()) != null) {
@@ -147,19 +133,7 @@ public class CommentController extends BaseController {
     public ResponseEntity review(@Validated(CommentVO.ReviewGroup.class) @RequestBody CommentVO commentVO, Errors errors) {
 
         //校验数据
-        if (errors.hasErrors()) {
-            Map<String, String> errMap = new HashMap<>(16);
-            List<ObjectError> oes = errors.getAllErrors();
-            for (ObjectError oe : oes) {
-                if (oe instanceof FieldError) {
-                    FieldError fe = (FieldError) oe;
-                    errMap.put(fe.getField(), oe.getDefaultMessage());
-                } else {
-                    errMap.put(oe.getObjectName(), oe.getDefaultMessage());
-                }
-            }
-            throw new BusinessException("字段格式错误", errMap);
-        }
+        checkErrors(errors);
 
         Comment comment = new Comment();
         BeanUtils.copyProperties(commentVO, comment);

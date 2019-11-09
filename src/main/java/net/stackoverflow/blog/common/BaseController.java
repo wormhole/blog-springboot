@@ -1,6 +1,10 @@
 package net.stackoverflow.blog.common;
 
+import net.stackoverflow.blog.exception.BusinessException;
 import net.stackoverflow.blog.exception.ServerException;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -12,6 +16,27 @@ import java.util.*;
  * @author 凉衫薄
  */
 public class BaseController {
+
+    /**
+     * 检查是否有字段错误
+     *
+     * @param errors
+     */
+    protected void checkErrors(Errors errors) {
+        if (errors.hasErrors()) {
+            Map<String, String> errMap = new HashMap<>(16);
+            List<ObjectError> oes = errors.getAllErrors();
+            for (ObjectError oe : oes) {
+                if (oe instanceof FieldError) {
+                    FieldError fe = (FieldError) oe;
+                    errMap.put(fe.getField(), oe.getDefaultMessage());
+                } else {
+                    errMap.put(oe.getObjectName(), oe.getDefaultMessage());
+                }
+            }
+            throw new BusinessException("字段格式错误", errMap);
+        }
+    }
 
     /**
      * vo转po

@@ -15,8 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,8 +24,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 个人信息维护Controller
@@ -68,19 +64,7 @@ public class PersonalController extends BaseController {
     public ResponseEntity updateBase(@Validated(UserVO.UpdateBaseGroup.class) @RequestBody UserVO userVO, Errors errors, HttpSession session) {
 
         //校验数据
-        if (errors.hasErrors()) {
-            Map<String, String> errMap = new HashMap<>(10);
-            List<ObjectError> oes = errors.getAllErrors();
-            for (ObjectError oe : oes) {
-                if (oe instanceof FieldError) {
-                    FieldError fe = (FieldError) oe;
-                    errMap.put(fe.getField(), oe.getDefaultMessage());
-                } else {
-                    errMap.put(oe.getObjectName(), oe.getDefaultMessage());
-                }
-            }
-            throw new BusinessException("字段格式错误", errMap);
-        }
+        checkErrors(errors);
 
         User user = (User) session.getAttribute("user");
 
@@ -127,19 +111,7 @@ public class PersonalController extends BaseController {
     public ResponseEntity updatePassword(@Validated(UserVO.UpdatePasswordGroup.class) @RequestBody UserVO userVO, Errors errors, HttpSession session) {
 
         //校验数据
-        if (errors.hasErrors()) {
-            Map<String, String> errMap = new HashMap<>(10);
-            List<ObjectError> oes = errors.getAllErrors();
-            for (ObjectError oe : oes) {
-                if (oe instanceof FieldError) {
-                    FieldError fe = (FieldError) oe;
-                    errMap.put(fe.getField(), oe.getDefaultMessage());
-                } else {
-                    errMap.put(oe.getObjectName(), oe.getDefaultMessage());
-                }
-            }
-            throw new BusinessException("字段格式错误", errMap);
-        }
+        checkErrors(errors);
 
         User user = (User) session.getAttribute("user");
 

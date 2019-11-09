@@ -13,8 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -101,19 +99,7 @@ public class MenuController extends BaseController {
     public ResponseEntity delete(@Validated(MenuVO.DeleteGroup.class) @RequestBody MenuVO menuVO, Errors errors, HttpServletRequest request) {
 
         //校验数据
-        if (errors.hasErrors()) {
-            Map<String, String> errMap = new HashMap<>();
-            List<ObjectError> oes = errors.getAllErrors();
-            for (ObjectError oe : oes) {
-                if (oe instanceof FieldError) {
-                    FieldError fe = (FieldError) oe;
-                    errMap.put(fe.getField(), oe.getDefaultMessage());
-                } else {
-                    errMap.put(oe.getObjectName(), oe.getDefaultMessage());
-                }
-            }
-            throw new BusinessException("字段格式错误", errMap);
-        }
+        checkErrors(errors);
 
         //判断该菜单是否可以被删除
         Menu menu = menuService.selectById(menuVO.getId());
@@ -151,19 +137,7 @@ public class MenuController extends BaseController {
     public ResponseEntity insert(@Validated(MenuVO.InsertGroup.class) @RequestBody MenuVO menuVO, Errors errors, HttpServletRequest request) {
 
         //校验数据
-        if (errors.hasErrors()) {
-            Map<String, String> errMap = new HashMap<>();
-            List<ObjectError> oes = errors.getAllErrors();
-            for (ObjectError oe : oes) {
-                if (oe instanceof FieldError) {
-                    FieldError fe = (FieldError) oe;
-                    errMap.put(fe.getField(), oe.getDefaultMessage());
-                } else {
-                    errMap.put(oe.getObjectName(), oe.getDefaultMessage());
-                }
-            }
-            throw new BusinessException("字段格式错误", errMap);
-        }
+        checkErrors(errors);
 
         Menu menu = new Menu();
         BeanUtils.copyProperties(menuVO, menu);
@@ -196,19 +170,7 @@ public class MenuController extends BaseController {
     public ResponseEntity update(@Validated(MenuVO.UpdateGroup.class) @RequestBody MenuVO menuVO, Errors errors, HttpServletRequest request) {
 
         //校验数据
-        if (errors.hasErrors()) {
-            Map<String, String> errMap = new HashMap<>();
-            List<ObjectError> oes = errors.getAllErrors();
-            for (ObjectError oe : oes) {
-                if (oe instanceof FieldError) {
-                    FieldError fe = (FieldError) oe;
-                    errMap.put(fe.getField(), oe.getDefaultMessage());
-                } else {
-                    errMap.put(oe.getObjectName(), oe.getDefaultMessage());
-                }
-            }
-            throw new BusinessException("字段格式错误", errMap);
-        }
+        checkErrors(errors);
 
         //检查菜单是否可以被删除
         Menu menu = menuService.selectById(menuVO.getId());
