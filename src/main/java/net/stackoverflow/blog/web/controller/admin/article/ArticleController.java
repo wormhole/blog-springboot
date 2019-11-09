@@ -10,6 +10,7 @@ import net.stackoverflow.blog.service.ArticleService;
 import net.stackoverflow.blog.service.CategoryService;
 import net.stackoverflow.blog.service.CommentService;
 import net.stackoverflow.blog.service.UserService;
+import net.stackoverflow.blog.util.CollectionUtils;
 import net.stackoverflow.blog.util.DateUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,10 +50,9 @@ public class ArticleController extends BaseController {
     /**
      * 文章管理页面跳转
      *
-     * @return 返回ModelAndView对象
+     * @return ModelAndView对象
      */
     @RequestMapping(value = "/article_management", method = RequestMethod.GET)
-    @ResponseBody
     public ModelAndView management() {
         ModelAndView mv = new ModelAndView();
         mv.setViewName("/admin/article/article_management");
@@ -60,10 +60,10 @@ public class ArticleController extends BaseController {
     }
 
     /**
-     * 通过文章url获取code
+     * 通过url获取code
      *
      * @param url 文章url
-     * @return 返回文章编码
+     * @return 文章编码code
      */
     private String urlToCode(String url) {
         String[] paths = url.split("/");
@@ -73,8 +73,8 @@ public class ArticleController extends BaseController {
     /**
      * 通过code转url
      *
-     * @param code 文章编码
-     * @return 返回文章url
+     * @param code 文章编码code
+     * @return 文章url
      */
     private String codeToUrl(String code) {
         return "/article" + DateUtils.getDatePath() + code;
@@ -82,11 +82,11 @@ public class ArticleController extends BaseController {
 
 
     /**
-     * 更新文章接口
+     * 更新文章
      *
-     * @param articleVO
-     * @param errors
-     * @return
+     * @param articleVO 文章VO对象
+     * @param errors 错误信息
+     * @return ResponseEntity对象
      */
     @RequestMapping(value = "/update_article", method = RequestMethod.POST)
     @ResponseBody
@@ -123,11 +123,11 @@ public class ArticleController extends BaseController {
     }
 
     /**
-     * 分页查询文章列表
+     * 分页获取文章列表
      *
-     * @param page  分页参数
+     * @param page  当前页码，从1开始
      * @param limit 每页数量
-     * @return 返回Response对象
+     * @return ResponseEntity对象
      */
     @RequestMapping(value = "/list_article", method = RequestMethod.GET)
     @ResponseBody
@@ -150,9 +150,9 @@ public class ArticleController extends BaseController {
             }}).size());
             articleVO.setUrl(article.getUrl());
             if (article.getVisible() == 0) {
-                articleVO.setVisibleTag("否");
+                articleVO.setVisibleStr("否");
             } else {
-                articleVO.setVisibleTag("是");
+                articleVO.setVisibleStr("是");
             }
             articleVOs.add(articleVO);
         }
@@ -169,28 +169,20 @@ public class ArticleController extends BaseController {
     }
 
     /**
-     * 删除文章接口
+     * 删除文章
      *
-     * @param articleVOs
-     * @return
+     * @param ids 被删除文章主键列表
+     * @return ResponseEntity对象
      */
     @RequestMapping(value = "/delete_article", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity delete(@RequestBody ArticleVO[] articleVOs) {
+    public ResponseEntity delete(@RequestBody List<String> ids) {
 
-        //字段校验
-        for (ArticleVO articleVO : articleVOs) {
-            if (articleVO.getId() == null) {
-                throw new BusinessException("字段错误校验失败", "id不能为空");
-            }
+        if (CollectionUtils.isEmpty(ids)) {
+            throw new BusinessException("文章主键不能为空");
         }
 
-        //获取id
-        List<String> ids = new ArrayList<>();
-        for (ArticleVO articleVO : articleVOs) {
-            ids.add(articleVO.getId());
-        }
-        articleService.batchDeleteById(ids);
+        articleService.batchDelete(ids);
 
         Result result = new Result();
         result.setStatus(Result.SUCCESS);
@@ -200,11 +192,11 @@ public class ArticleController extends BaseController {
     }
 
     /**
-     * 设置文章是否显示接口
+     * 设置文章是否显示
      *
-     * @param articleVO
-     * @param errors
-     * @return
+     * @param articleVO 文章VO对象
+     * @param errors 错误信息
+     * @return ResponseEntity对象
      */
     @RequestMapping(value = "/visible_article", method = RequestMethod.POST)
     @ResponseBody
@@ -238,7 +230,7 @@ public class ArticleController extends BaseController {
      * 导出markdown格式备份
      *
      * @param id 文章主键
-     * @return 返回ResponseEntity对象
+     * @return ResponseEntity对象
      * @throws IOException
      */
     @RequestMapping(value = "/export_article", method = RequestMethod.GET)
@@ -254,8 +246,7 @@ public class ArticleController extends BaseController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment;filename=" + filename);
-        HttpStatus status = HttpStatus.OK;
-        ResponseEntity<byte[]> entity = new ResponseEntity<>(body, headers, status);
+        ResponseEntity<byte[]> entity = new ResponseEntity<>(body, headers, HttpStatus.OK);
         return entity;
     }
 }

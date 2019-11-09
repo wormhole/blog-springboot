@@ -27,7 +27,7 @@ layui.use(['table', 'jquery', 'layer'], function () {
             {field: 'likes', title: '点赞', sort: true},
             {field: 'hits', title: '点击量', sort: true},
             {field: 'commentCount', title: '评论量', sort: true},
-            {field: 'visibleTag', title: '是否显示'},
+            {field: 'visibleStr', title: '是否显示'},
             {field: 'createDate', title: '创建日期', sort: true},
             {field: 'modifyDate', title: '修改日期', sort: true},
             {fixed: 'right', width: 270, title: '操作', toolbar: '#toolbar-col'}
@@ -115,10 +115,7 @@ layui.use(['table', 'jquery', 'layer'], function () {
                 layer.confirm('确认删除该文章吗', function (index) {
                     var data = [];
                     for (var i = 0; i < checkStatus.data.length; i++) {
-                        var item = {
-                            id: checkStatus.data[i].id
-                        };
-                        data.push(item);
+                        data.push(data[i].id);
                     }
                     deleteArticleAjax(data);
                     layer.close(index);

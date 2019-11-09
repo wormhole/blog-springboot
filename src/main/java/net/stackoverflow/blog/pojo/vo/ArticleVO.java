@@ -16,7 +16,7 @@ import java.util.Date;
  */
 public class ArticleVO {
 
-    @NotNull(message = "缺少主键字段", groups = {ArticleVO.UpdateGroup.class, ArticleVO.DeleteGroup.class, ArticleVO.VisibleGroup.class})
+    @NotNull(message = "缺少主键字段", groups = {ArticleVO.UpdateGroup.class, ArticleVO.VisibleGroup.class})
     private String id;
 
     @NotNull(message = "缺少标题字段", groups = {ArticleVO.UpdateGroup.class, ArticleVO.InsertGroup.class})
@@ -57,15 +57,12 @@ public class ArticleVO {
     private String author;
     private String categoryName;
     private Integer commentCount;
-    private String visibleTag;
+    private String visibleStr;
 
     public interface UpdateGroup {
     }
 
     public interface InsertGroup {
-    }
-
-    public interface DeleteGroup {
     }
 
     public interface VisibleGroup {
@@ -204,11 +201,11 @@ public class ArticleVO {
         this.commentCount = commentCount;
     }
 
-    public String getVisibleTag() {
-        return visibleTag;
+    public String getVisibleStr() {
+        return visibleStr;
     }
 
-    public void setVisibleTag(String visibleTag) {
-        this.visibleTag = visibleTag;
+    public void setVisibleStr(String visibleStr) {
+        this.visibleStr = visibleStr;
     }
 }
