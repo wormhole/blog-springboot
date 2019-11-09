@@ -20,7 +20,7 @@ layui.use(['element', 'jquery', 'layer'], function () {
 
     function deleteImage(url) {
         $.ajax({
-            url: "/admin/media/image/delete?url=" + url,
+            url: "/admin/media/delete_image?url=" + url,
             type: "post",
             dataType: "json",
             success: function (response) {
