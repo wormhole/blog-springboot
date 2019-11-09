@@ -49,10 +49,10 @@ public class SettingController extends BaseController {
      *
      * @return
      */
-    @RequestMapping(value = "/setting_manage", method = RequestMethod.GET)
+    @RequestMapping(value = "/setting_management", method = RequestMethod.GET)
     public ModelAndView setting() {
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("/admin/system/setting_manage");
+        mv.setViewName("/admin/system/setting_management");
         return mv;
     }
 

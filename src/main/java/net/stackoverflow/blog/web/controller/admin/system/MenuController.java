@@ -41,10 +41,10 @@ public class MenuController extends BaseController {
      *
      * @return 返回ModelAndView对象
      */
-    @RequestMapping(value = "/menu_manage", method = RequestMethod.GET)
+    @RequestMapping(value = "/menu_management", method = RequestMethod.GET)
     public ModelAndView management() {
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("/admin/system/menu_manage");
+        mv.setViewName("/admin/system/menu_management");
         return mv;
     }
 

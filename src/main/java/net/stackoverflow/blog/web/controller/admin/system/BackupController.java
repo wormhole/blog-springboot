@@ -39,14 +39,14 @@ public class BackupController {
     private String path;
 
     /**
-     * 备份页面跳转
+     * 备份管理页面跳转
      *
      * @return 返回ModelAndView对象
      */
-    @RequestMapping(value = "/backup_manage", method = RequestMethod.GET)
+    @RequestMapping(value = "/backup_management", method = RequestMethod.GET)
     public ModelAndView backup() {
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("/admin/system/backup_manage");
+        mv.setViewName("/admin/system/backup_management");
         return mv;
     }
 
