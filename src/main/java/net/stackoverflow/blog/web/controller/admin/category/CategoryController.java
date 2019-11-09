@@ -38,10 +38,10 @@ public class CategoryController extends BaseController {
      *
      * @return 返回ModelAndView对象
      */
-    @RequestMapping(value = "/category_manage", method = RequestMethod.GET)
+    @RequestMapping(value = "/category_management", method = RequestMethod.GET)
     public ModelAndView category() {
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("/admin/category/category_manage");
+        mv.setViewName("/admin/category/category_management");
         return mv;
     }
 
