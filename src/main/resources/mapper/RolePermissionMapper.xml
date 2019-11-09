@@ -58,11 +58,11 @@
         </foreach>
     </insert>
 
-    <delete id="deleteById" parameterType="string">
+    <delete id="delete" parameterType="string">
         delete from role_permission where id = #{id}
     </delete>
 
-    <delete id="batchDeleteById" parameterType="list">
+    <delete id="batchDelete" parameterType="list">
         delete from role_permission where id in
         <foreach collection="list" item="id" open="(" separator="," close=")">
             #{id}
