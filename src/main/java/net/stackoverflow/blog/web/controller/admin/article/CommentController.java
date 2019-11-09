@@ -1,4 +1,4 @@
-package net.stackoverflow.blog.web.controller.admin.comment;
+package net.stackoverflow.blog.web.controller.admin.article;
 
 import net.stackoverflow.blog.common.BaseController;
 import net.stackoverflow.blog.common.Page;
@@ -32,7 +32,7 @@ import java.util.Map;
  * @author 凉衫薄
  */
 @Controller
-@RequestMapping(value = "/admin/comment")
+@RequestMapping(value = "/admin/article")
 public class CommentController extends BaseController {
 
     @Autowired
@@ -48,7 +48,7 @@ public class CommentController extends BaseController {
     @RequestMapping(value = "/comment_management", method = RequestMethod.GET)
     public ModelAndView management() {
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("/admin/comment/comment_management");
+        mv.setViewName("/admin/article/comment_management");
         return mv;
     }
 
@@ -59,7 +59,7 @@ public class CommentController extends BaseController {
      * @param limit 每页数量
      * @return
      */
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/list_comment", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity list(@RequestParam(value = "page") String page, @RequestParam(value = "limit") String limit) {
 
@@ -105,7 +105,7 @@ public class CommentController extends BaseController {
      * @param errors
      * @return
      */
-    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @RequestMapping(value = "/delete_comment", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity delete(@Validated(CommentVO.DeleteGroup.class) @RequestBody CommentVO commentVO, Errors errors) {
 
@@ -142,7 +142,7 @@ public class CommentController extends BaseController {
      * @param errors
      * @return
      */
-    @RequestMapping(value = "/review", method = RequestMethod.POST)
+    @RequestMapping(value = "/review_comment", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity review(@Validated(CommentVO.ReviewGroup.class) @RequestBody CommentVO commentVO, Errors errors) {
 

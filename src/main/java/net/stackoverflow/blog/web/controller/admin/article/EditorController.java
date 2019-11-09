@@ -109,7 +109,7 @@ public class EditorController extends BaseController {
      * @param session
      * @return
      */
-    @RequestMapping(value = "/insert", method = RequestMethod.POST)
+    @RequestMapping(value = "/insert_article", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity insert(@Validated(ArticleVO.InsertGroup.class) @RequestBody ArticleVO articleVO, Errors errors, HttpSession session) {
 

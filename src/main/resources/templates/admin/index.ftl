@@ -15,7 +15,7 @@
 <div class="layui-layout layui-layout-admin">
     <!-- 头部区域（可配合layui已有的水平导航） -->
     <div class="layui-header">
-        <div class="layui-logo">虫洞博客</div>
+        <div class="layui-logo">虫洞</div>
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item">
                 <a href="javascript:;"><i class="layui-icon layui-icon-notice"></i>&nbsp;&nbsp;消息</a>
@@ -41,50 +41,41 @@
                 <li class="layui-nav-item">
                     <a href="javascript:;"><i class="layui-icon layui-icon-read"></i>&nbsp;&nbsp;文章</a>
                     <dl class="layui-nav-child">
-                        <dd><a href="javascript:;" data-url="/admin/article/article-manage" data-title="文章管理"
-                               data-id="article-manage">文章管理</a></dd>
-                        <dd><a href="javascript:;" data-url="/admin/article/article-edit" data-title="文章编辑"
-                               data-id="article-edit">文章编辑</a></dd>
-                    </dl>
-                </li>
-                <li class="layui-nav-item">
-                    <a href="javascript:;"><i class="layui-icon layui-icon-note"></i>&nbsp;&nbsp;分类</a>
-                    <dl class="layui-nav-child">
-                        <dd><a href="javascript:;" data-url="/admin/category/category-manage" data-title="分类管理"
-                               data-id="category-manage">分类管理</a></dd>
-                    </dl>
-                </li>
-                <li class="layui-nav-item">
-                    <a href="javascript:;"><i class="layui-icon layui-icon-reply-fill"></i>&nbsp;&nbsp;评论</a>
-                    <dl class="layui-nav-child">
-                        <dd><a href="javascript:;" data-url="/admin/comment/comment-manage" data-title="评论管理"
-                               data-id="comment-manage">评论管理</a></dd>
+                        <dd><a href="javascript:;" data-url="/admin/article/article_management" data-title="文章管理"
+                               data-id="article_management">文章管理</a></dd>
+                        <dd><a href="javascript:;" data-url="/admin/article/article_editor" data-title="文章编辑"
+                               data-id="article_editor">文章编辑</a></dd>
+                        <dd><a href="javascript:;" data-url="/admin/article/category_management" data-title="分类管理"
+                               data-id="category_management">分类管理</a></dd>
+                        <dd><a href="javascript:;" data-url="/admin/comment/comment_management" data-title="评论管理"
+                               data-id="comment_management">评论管理</a></dd>
                     </dl>
                 </li>
                 <li class="layui-nav-item">
                     <a href="javascript:;"><i class="layui-icon layui-icon-user"></i>&nbsp;&nbsp;用户</a>
                     <dl class="layui-nav-child">
-                        <dd><a href="javascript:;" data-url="/admin/user/personal" data-title="个人中心" data-id="personal">个人信息</a>
+                        <dd><a href="javascript:;" data-url="/admin/user/personal_management" data-title="个人中心"
+                               data-id="personal_management">个人信息</a>
                         </dd>
                     </dl>
                 </li>
                 <li class="layui-nav-item">
                     <a href="javascript:;"><i class="layui-icon layui-icon-picture"></i>&nbsp;&nbsp;媒体</a>
                     <dl class="layui-nav-child">
-                        <dd><a href="javascript:;" data-url="/admin/media/image" data-title="图片管理"
-                               data-id="image">图片管理</a></dd>
+                        <dd><a href="javascript:;" data-url="/admin/media/image_management" data-title="图片管理"
+                               data-id="image_management">图片管理</a></dd>
                     </dl>
                 </li>
                 <li class="layui-nav-item">
                     <a href="javascript:;"><i class="layui-icon layui-icon-set-fill"></i>&nbsp;&nbsp;系统</a>
                     <dl class="layui-nav-child">
-                        <dd><a href="javascript:;" data-url="/admin/system/setting" data-title="常规设置"
-                               data-id="setting">常规设置</a></dd>
-                        <dd><a href="javascript:;" data-url="/admin/system/menu" data-title="菜单管理"
-                               data-id="menu">菜单管理</a>
+                        <dd><a href="javascript:;" data-url="/admin/system/setting_management" data-title="常规设置"
+                               data-id="setting_management">常规设置</a></dd>
+                        <dd><a href="javascript:;" data-url="/admin/system/menu_management" data-title="菜单管理"
+                               data-id="menu_management">菜单管理</a>
                         </dd>
-                        <dd><a href="javascript:;" data-url="/admin/system/backup" data-title="数据备份"
-                               data-id="backup">数据备份</a></dd>
+                        <dd><a href="javascript:;" data-url="/admin/system/backup_management" data-title="数据备份"
+                               data-id="backup_management">数据备份</a></dd>
                     </dl>
                 </li>
             </ul>

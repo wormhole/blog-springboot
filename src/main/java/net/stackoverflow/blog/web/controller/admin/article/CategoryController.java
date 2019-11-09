@@ -1,4 +1,4 @@
-package net.stackoverflow.blog.web.controller.admin.category;
+package net.stackoverflow.blog.web.controller.admin.article;
 
 import net.stackoverflow.blog.common.BaseController;
 import net.stackoverflow.blog.common.Page;
@@ -27,7 +27,7 @@ import java.util.*;
  * @author 凉衫薄
  */
 @Controller
-@RequestMapping("/admin/category")
+@RequestMapping("/admin/article")
 public class CategoryController extends BaseController {
 
     @Autowired
@@ -41,7 +41,7 @@ public class CategoryController extends BaseController {
     @RequestMapping(value = "/category_management", method = RequestMethod.GET)
     public ModelAndView category() {
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("/admin/category/category_management");
+        mv.setViewName("/admin/article/category_management");
         return mv;
     }
 
@@ -52,7 +52,7 @@ public class CategoryController extends BaseController {
      * @param errors
      * @return
      */
-    @RequestMapping(value = "/insert", method = RequestMethod.POST)
+    @RequestMapping(value = "/insert_category", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity insert(@Validated(CategoryVO.InsertGroup.class) @RequestBody CategoryVO categoryVO, Errors errors) {
 
@@ -104,7 +104,7 @@ public class CategoryController extends BaseController {
      * @param limit 每页数量
      * @return
      */
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/list_category", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity list(@RequestParam(value = "page") String page, @RequestParam(value = "limit") String limit) {
 
@@ -142,7 +142,7 @@ public class CategoryController extends BaseController {
      * @param errors
      * @return
      */
-    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @RequestMapping(value = "/delete_category", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity delete(@Validated(CategoryVO.DeleteGroup.class) @RequestBody CategoryVO categoryVO, Errors errors) {
 
@@ -186,7 +186,7 @@ public class CategoryController extends BaseController {
      * @param errors
      * @return
      */
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    @RequestMapping(value = "/update_category", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity update(@Validated(CategoryVO.UpdateGroup.class) @RequestBody CategoryVO categoryVO, Errors errors) {
 

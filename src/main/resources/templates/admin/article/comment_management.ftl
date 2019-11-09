@@ -4,7 +4,7 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
     <link rel="stylesheet" href="/static/plugins/layui/css/layui.css"/>
-    <link rel="stylesheet" href="/static/admin/css/comment/comment_management.css"/>
+    <link rel="stylesheet" href="/static/admin/css/article/comment_management.css"/>
     <script src="/static/plugins/layui/layui.js"></script>
     <meta name="keywords" content="${Application.setting.keywords}"/>
     <meta name="description" content="${Application.setting.description}"/>
@@ -23,6 +23,6 @@
     <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="unreview"><i class="layui-icon layui-icon-refresh"/>撤回</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"/>删除</a>
 </script>
-<script type="text/javascript" src="/static/admin/js/comment/comment_management.js"></script>
+<script type="text/javascript" src="/static/admin/js/article/comment_management.js"></script>
 </body>
 </html>

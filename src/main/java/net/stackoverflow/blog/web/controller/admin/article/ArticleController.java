@@ -90,7 +90,7 @@ public class ArticleController extends BaseController {
      * @param errors
      * @return
      */
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    @RequestMapping(value = "/update_article", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity update(@Validated(ArticleVO.UpdateGroup.class) @RequestBody ArticleVO articleVO, Errors errors) {
 
@@ -143,7 +143,7 @@ public class ArticleController extends BaseController {
      * @param limit 每页数量
      * @return 返回Response对象
      */
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/list_article", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity list(@RequestParam(value = "page") String page, @RequestParam(value = "limit") String limit) {
 
@@ -188,7 +188,7 @@ public class ArticleController extends BaseController {
      * @param articleVOs
      * @return
      */
-    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @RequestMapping(value = "/delete_article", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity delete(@RequestBody ArticleVO[] articleVOs) {
 
@@ -220,7 +220,7 @@ public class ArticleController extends BaseController {
      * @param errors
      * @return
      */
-    @RequestMapping(value = "/visible", method = RequestMethod.POST)
+    @RequestMapping(value = "/visible_article", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity visible(@Validated(ArticleVO.VisibleGroup.class) @RequestBody ArticleVO articleVO, Errors errors) {
 
@@ -267,7 +267,7 @@ public class ArticleController extends BaseController {
      * @return 返回ResponseEntity对象
      * @throws IOException
      */
-    @RequestMapping(value = "/export", method = RequestMethod.GET)
+    @RequestMapping(value = "/export_article", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<byte[]> export(@RequestParam("id") String id) throws IOException {
         Article article = articleService.selectById(id);
