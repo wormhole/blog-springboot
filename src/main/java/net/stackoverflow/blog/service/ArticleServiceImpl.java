@@ -146,7 +146,7 @@ public class ArticleServiceImpl implements ArticleService {
                 ids.add(comment.getId());
                 RedisCacheUtils.del("comment:" + comment.getId());
             }
-            commentDao.batchDeleteById(ids);
+            commentDao.batchDelete(ids);
         }
 
         //删除文章及缓存
@@ -179,7 +179,7 @@ public class ArticleServiceImpl implements ArticleService {
                     commentIds.add(comment.getId());
                     RedisCacheUtils.del("comment:" + comment.getId());
                 }
-                commentDao.batchDeleteById(commentIds);
+                commentDao.batchDelete(commentIds);
             }
 
             //清楚缓存

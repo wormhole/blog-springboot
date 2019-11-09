@@ -29,7 +29,6 @@ public class CommentServiceImpl implements CommentService {
      * @return 返回分页查询的结果集
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public List<Comment> selectByPage(Page page) {
         return dao.selectByPage(page);
     }
@@ -41,7 +40,6 @@ public class CommentServiceImpl implements CommentService {
      * @return 返回查询的结果集
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public List<Comment> selectByCondition(Map<String, Object> searchMap) {
         return dao.selectByCondition(searchMap);
     }
@@ -50,62 +48,61 @@ public class CommentServiceImpl implements CommentService {
      * 根据id查询评论
      *
      * @param id 评论id
-     * @return 返回查询的评论PO
+     * @return 返回查询的评论实体对象
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public Comment selectById(String id) {
-        Comment commentPO = (Comment) RedisCacheUtils.get("comment:" + id);
-        if (commentPO != null) {
-            return commentPO;
+        Comment comment = (Comment) RedisCacheUtils.get("comment:" + id);
+        if (comment != null) {
+            return comment;
         } else {
-            commentPO = dao.selectById(id);
-            if (commentPO != null) {
-                RedisCacheUtils.set("comment:" + id, commentPO);
+            comment = dao.selectById(id);
+            if (comment != null) {
+                RedisCacheUtils.set("comment:" + id, comment, 1800);
             }
-            return commentPO;
+            return comment;
         }
     }
 
     /**
      * 新增评论
      *
-     * @param commentPO 新增的评论PO
-     * @return 返回新增的评论PO
+     * @param comment 新增的评论实体对象
+     * @return 返回新增的评论实体对象
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Comment insert(Comment commentPO) {
-        dao.insert(commentPO);
-        RedisCacheUtils.set("comment:" + commentPO.getId(), commentPO);
-        return dao.selectById(commentPO.getId());
+    public Comment insert(Comment comment) {
+        dao.insert(comment);
+        RedisCacheUtils.set("comment:" + comment.getId(), comment, 1800);
+        return dao.selectById(comment.getId());
     }
 
     /**
      * 批量新增
      *
-     * @param commentPOs 新增的评论PO
+     * @param comments 新增的评论实体对象
      * @return 返回新增的记录数
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchInsert(List<Comment> commentPOs) {
-        return dao.batchInsert(commentPOs);
+    public int batchInsert(List<Comment> comments) {
+        return dao.batchInsert(comments);
     }
 
     /**
      * 根据ID删除评论
      *
      * @param id 被删除的评论ID
-     * @return 返回被删除的评论PO
+     * @return 返回被删除的评论实体对象
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Comment deleteById(String id) {
-        Comment commentPO = dao.selectById(id);
-        dao.deleteById(id);
+    public Comment delete(String id) {
+        Comment comment = dao.selectById(id);
+        dao.delete(id);
         RedisCacheUtils.del("comment:" + id);
-        return commentPO;
+        return comment;
     }
 
     /**
@@ -116,8 +113,8 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchDeleteById(List<String> ids) {
-        int result = dao.batchDeleteById(ids);
+    public int batchDelete(List<String> ids) {
+        int result = dao.batchDelete(ids);
         for (String id : ids) {
             RedisCacheUtils.del("comment:" + id);
         }
@@ -127,29 +124,29 @@ public class CommentServiceImpl implements CommentService {
     /**
      * 更新评论
      *
-     * @param commentPO 更新的评论PO
-     * @return 返回被更新的评论PO
+     * @param comment 更新的评论实体对象
+     * @return 返回被更新的评论实体对象
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Comment update(Comment commentPO) {
-        dao.update(commentPO);
-        Comment newCommentPO = dao.selectById(commentPO.getId());
-        RedisCacheUtils.set("comment:" + newCommentPO.getId(), newCommentPO);
-        return newCommentPO;
+    public Comment update(Comment comment) {
+        dao.update(comment);
+        Comment newComment = dao.selectById(comment.getId());
+        RedisCacheUtils.set("comment:" + newComment.getId(), newComment, 1800);
+        return newComment;
     }
 
     /**
      * 批量更新
      *
-     * @param commentPOs 被更新的评论列表
+     * @param comments 被更新的评论列表
      * @return 返回更新的记录数
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchUpdate(List<Comment> commentPOs) {
-        int result = dao.batchUpdate(commentPOs);
-        for (Comment commentPO : commentPOs) {
+    public int batchUpdate(List<Comment> comments) {
+        int result = dao.batchUpdate(comments);
+        for (Comment commentPO : comments) {
             RedisCacheUtils.del("comment:" + commentPO.getId());
         }
         return result;

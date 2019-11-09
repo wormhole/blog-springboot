@@ -23,9 +23,9 @@ public interface CommentService {
 
     int batchInsert(List<Comment> commentPOs);
 
-    Comment deleteById(String id);
+    Comment delete(String id);
 
-    int batchDeleteById(List<String> ids);
+    int batchDelete(List<String> ids);
 
     Comment update(Comment commentPO);
 
