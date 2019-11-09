@@ -25,9 +25,9 @@ public interface RoleService {
 
     int batchInsert(List<Role> rolePOs);
 
-    Role deleteById(String id);
+    Role delete(String id);
 
-    int batchDeleteById(List<String> ids);
+    int batchDelete(List<String> ids);
 
     Role update(Role rolePO);
 

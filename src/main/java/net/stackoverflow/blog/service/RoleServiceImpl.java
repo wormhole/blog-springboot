@@ -39,7 +39,6 @@ public class RoleServiceImpl implements RoleService {
      * @return 角色列表
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public List<Role> selectByPage(Page page) {
         return roleDao.selectByPage(page);
     }
@@ -51,7 +50,6 @@ public class RoleServiceImpl implements RoleService {
      * @return 角色列表
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public List<Role> selectByCondition(Map<String, Object> searchMap) {
         return roleDao.selectByCondition(searchMap);
     }
@@ -63,44 +61,43 @@ public class RoleServiceImpl implements RoleService {
      * @return 角色实体类
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public Role selectById(String id) {
-        Role rolePO = (Role) RedisCacheUtils.get("role:" + id);
-        if (rolePO != null) {
-            return rolePO;
+        Role role = (Role) RedisCacheUtils.get("role:" + id);
+        if (role != null) {
+            return role;
         } else {
-            rolePO = roleDao.selectById(id);
-            if (rolePO != null) {
-                RedisCacheUtils.set("role:" + id, rolePO);
+            role = roleDao.selectById(id);
+            if (role != null) {
+                RedisCacheUtils.set("role:" + id, role, 1800);
             }
-            return rolePO;
+            return role;
         }
     }
 
     /**
      * 新增角色
      *
-     * @param rolePO 角色实体类
+     * @param role 角色实体类
      * @return 新增的角色
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Role insert(Role rolePO) {
-        roleDao.insert(rolePO);
-        RedisCacheUtils.set("role:" + rolePO.getId(), rolePO);
-        return rolePO;
+    public Role insert(Role role) {
+        roleDao.insert(role);
+        RedisCacheUtils.set("role:" + role.getId(), role, 1800);
+        return role;
     }
 
     /**
      * 批量新增
      *
-     * @param rolePOs 角色列表
+     * @param roles 角色列表
      * @return 新增的记录数
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchInsert(List<Role> rolePOs) {
-        return roleDao.batchInsert(rolePOs);
+    public int batchInsert(List<Role> roles) {
+        return roleDao.batchInsert(roles);
     }
 
     /**
@@ -111,11 +108,11 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Role deleteById(String id) {
-        Role rolePO = roleDao.selectById(id);
-        roleDao.deleteById(id);
+    public Role delete(String id) {
+        Role role = roleDao.selectById(id);
+        roleDao.delete(id);
         RedisCacheUtils.del("role:" + id);
-        return rolePO;
+        return role;
     }
 
     /**
@@ -126,8 +123,8 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchDeleteById(List<String> ids) {
-        int result = roleDao.batchDeleteById(ids);
+    public int batchDelete(List<String> ids) {
+        int result = roleDao.batchDelete(ids);
         for (String id : ids) {
             RedisCacheUtils.del("role:" + id);
         }
@@ -137,30 +134,30 @@ public class RoleServiceImpl implements RoleService {
     /**
      * 更新角色
      *
-     * @param rolePO 角色实体类
+     * @param role 角色实体类
      * @return 更新后的角色实体类
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Role update(Role rolePO) {
-        roleDao.update(rolePO);
-        Role newRolePO = roleDao.selectById(rolePO.getId());
-        RedisCacheUtils.set("role:" + newRolePO.getId(), newRolePO);
-        return newRolePO;
+    public Role update(Role role) {
+        roleDao.update(role);
+        Role newRole = roleDao.selectById(role.getId());
+        RedisCacheUtils.set("role:" + newRole.getId(), newRole, 1800);
+        return newRole;
     }
 
     /**
      * 批量更新角色
      *
-     * @param rolePOs 角色列表
+     * @param roles 角色列表
      * @return 更新的记录数
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchUpdate(List<Role> rolePOs) {
-        int result = roleDao.batchUpdate(rolePOs);
-        for (Role rolePO : rolePOs) {
-            RedisCacheUtils.del("role:" + rolePO.getId());
+    public int batchUpdate(List<Role> roles) {
+        int result = roleDao.batchUpdate(roles);
+        for (Role role : roles) {
+            RedisCacheUtils.del("role:" + role.getId());
         }
         return result;
     }
@@ -175,19 +172,19 @@ public class RoleServiceImpl implements RoleService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public RolePermission grantPermission(String roleId, String permissionId) {
-        Role rolePO = roleDao.selectById(roleId);
-        Permission permissionPO = permissionDao.selectById(permissionId);
+        Role role = roleDao.selectById(roleId);
+        Permission permission = permissionDao.selectById(permissionId);
 
-        if (rolePO == null || permissionPO == null) {
+        if (role == null || permission == null) {
             return null;
         }
 
-        RolePermission rolePermissionPO = new RolePermission();
-        rolePermissionPO.setRoleId(roleId);
-        rolePermissionPO.setPermissionId(permissionId);
-        rolePermissionDao.insert(rolePermissionPO);
+        RolePermission rolePermission = new RolePermission();
+        rolePermission.setRoleId(roleId);
+        rolePermission.setPermissionId(permissionId);
+        rolePermissionDao.insert(rolePermission);
 
-        return rolePermissionPO;
+        return rolePermission;
     }
 
     /**
@@ -201,17 +198,17 @@ public class RoleServiceImpl implements RoleService {
     @Transactional(rollbackFor = Exception.class)
     public RolePermission revokePermission(String roleId, String permissionId) {
 
-        List<RolePermission> rolePermissionPOs = rolePermissionDao.selectByCondition(new HashMap<String, Object>() {{
+        List<RolePermission> rolePermissions = rolePermissionDao.selectByCondition(new HashMap<String, Object>(16) {{
             put("roleId", roleId);
             put("permissionId", permissionId);
         }});
 
-        if (rolePermissionPOs.size() == 0) {
+        if (rolePermissions.size() == 0) {
             return null;
         }
 
-        rolePermissionDao.deleteById(rolePermissionPOs.get(0).getId());
-        return rolePermissionPOs.get(0);
+        rolePermissionDao.deleteById(rolePermissions.get(0).getId());
+        return rolePermissions.get(0);
     }
 
     /**
@@ -222,20 +219,20 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     public List<Permission> getPermissionByRoleId(String roleId) {
-        List<Permission> permissionPOs = null;
+        List<Permission> permissions = null;
 
-        List<RolePermission> rolePermissionPOs = rolePermissionDao.selectByCondition(new HashMap<String, Object>() {{
+        List<RolePermission> rolePermissions = rolePermissionDao.selectByCondition(new HashMap<String, Object>(16) {{
             put("roleId", roleId);
         }});
-        if ((null != rolePermissionPOs) && (rolePermissionPOs.size() != 0)) {
-            permissionPOs = new ArrayList<>();
-            for (RolePermission rolePermissionPO : rolePermissionPOs) {
-                Permission permissionPO = permissionDao.selectById(rolePermissionPO.getPermissionId());
-                permissionPOs.add(permissionPO);
+        if ((null != rolePermissions) && (rolePermissions.size() != 0)) {
+            permissions = new ArrayList<>();
+            for (RolePermission rolePermission : rolePermissions) {
+                Permission permission = permissionDao.selectById(rolePermission.getPermissionId());
+                permissions.add(permission);
             }
         }
 
-        return permissionPOs;
+        return permissions;
     }
 
 }
