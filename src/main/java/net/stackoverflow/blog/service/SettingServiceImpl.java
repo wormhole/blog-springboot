@@ -31,7 +31,6 @@ public class SettingServiceImpl implements SettingService {
      * @return 返回查询结果集
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public List<Setting> selectByPage(Page page) {
         return dao.selectByPage(page);
     }
@@ -43,7 +42,6 @@ public class SettingServiceImpl implements SettingService {
      * @return 返回查询结果集
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public List<Setting> selectByCondition(Map<String, Object> searchMap) {
         return dao.selectByCondition(searchMap);
     }
@@ -52,62 +50,61 @@ public class SettingServiceImpl implements SettingService {
      * 根据主键查询
      *
      * @param id 查询主键
-     * @return 返回查询的设置PO
+     * @return 返回查询的设置实体对象
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public Setting selectById(String id) {
-        Setting settingPO = (Setting) RedisCacheUtils.get("setting:" + id);
-        if (settingPO != null) {
-            return settingPO;
+        Setting setting = (Setting) RedisCacheUtils.get("setting:" + id);
+        if (setting != null) {
+            return setting;
         } else {
-            settingPO = dao.selectById(id);
-            if (settingPO != null) {
-                RedisCacheUtils.set("setting:" + id, settingPO);
+            setting = dao.selectById(id);
+            if (setting != null) {
+                RedisCacheUtils.set("setting:" + id, setting, 1800);
             }
-            return settingPO;
+            return setting;
         }
     }
 
     /**
      * 新增设置
      *
-     * @param settingPO 新增的设置PO
-     * @return 返回新增后的PO
+     * @param setting 新增的设置实体对象
+     * @return 返回新增后的实体对象
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Setting insert(Setting settingPO) {
-        dao.insert(settingPO);
-        RedisCacheUtils.set("setting:" + settingPO.getId(), settingPO);
-        return settingPO;
+    public Setting insert(Setting setting) {
+        dao.insert(setting);
+        RedisCacheUtils.set("setting:" + setting.getId(), setting, 1800);
+        return setting;
     }
 
     /**
      * 批量新增
      *
-     * @param settingPOs 批量新增的设置PO列表
+     * @param settings 批量新增的设置列表
      * @return 返回新增的记录数
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchInsert(List<Setting> settingPOs) {
-        return dao.batchInsert(settingPOs);
+    public int batchInsert(List<Setting> settings) {
+        return dao.batchInsert(settings);
     }
 
     /**
      * 根据id删除
      *
      * @param id 被删除的设置主键
-     * @return 返回被删除的设置PO
+     * @return 返回被删除的设置
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Setting deleteById(String id) {
-        Setting settingPO = dao.selectById(id);
-        dao.deleteById(id);
+    public Setting delete(String id) {
+        Setting setting = dao.selectById(id);
+        dao.delete(id);
         RedisCacheUtils.del("setting:" + id);
-        return settingPO;
+        return setting;
     }
 
     /**
@@ -118,8 +115,8 @@ public class SettingServiceImpl implements SettingService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchDeleteById(List<String> ids) {
-        int result = dao.batchDeleteById(ids);
+    public int batchDelete(List<String> ids) {
+        int result = dao.batchDelete(ids);
         for (String id : ids) {
             RedisCacheUtils.del("setting:" + id);
         }
@@ -129,19 +126,19 @@ public class SettingServiceImpl implements SettingService {
     /**
      * 更新设置
      *
-     * @param settingPO 被更新的设置PO
-     * @return 返回更新后的设置PO
+     * @param setting 被更新的设置实体对象
+     * @return 返回更新后的设置实体对象
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Setting update(Setting settingPO) {
-        dao.update(settingPO);
-        List<Setting> settingPOs = dao.selectByCondition(new HashMap<String, Object>() {{
-            put("name", settingPO.getName());
+    public Setting update(Setting setting) {
+        dao.update(setting);
+        List<Setting> settings = dao.selectByCondition(new HashMap<String, Object>(16) {{
+            put("name", setting.getName());
         }});
-        if (!CollectionUtils.isEmpty(settingPOs)) {
-            RedisCacheUtils.set("setting:" + settingPOs.get(0).getId(), settingPOs.get(0));
-            return settingPOs.get(0);
+        if (!CollectionUtils.isEmpty(settings)) {
+            RedisCacheUtils.set("setting:" + settings.get(0).getId(), settings.get(0));
+            return settings.get(0);
         } else {
             return null;
         }
@@ -150,20 +147,15 @@ public class SettingServiceImpl implements SettingService {
     /**
      * 批量更新设置
      *
-     * @param settingPOs 批量更新的设置PO
+     * @param settings 批量更新的设置实体对象
      * @return 返回更新的记录数
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchUpdate(List<Setting> settingPOs) {
-        int result = dao.batchUpdate(settingPOs);
-        for (Setting settingPO : settingPOs) {
-            List<Setting> settingPOList = dao.selectByCondition(new HashMap<String, Object>() {{
-                put("name", settingPO.getName());
-            }});
-            if (!CollectionUtils.isEmpty(settingPOList)) {
-                RedisCacheUtils.set("setting:" + settingPOList.get(0).getId(), settingPOList.get(0));
-            }
+    public int batchUpdate(List<Setting> settings) {
+        int result = dao.batchUpdate(settings);
+        for (Setting setting : settings) {
+            RedisCacheUtils.del("setting:" + setting.getId());
         }
         return result;
     }

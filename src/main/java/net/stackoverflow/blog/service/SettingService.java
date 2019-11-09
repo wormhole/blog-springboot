@@ -23,9 +23,9 @@ public interface SettingService {
 
     int batchInsert(List<Setting> settingPOs);
 
-    Setting deleteById(String id);
+    Setting delete(String id);
 
-    int batchDeleteById(List<String> ids);
+    int batchDelete(List<String> ids);
 
     Setting update(Setting settingPO);
 
