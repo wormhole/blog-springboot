@@ -23,9 +23,9 @@ public interface CategoryService {
 
     int batchInsert(List<Category> categoryPOs);
 
-    Category deleteById(String id);
+    Category delete(String id);
 
-    int batchDeleteById(List<String> ids);
+    int batchDelete(List<String> ids);
 
     Category update(Category categoryPO);
 

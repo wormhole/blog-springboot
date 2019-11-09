@@ -34,7 +34,6 @@ public class CategoryServiceImpl implements CategoryService {
      * @return 返回结果集
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public List<Category> selectByPage(Page page) {
         return categoryDao.selectByPage(page);
     }
@@ -46,7 +45,6 @@ public class CategoryServiceImpl implements CategoryService {
      * @return 返回结果集
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public List<Category> selectByCondition(Map<String, Object> searchMap) {
         return categoryDao.selectByCondition(searchMap);
     }
@@ -58,75 +56,74 @@ public class CategoryServiceImpl implements CategoryService {
      * @return 返回查询结果
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public Category selectById(String id) {
-        Category categoryPO = (Category) RedisCacheUtils.get("category:" + id);
-        if (categoryPO != null) {
-            return categoryPO;
+        Category category = (Category) RedisCacheUtils.get("category:" + id);
+        if (category != null) {
+            return category;
         } else {
-            categoryPO = categoryDao.selectById(id);
-            if (categoryPO != null) {
-                RedisCacheUtils.set("category:" + id, categoryPO);
+            category = categoryDao.selectById(id);
+            if (category != null) {
+                RedisCacheUtils.set("category:" + id, category, 1800);
             }
-            return categoryPO;
+            return category;
         }
     }
 
     /**
      * 新增分类
      *
-     * @param categoryPO 新增的分类PO
-     * @return 新增后的分类PO
+     * @param category 新增的分类实体对象
+     * @return 新增后的分类实体对象
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Category insert(Category categoryPO) {
-        categoryDao.insert(categoryPO);
-        RedisCacheUtils.set("category:" + categoryPO.getId(), categoryPO);
-        return categoryPO;
+    public Category insert(Category category) {
+        categoryDao.insert(category);
+        RedisCacheUtils.set("category:" + category.getId(), category, 1800);
+        return category;
     }
 
     /**
      * 批量新增
      *
-     * @param categoryPOs 批量新增的文章列表
+     * @param categorys 批量新增的文章列表
      * @return 返回批量新增的记录数
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchInsert(List<Category> categoryPOs) {
-        return categoryDao.batchInsert(categoryPOs);
+    public int batchInsert(List<Category> categorys) {
+        return categoryDao.batchInsert(categorys);
     }
 
     /**
      * 根据id删除分类
      *
      * @param id 被删除的分类主键
-     * @return 返回被删除的分类PO
+     * @return 返回被删除的分类实体对象
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Category deleteById(String id) {
+    public Category delete(String id) {
         Category category = categoryDao.selectById(id);
 
         //将所有该分类的文章设成未分类
-        Category unCategoryPO = categoryDao.selectByCondition(new HashMap<String, Object>() {{
+        Category unCategory = categoryDao.selectByCondition(new HashMap<String, Object>(16) {{
             put("code", "uncategory");
         }}).get(0);
-        List<Article> articlePOs = articleDao.selectByCondition(new HashMap<String, Object>() {{
+        List<Article> articles = articleDao.selectByCondition(new HashMap<String, Object>(16) {{
             put("categoryId", category.getId());
         }});
 
-        if (articlePOs != null && articlePOs.size() != 0) {
-            for (Article articlePO : articlePOs) {
-                articlePO.setCategoryId(unCategoryPO.getId());
-                RedisCacheUtils.set("article:" + articlePO.getId(), articlePO);
-                RedisCacheUtils.set("article:" + articlePO.getUrl(), articlePO);
+        if (articles != null && articles.size() != 0) {
+            for (Article article : articles) {
+                article.setCategoryId(unCategory.getId());
+                RedisCacheUtils.set("article:" + article.getId(), article, 1800);
+                RedisCacheUtils.set("article:" + article.getUrl(), article, 1800);
             }
-            articleDao.batchUpdate(articlePOs);
+            articleDao.batchUpdate(articles);
         }
 
-        categoryDao.deleteById(id);
+        categoryDao.delete(id);
         RedisCacheUtils.del("category:" + id);
         return category;
     }
@@ -139,57 +136,57 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchDeleteById(List<String> ids) {
+    public int batchDelete(List<String> ids) {
         for (String id : ids) {
-            Category categoryPO = categoryDao.selectById(id);
+            Category category = categoryDao.selectById(id);
 
             //将该分类下的文章都设成未分类
-            Category unCategoryPO = categoryDao.selectByCondition(new HashMap<String, Object>() {{
+            Category unCategory = categoryDao.selectByCondition(new HashMap<String, Object>(16) {{
                 put("code", "uncategory");
             }}).get(0);
-            List<Article> articlePOs = articleDao.selectByCondition(new HashMap<String, Object>() {{
-                put("categoryId", categoryPO.getId());
+            List<Article> articles = articleDao.selectByCondition(new HashMap<String, Object>(16) {{
+                put("categoryId", category.getId());
             }});
-            if (articlePOs != null && articlePOs.size() != 0) {
-                for (Article articlePO : articlePOs) {
-                    articlePO.setCategoryId(unCategoryPO.getId());
-                    RedisCacheUtils.set("article:" + articlePO.getId(), articlePO);
-                    RedisCacheUtils.set("article:" + articlePO.getUrl(), articlePO);
+            if (articles != null && articles.size() != 0) {
+                for (Article article : articles) {
+                    article.setCategoryId(unCategory.getId());
+                    RedisCacheUtils.set("article:" + article.getId(), article, 1800);
+                    RedisCacheUtils.set("article:" + article.getUrl(), article, 1800);
                 }
-                articleDao.batchUpdate(articlePOs);
+                articleDao.batchUpdate(articles);
             }
             RedisCacheUtils.del("category:" + id);
         }
-        return categoryDao.batchDeleteById(ids);
+        return categoryDao.batchDelete(ids);
     }
 
     /**
      * 更新分类
      *
-     * @param categoryPO 被更新的分类PO类
-     * @return 返回更新后的分类PO
+     * @param category 被更新的分类实体对象
+     * @return 返回更新后的分类实体对象
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Category update(Category categoryPO) {
-        categoryDao.update(categoryPO);
-        Category newCategoryPO = categoryDao.selectById(categoryPO.getId());
-        RedisCacheUtils.set("category:" + newCategoryPO.getId(), newCategoryPO);
-        return newCategoryPO;
+    public Category update(Category category) {
+        categoryDao.update(category);
+        Category newCategory = categoryDao.selectById(category.getId());
+        RedisCacheUtils.set("category:" + newCategory.getId(), newCategory, 1800);
+        return newCategory;
     }
 
     /**
      * 批量更新
      *
-     * @param categoryPOs 批量更新的分类列表
+     * @param categorys 批量更新的分类列表
      * @return 返回被更新的记录数
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchUpdate(List<Category> categoryPOs) {
-        int result = categoryDao.batchUpdate(categoryPOs);
-        for (Category categoryPO : categoryPOs) {
-            RedisCacheUtils.del("category:" + categoryPO.getId());
+    public int batchUpdate(List<Category> categorys) {
+        int result = categoryDao.batchUpdate(categorys);
+        for (Category category : categorys) {
+            RedisCacheUtils.del("category:" + category.getId());
         }
         return result;
     }
