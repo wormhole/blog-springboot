@@ -7,7 +7,7 @@ layui.use(['layer', 'jquery', 'table'], function () {
     var parameter1 = {
         id: 'all-table',
         elem: '#all-table',
-        url: '/admin/dashboard/visit/list',
+        url: '/admin/dashboard/visit_list',
         method: 'get',
         page: true,
         toolbar: '#toolbar-head',
@@ -80,7 +80,7 @@ layui.use(['layer', 'jquery', 'table'], function () {
 
     function flowAjax(option, chart) {
         $.ajax({
-            url: "/admin/dashboard/visit/chart",
+            url: "/admin/dashboard/visit_chart",
             type: "get",
             dataType: "json",
             success: function (response) {
@@ -106,7 +106,7 @@ layui.use(['layer', 'jquery', 'table'], function () {
 
     function countAjax() {
         $.ajax({
-            url: "/admin/dashboard/visit/count",
+            url: "/admin/dashboard/visit_count",
             type: "get",
             dataType: "json",
             success: function (response) {

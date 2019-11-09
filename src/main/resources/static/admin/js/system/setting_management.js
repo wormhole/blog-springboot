@@ -5,7 +5,7 @@ layui.use(['layer', 'jquery'], function () {
 
     function updateSEOAjax(param) {
         $.ajax({
-            url: "/admin/system/setting/update",
+            url: "/admin/system/update_setting",
             type: "post",
             data: JSON.stringify(param),
             dataType: "json",
@@ -58,7 +58,7 @@ layui.use(['layer', 'jquery'], function () {
 
     function updateBaseAjax(param) {
         $.ajax({
-            url: "/admin/system/setting/update",
+            url: "/admin/system/update_setting",
             type: "post",
             data: JSON.stringify(param),
             dataType: "json",
@@ -101,7 +101,7 @@ layui.use(['layer', 'jquery'], function () {
 
     function updateLimitAjax(param) {
         $.ajax({
-            url: "/admin/system/setting/update",
+            url: "/admin/system/update_setting",
             type: "post",
             data: JSON.stringify(param),
             dataType: "json",
@@ -139,7 +139,7 @@ layui.use(['layer', 'jquery'], function () {
 
     function updateHeadAjax(formData) {
         $.ajax({
-            url: "/admin/system/setting/head",
+            url: "/admin/system/update_head",
             type: 'POST',
             data: formData,
             cache: false,
