@@ -30,7 +30,6 @@ public class VisitServiceImpl implements VisitService {
      * @return 返回查询结果集
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public List<Visit> selectByPage(Page page) {
         return dao.selectByPage(page);
     }
@@ -42,7 +41,6 @@ public class VisitServiceImpl implements VisitService {
      * @return 返回条件查询结果集
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public List<Visit> selectByCondition(Map<String, Object> searchMap) {
         return dao.selectByCondition(searchMap);
     }
@@ -51,62 +49,61 @@ public class VisitServiceImpl implements VisitService {
      * 根据主键查询
      *
      * @param id 查询主键
-     * @return 返回访客PO
+     * @return 返回访客实体对象
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public Visit selectById(String id) {
-        Visit visitPO = (Visit) RedisCacheUtils.get("visit:" + id);
-        if (visitPO != null) {
-            return visitPO;
+        Visit visit = (Visit) RedisCacheUtils.get("visit:" + id);
+        if (visit != null) {
+            return visit;
         } else {
-            visitPO = dao.selectById(id);
-            if (visitPO != null) {
-                RedisCacheUtils.set("visit:" + id, visitPO);
+            visit = dao.selectById(id);
+            if (visit != null) {
+                RedisCacheUtils.set("visit:" + id, visit, 1800);
             }
-            return visitPO;
+            return visit;
         }
     }
 
     /**
      * 新增访客
      *
-     * @param visitPO 新增访客PO
-     * @return 返回新增的访客PO
+     * @param visit 新增访客实体对象
+     * @return 返回新增的访客实体对象
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Visit insert(Visit visitPO) {
-        dao.insert(visitPO);
-        RedisCacheUtils.set("visit:" + visitPO.getId(), visitPO);
-        return visitPO;
+    public Visit insert(Visit visit) {
+        dao.insert(visit);
+        RedisCacheUtils.set("visit:" + visit.getId(), visit, 1800);
+        return visit;
     }
 
     /**
      * 批量新增访客
      *
-     * @param visitPOs 批量新增访客PO列表
+     * @param visits 批量新增访客列表
      * @return
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchInsert(List<Visit> visitPOs) {
-        return dao.batchInsert(visitPOs);
+    public int batchInsert(List<Visit> visits) {
+        return dao.batchInsert(visits);
     }
 
     /**
      * 根据id删除
      *
      * @param id 被删除的访客主键
-     * @return 返回被删除的访客PO
+     * @return 返回被删除的访客实体对象
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Visit deleteById(String id) {
-        Visit visitPO = dao.selectById(id);
-        dao.deleteById(id);
+    public Visit delete(String id) {
+        Visit visit = dao.selectById(id);
+        dao.delete(id);
         RedisCacheUtils.del("visit:" + id);
-        return visitPO;
+        return visit;
     }
 
     /**
@@ -117,8 +114,8 @@ public class VisitServiceImpl implements VisitService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchDeleteById(List<String> ids) {
-        int result = dao.batchDeleteById(ids);
+    public int batchDelete(List<String> ids) {
+        int result = dao.batchDelete(ids);
         for (String id : ids) {
             RedisCacheUtils.del("visit:" + id);
         }
@@ -128,30 +125,30 @@ public class VisitServiceImpl implements VisitService {
     /**
      * 更新访客
      *
-     * @param visitPO 被更新的访客PO
-     * @return 返回更新后的访客PO
+     * @param visit 被更新的访客实体对象
+     * @return 返回更新后的访客实体对象
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Visit update(Visit visitPO) {
-        dao.update(visitPO);
-        Visit newVisitPO = dao.selectById(visitPO.getId());
-        RedisCacheUtils.set("visit:" + visitPO.getId(), newVisitPO);
-        return newVisitPO;
+    public Visit update(Visit visit) {
+        dao.update(visit);
+        Visit newVisit = dao.selectById(visit.getId());
+        RedisCacheUtils.set("visit:" + visit.getId(), newVisit, 1800);
+        return newVisit;
     }
 
     /**
      * 批量更新访客
      *
-     * @param visitPOs 批量更新的访客PO列表
+     * @param visits 批量更新的访客列表
      * @return 返回更新的记录数
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int batchUpdate(List<Visit> visitPOs) {
-        int result = dao.batchUpdate(visitPOs);
-        for (Visit visitPO : visitPOs) {
-            RedisCacheUtils.del("visit:" + visitPO.getId());
+    public int batchUpdate(List<Visit> visits) {
+        int result = dao.batchUpdate(visits);
+        for (Visit visit : visits) {
+            RedisCacheUtils.del("visit:" + visit.getId());
         }
         return result;
     }

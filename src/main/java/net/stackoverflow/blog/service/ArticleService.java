@@ -21,16 +21,16 @@ public interface ArticleService {
 
     Article selectByUrl(String url);
 
-    Article insert(Article articlePO);
+    Article insert(Article article);
 
-    int batchInsert(List<Article> articlePOs);
+    int batchInsert(List<Article> articles);
 
     Article delete(String id);
 
     int batchDelete(List<String> ids);
 
-    Article update(Article articlePO);
+    Article update(Article article);
 
-    int batchUpdate(List<Article> articlePOs);
+    int batchUpdate(List<Article> articles);
 
 }

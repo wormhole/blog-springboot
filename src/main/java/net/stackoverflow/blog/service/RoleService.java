@@ -21,17 +21,17 @@ public interface RoleService {
 
     Role selectById(String id);
 
-    Role insert(Role rolePO);
+    Role insert(Role role);
 
-    int batchInsert(List<Role> rolePOs);
+    int batchInsert(List<Role> roles);
 
     Role delete(String id);
 
     int batchDelete(List<String> ids);
 
-    Role update(Role rolePO);
+    Role update(Role role);
 
-    int batchUpdate(List<Role> rolePOs);
+    int batchUpdate(List<Role> roles);
 
     RolePermission grantPermission(String roleId, String permissionId);
 

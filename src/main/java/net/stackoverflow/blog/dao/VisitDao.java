@@ -2,7 +2,7 @@ package net.stackoverflow.blog.dao;
 
 import net.stackoverflow.blog.common.Page;
 import net.stackoverflow.blog.pojo.entity.Visit;
-import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.Map;
  *
  * @author 凉衫薄
  */
-@Mapper
+@Repository
 public interface VisitDao {
 
     List<Visit> selectByPage(Page page);
@@ -26,9 +26,9 @@ public interface VisitDao {
 
     int batchInsert(List<Visit> list);
 
-    int deleteById(String id);
+    int delete(String id);
 
-    int batchDeleteById(List<String> list);
+    int batchDelete(List<String> list);
 
     int update(Visit visit);
 

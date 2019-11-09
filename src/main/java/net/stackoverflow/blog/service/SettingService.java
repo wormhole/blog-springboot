@@ -19,16 +19,16 @@ public interface SettingService {
 
     Setting selectById(String id);
 
-    Setting insert(Setting settingPO);
+    Setting insert(Setting setting);
 
-    int batchInsert(List<Setting> settingPOs);
+    int batchInsert(List<Setting> settings);
 
     Setting delete(String id);
 
     int batchDelete(List<String> ids);
 
-    Setting update(Setting settingPO);
+    Setting update(Setting setting);
 
-    int batchUpdate(List<Setting> settingPOs);
+    int batchUpdate(List<Setting> settings);
 
 }

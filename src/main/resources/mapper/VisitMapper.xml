@@ -87,11 +87,11 @@
         </foreach>
     </insert>
 
-    <delete id="deleteById" parameterType="string">
+    <delete id="delete" parameterType="string">
         delete from visit where id = #{id}
     </delete>
 
-    <delete id="batchDeleteById" parameterType="list">
+    <delete id="batchDelete" parameterType="list">
         delete from visit where id in
         <foreach collection="list" item="id" open="(" separator="," close=")">
             #{id}

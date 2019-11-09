@@ -19,16 +19,16 @@ public interface MenuService {
 
     Menu selectById(String id);
 
-    Menu insert(Menu menuPO);
+    Menu insert(Menu menu);
 
-    int batchInsert(List<Menu> menuPOs);
+    int batchInsert(List<Menu> menus);
 
     Menu delete(String id);
 
     int batchDelete(List<String> ids);
 
-    Menu update(Menu menuPO);
+    Menu update(Menu menu);
 
-    int batchUpdate(List<Menu> menuPOs);
+    int batchUpdate(List<Menu> menus);
 
 }
