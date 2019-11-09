@@ -33,7 +33,7 @@ layui.use(['form', 'layer'], function () {
 
     function saveArticleAjax(param) {
         $.ajax({
-            url: "/admin/article/insert",
+            url: "/admin/article/insert_article",
             type: "post",
             data: JSON.stringify(param),
             dataType: "json",
@@ -72,7 +72,7 @@ layui.use(['form', 'layer'], function () {
 
     function updateArticleAjax(param) {
         $.ajax({
-            url: "/admin/article/update",
+            url: "/admin/article/update_article",
             type: "post",
             data: JSON.stringify(param),
             dataType: "json",

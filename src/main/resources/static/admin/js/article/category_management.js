@@ -6,7 +6,7 @@ layui.use(['table', 'jquery', 'layer'], function () {
     var parameter = {
         id: 'category-table',
         elem: '#category-table',
-        url: '/admin/category/list',
+        url: '/admin/article/list_article',
         method: 'get',
         page: true,
         toolbar: '#toolbar-head',
@@ -82,7 +82,7 @@ layui.use(['table', 'jquery', 'layer'], function () {
 
     function updateCategoryAjax(param) {
         $.ajax({
-            url: "/admin/category/update",
+            url: "/admin/article/update_category",
             type: "post",
             data: JSON.stringify(param),
             dataType: "json",
@@ -122,7 +122,7 @@ layui.use(['table', 'jquery', 'layer'], function () {
 
     function deleteCategoryAjax(param) {
         $.ajax({
-            url: "/admin/category/delete",
+            url: "/admin/article/delete_category",
             type: "post",
             data: JSON.stringify(param),
             dataType: "json",
@@ -152,7 +152,7 @@ layui.use(['table', 'jquery', 'layer'], function () {
 
     function insertCategoryAjax(param) {
         $.ajax({
-            url: "/admin/category/insert",
+            url: "/admin/article/insert_category",
             type: "post",
             data: JSON.stringify(param),
             dataType: "json",
