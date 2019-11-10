@@ -1,5 +1,8 @@
 package net.stackoverflow.blog.web.controller.admin.article;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import net.stackoverflow.blog.common.BaseController;
 import net.stackoverflow.blog.common.Result;
 import net.stackoverflow.blog.exception.BusinessException;
@@ -16,7 +19,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,6 +37,7 @@ import java.util.Map;
  *
  * @author 凉衫薄
  */
+@Api(value = "文章编辑接口")
 @Controller
 @RequestMapping(value = "/admin/article")
 public class EditorController extends BaseController {
@@ -73,6 +76,7 @@ public class EditorController extends BaseController {
      * @param id 文章id
      * @return 返回ModelAndView对象
      */
+    @ApiOperation(value = "文章编辑页面跳转")
     @RequestMapping(value = "/article_editor", method = RequestMethod.GET)
     public ModelAndView article(@RequestParam(value = "id", required = false) String id) {
         ModelAndView mv = new ModelAndView();
@@ -103,16 +107,13 @@ public class EditorController extends BaseController {
      * 保存文章接口
      *
      * @param articleVO
-     * @param errors
      * @param session
      * @return
      */
+    @ApiOperation(value = "保存文章接口", response = Result.class)
     @RequestMapping(value = "/insert_article", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity insert(@Validated(ArticleVO.InsertGroup.class) @RequestBody ArticleVO articleVO, Errors errors, HttpSession session) {
-
-        //校验数据
-        checkErrors(errors);
+    public ResponseEntity insert(@ApiParam(name = "articleVO", value = "文章VO对象") @Validated(ArticleVO.InsertGroup.class) @RequestBody ArticleVO articleVO, HttpSession session) {
 
         //检验url是否重复
         articleVO.setUrl(codeToUrl(articleVO.getArticleCode()));
@@ -144,6 +145,7 @@ public class EditorController extends BaseController {
      * @param multipartFile multipartFile对象
      * @return 返回Map对象
      */
+    @ApiOperation(value = "图片上传接口", response = ResponseEntity.class)
     @RequestMapping(value = "/upload_image", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity image(@RequestParam("editormd-image-file") MultipartFile multipartFile) {
