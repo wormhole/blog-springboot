@@ -1,5 +1,8 @@
 package net.stackoverflow.blog.web.controller.admin;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import net.stackoverflow.blog.common.Page;
 import net.stackoverflow.blog.common.Result;
 import net.stackoverflow.blog.pojo.entity.Visit;
@@ -24,6 +27,7 @@ import java.util.*;
  *
  * @author 凉衫薄
  */
+@Api(value = "仪表盘接口")
 @Controller
 @RequestMapping("/admin/dashboard")
 public class DashboardPageController {
@@ -36,6 +40,7 @@ public class DashboardPageController {
      *
      * @return 返回ModelAndView
      */
+    @ApiOperation(value = "仪表盘跳转")
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView dashboard() {
         ModelAndView mv = new ModelAndView();
@@ -48,6 +53,7 @@ public class DashboardPageController {
      *
      * @return 返回Response对象
      */
+    @ApiOperation(value = "获取三十天内流量数据", response = Result.class)
     @RequestMapping(value = "/visit_chart", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity flow() {
@@ -85,13 +91,15 @@ public class DashboardPageController {
     /**
      * 获取访问记录接口
      *
-     * @param page  分页参数
+     * @param page  当前页码
      * @param limit 每页数量
      * @return
      */
+    @ApiOperation(value = "获取访问记录", response = Result.class)
     @RequestMapping(value = "/visit_list", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity today(@RequestParam(value = "page") String page, @RequestParam(value = "limit") String limit) {
+    public ResponseEntity today(@ApiParam(name = "page", value = "当前页码") @RequestParam(value = "page") String page,
+                                @ApiParam(name = "limit", value = "每页数量") @RequestParam(value = "limit") String limit) {
 
         Page pageParam = new Page(Integer.valueOf(page), Integer.valueOf(limit), null);
         List<Visit> visits = visitService.selectByPage(pageParam);
@@ -120,6 +128,7 @@ public class DashboardPageController {
      *
      * @return
      */
+    @ApiOperation(value = "获取访问量接口", response = Result.class)
     @RequestMapping(value = "/visit_count", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity count() {
@@ -134,7 +143,7 @@ public class DashboardPageController {
         Date endDate = calendar.getTime();
 
         int todayVisit = visitService.selectByDate(startDate, endDate).size();
-        int totalVisit = visitService.selectByCondition(new HashMap<>()).size();
+        int totalVisit = visitService.selectByCondition(new HashMap<>(16)).size();
 
         Map<String, Integer> map = new HashMap<>();
         map.put("todayVisit", todayVisit);
