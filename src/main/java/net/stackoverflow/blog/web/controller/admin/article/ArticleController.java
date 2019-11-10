@@ -90,16 +90,12 @@ public class ArticleController extends BaseController {
      * 更新文章
      *
      * @param articleVO 文章VO对象
-     * @param errors    错误信息
      * @return ResponseEntity对象
      */
     @ApiOperation(value = "文章更新接口", response = Result.class)
     @RequestMapping(value = "/update_article", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity update(@ApiParam(name = "articleVO", value = "文章VO对象") @Validated(ArticleVO.UpdateGroup.class) @RequestBody ArticleVO articleVO, Errors errors) {
-
-        //校验数据
-        checkErrors(errors);
+    public ResponseEntity update(@ApiParam(name = "articleVO", value = "文章VO对象") @Validated(ArticleVO.UpdateGroup.class) @RequestBody ArticleVO articleVO) {
 
         Article article = articleService.selectById(articleVO.getId());
         if (article == null) {

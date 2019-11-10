@@ -7,6 +7,10 @@ import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -14,6 +18,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 全局异常处理控制器
@@ -22,6 +29,29 @@ import javax.servlet.http.HttpServletRequest;
  */
 @ControllerAdvice
 public class ExceptionController {
+
+    /**
+     * 处理字段校验异常
+     *
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(BindException.class)
+    @ResponseBody
+    public ResponseEntity handleBindException(BindException e) {
+        Errors errors = e.getBindingResult();
+        Map<String, String> errMap = new HashMap<>(16);
+        List<ObjectError> oes = errors.getAllErrors();
+        for (ObjectError oe : oes) {
+            if (oe instanceof FieldError) {
+                FieldError fe = (FieldError) oe;
+                errMap.put(fe.getField(), oe.getDefaultMessage());
+            } else {
+                errMap.put(oe.getObjectName(), oe.getDefaultMessage());
+            }
+        }
+        return new ResponseEntity(errMap, HttpStatus.OK);
+    }
 
     /**
      * 处理业务异常

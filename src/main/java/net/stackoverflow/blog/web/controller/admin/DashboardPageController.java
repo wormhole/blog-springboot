@@ -36,7 +36,7 @@ public class DashboardPageController {
      *
      * @return 返回ModelAndView
      */
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public ModelAndView dashboard() {
         ModelAndView mv = new ModelAndView();
         mv.setViewName("/admin/dashboard");
