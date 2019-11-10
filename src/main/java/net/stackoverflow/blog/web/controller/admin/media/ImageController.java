@@ -1,5 +1,8 @@
 package net.stackoverflow.blog.web.controller.admin.media;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import net.stackoverflow.blog.common.Result;
 import net.stackoverflow.blog.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +26,7 @@ import java.util.TreeMap;
  *
  * @author 凉衫薄
  */
+@Api(value = "图片管理接口")
 @Controller
 @RequestMapping(value = "/admin/media")
 public class ImageController {
@@ -35,6 +39,7 @@ public class ImageController {
      *
      * @return 返回ModelAndView对象
      */
+    @ApiOperation(value = "图片管理页面跳转")
     @RequestMapping(value = "/image_manage", method = RequestMethod.GET)
     public ModelAndView image() {
         ModelAndView mv = new ModelAndView();
@@ -54,9 +59,10 @@ public class ImageController {
      * @param url 图片url
      * @return
      */
+    @ApiOperation(value = "图片删除接口", response = Result.class)
     @RequestMapping(value = "/delete_image", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity delete(@RequestParam("url") String url) {
+    public ResponseEntity delete(@ApiParam(name = "url", value = "被删除图片的链接") @RequestParam("url") String url) {
         Result result = new Result();
         url = url.replaceFirst("/upload", "");
         File file = new File(path, url);
