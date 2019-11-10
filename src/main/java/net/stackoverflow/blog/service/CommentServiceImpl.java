@@ -65,6 +65,17 @@ public class CommentServiceImpl implements CommentService {
     }
 
     /**
+     * 根据主键批量查询评论
+     *
+     * @param ids 主键列表
+     * @return 结果集
+     */
+    @Override
+    public List<Comment> selectByIds(List<String> ids) {
+        return dao.selectByIds(ids);
+    }
+
+    /**
      * 新增评论
      *
      * @param comment 新增的评论实体对象

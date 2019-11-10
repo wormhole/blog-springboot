@@ -48,7 +48,7 @@ public class CommentVO {
     private String url;
 
     private String articleTitle;
-    private String reviewTag;
+    private String reviewStr;
 
     public interface InsertGroup {
     }
@@ -148,11 +148,11 @@ public class CommentVO {
         this.articleTitle = articleTitle;
     }
 
-    public String getReviewTag() {
-        return reviewTag;
+    public String getReviewStr() {
+        return reviewStr;
     }
 
-    public void setReviewTag(String reviewTag) {
-        this.reviewTag = reviewTag;
+    public void setReviewStr(String reviewStr) {
+        this.reviewStr = reviewStr;
     }
 }

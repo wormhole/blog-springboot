@@ -19,6 +19,8 @@ public interface CommentService {
 
     Comment selectById(String id);
 
+    List<Comment> selectByIds(List<String> ids);
+
     Comment insert(Comment comment);
 
     int batchInsert(List<Comment> comments);

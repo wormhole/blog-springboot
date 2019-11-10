@@ -26,7 +26,7 @@ layui.use(['table', 'jquery', 'layer'], function () {
             {field: 'articleTitle', title: '文章标题', sort: true},
             {field: 'replyTo', title: '回复谁', sort: true},
             {field: 'content', title: '评论内容'},
-            {field: 'reviewTag', title: '是否审核'},
+            {field: 'reviewStr', title: '是否审核'},
             {fixed: 'right', width: 210, title: '操作', toolbar: '#toolbar-col'}
         ]]
     };
@@ -39,24 +39,19 @@ layui.use(['table', 'jquery', 'layer'], function () {
 
         if (layEvent === 'del') {
             layer.confirm('确认删除该评论吗', function (index) {
-                var param = {
-                    id: data.id
-                };
+                var param = [];
+                param.push(data.id);
                 deleteAjax(param);
                 layer.close(index);
             });
         } else if (layEvent === 'review') {
-            var param = {
-                id: data.id,
-                review: 1
-            };
-            reviewAjax(param);
+            var param = [];
+            param.push(data.id);
+            reviewAjax(param, 1);
         } else if (layEvent === 'unreview') {
-            var param = {
-                id: data.id,
-                review: 0
-            };
-            reviewAjax(param);
+            var param = [];
+            param.push(data.id);
+            reviewAjax(param, 0);
         }
     });
 
@@ -90,9 +85,9 @@ layui.use(['table', 'jquery', 'layer'], function () {
         });
     }
 
-    function reviewAjax(param) {
+    function reviewAjax(param, review) {
         $.ajax({
-            url: "/admin/article/review_comment",
+            url: "/admin/article/review_comment?review=" + review,
             type: "post",
             data: JSON.stringify(param),
             dataType: "json",

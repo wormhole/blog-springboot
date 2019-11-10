@@ -21,6 +21,8 @@ public interface CommentDao {
 
     Comment selectById(String id);
 
+    List<Comment> selectByIds(List<String> ids);
+
     int insert(Comment comment);
 
     int batchInsert(List<Comment> list);

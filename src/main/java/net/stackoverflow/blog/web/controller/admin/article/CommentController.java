@@ -1,5 +1,8 @@
 package net.stackoverflow.blog.web.controller.admin.article;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import net.stackoverflow.blog.common.BaseController;
 import net.stackoverflow.blog.common.Page;
 import net.stackoverflow.blog.common.Result;
@@ -8,13 +11,12 @@ import net.stackoverflow.blog.pojo.entity.Comment;
 import net.stackoverflow.blog.pojo.vo.CommentVO;
 import net.stackoverflow.blog.service.ArticleService;
 import net.stackoverflow.blog.service.CommentService;
+import net.stackoverflow.blog.util.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
@@ -29,6 +31,7 @@ import java.util.Map;
  *
  * @author 凉衫薄
  */
+@Api(value = "评论管理接口")
 @Controller
 @RequestMapping(value = "/admin/article")
 public class CommentController extends BaseController {
@@ -43,6 +46,7 @@ public class CommentController extends BaseController {
      *
      * @return
      */
+    @ApiOperation(value = "评论管理页面跳转")
     @RequestMapping(value = "/comment_management", method = RequestMethod.GET)
     public ModelAndView management() {
         ModelAndView mv = new ModelAndView();
@@ -53,13 +57,15 @@ public class CommentController extends BaseController {
     /**
      * 分页查询接口
      *
-     * @param page  分页参数
+     * @param page  当前页码
      * @param limit 每页数量
      * @return
      */
+    @ApiOperation(value = "分页获取评论接口", response = Result.class)
     @RequestMapping(value = "/list_comment", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity list(@RequestParam(value = "page") String page, @RequestParam(value = "limit") String limit) {
+    public ResponseEntity list(@ApiParam(name = "page", value = "当前页码") @RequestParam(value = "page") String page,
+                               @ApiParam(name = "limit", value = "每页数量") @RequestParam(value = "limit") String limit) {
 
         //分页查询
         Page pageParam = new Page(Integer.valueOf(page), Integer.valueOf(limit), null);
@@ -75,9 +81,9 @@ public class CommentController extends BaseController {
             commentVO.setContent(HtmlUtils.htmlEscape(comment.getContent()));
             commentVO.setArticleTitle(HtmlUtils.htmlEscape(articleService.selectById(comment.getArticleId()).getTitle()));
             if (comment.getReview() == 0) {
-                commentVO.setReviewTag("否");
+                commentVO.setReviewStr("否");
             } else {
-                commentVO.setReviewTag("是");
+                commentVO.setReviewStr("是");
             }
             if (comment.getReplyTo() != null) {
                 commentVO.setReplyTo(HtmlUtils.htmlEscape(comment.getReplyTo()));
@@ -99,59 +105,58 @@ public class CommentController extends BaseController {
     /**
      * 评论删除接口
      *
-     * @param commentVO
-     * @param errors
-     * @return
+     * @param ids 评论主键列表
+     * @return ResponseEntity对象
      */
+    @ApiOperation(value = "评论删除接口", response = Result.class)
     @RequestMapping(value = "/delete_comment", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity delete(@Validated(CommentVO.DeleteGroup.class) @RequestBody CommentVO commentVO, Errors errors) {
+    public ResponseEntity delete(@ApiParam(name = "ids", value = "评论主键列表") @RequestBody List<String> ids) {
 
-        //校验数据
-        checkErrors(errors);
+        if (CollectionUtils.isEmpty(ids)) {
+            throw new BusinessException("被删除的评论主键不能为空");
+        }
 
         Result result = new Result();
-        if (commentService.delete(commentVO.getId()) != null) {
+        if (commentService.batchDelete(ids) > 0) {
             result.setStatus(Result.SUCCESS);
             result.setMessage("评论删除成功");
         } else {
-            throw new BusinessException("评论删除失败,找不到该评论");
+            throw new BusinessException("评论删除失败");
         }
 
         return new ResponseEntity(result, HttpStatus.OK);
     }
 
     /**
-     * 审核评论接口
+     * 评论审核接口
      *
-     * @param commentVO
-     * @param errors
+     * @param ids    评论主键列表
+     * @param review 审核状态
      * @return
      */
+    @ApiOperation(value = "审核评论接口", response = Result.class)
     @RequestMapping(value = "/review_comment", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity review(@Validated(CommentVO.ReviewGroup.class) @RequestBody CommentVO commentVO, Errors errors) {
+    public ResponseEntity review(@ApiParam(name = "ids", value = "评论主键列表") @RequestBody List<String> ids,
+                                 @ApiParam(name = "review", value = "审核状态,0-未审核,1-已审核") @RequestParam(name = "review") Integer review) {
 
-        //校验数据
-        checkErrors(errors);
-
-        Comment comment = new Comment();
-        BeanUtils.copyProperties(commentVO, comment);
+        if (CollectionUtils.isEmpty(ids)) {
+            throw new BusinessException("主键不能为空");
+        }
 
         Result result = new Result();
-        if (commentService.update(comment) != null) {
+        List<Comment> comments = commentService.selectByIds(ids);
+        for (Comment comment : comments) {
+            comment.setReview(review);
+        }
+        commentService.batchUpdate(comments);
+        if (review == 0) {
             result.setStatus(Result.SUCCESS);
-            if (comment.getReview() == 1) {
-                result.setMessage("审核成功");
-            } else {
-                result.setMessage("撤回成功");
-            }
+            result.setMessage("撤回成功");
         } else {
-            if (comment.getReview() == 1) {
-                throw new BusinessException("审核失败");
-            } else {
-                throw new BusinessException("撤回失败");
-            }
+            result.setStatus(Result.SUCCESS);
+            result.setMessage("审核成功");
         }
         return new ResponseEntity(result, HttpStatus.OK);
     }

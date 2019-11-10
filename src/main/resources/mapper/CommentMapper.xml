@@ -85,6 +85,13 @@
         select * from comment where id = #{id}
     </select>
 
+    <select id="selectByIds" resultMap="commentMap" resultType="comment">
+        select * from comment where id in
+        <foreach item="id" index="index" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
     <insert id="insert" parameterType="comment">
         <selectKey keyProperty="id" resultType="string" order="BEFORE">
             select uuid()
