@@ -70,6 +70,17 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     /**
+     * 根据主键批量查询分类
+     *
+     * @param ids 主键列表
+     * @return 结果集
+     */
+    @Override
+    public List<Category> selectByIds(List<String> ids) {
+        return categoryDao.selectByIds(ids);
+    }
+
+    /**
      * 新增分类
      *
      * @param category 新增的分类实体对象

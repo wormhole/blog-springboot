@@ -32,7 +32,7 @@ public class CategoryVO {
 
     //以下为扩展字段
     private Integer articleCount;
-    private String deleteTag;
+    private String deleteStr;
 
     public interface InsertGroup {
     }
@@ -92,11 +92,11 @@ public class CategoryVO {
         this.articleCount = articleCount;
     }
 
-    public String getDeleteTag() {
-        return deleteTag;
+    public String getDeleteStr() {
+        return deleteStr;
     }
 
-    public void setDeleteTag(String deleteTag) {
-        this.deleteTag = deleteTag;
+    public void setDeleteStr(String deleteStr) {
+        this.deleteStr = deleteStr;
     }
 }

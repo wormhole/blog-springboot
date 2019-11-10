@@ -57,6 +57,13 @@
         select * from category where id = #{id}
     </select>
 
+    <select id="selectByIds" resultMap="categoryMap" resultType="category">
+        select * from category where id in
+        <foreach item="id" index="index" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
     <insert id="insert" parameterType="category">
         <selectKey keyProperty="id" resultType="string" order="BEFORE">
             select uuid()

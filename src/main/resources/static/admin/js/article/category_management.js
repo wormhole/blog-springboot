@@ -22,7 +22,7 @@ layui.use(['table', 'jquery', 'layer'], function () {
             {field: 'id', title: 'ID'},
             {field: 'name', title: '分类名', sort: true, edit: 'text'},
             {field: 'code', title: '编码', sort: true, edit: 'text'},
-            {field: 'deleteTag', title: '是否能删除'},
+            {field: 'deleteStr', title: '是否能删除'},
             {fixed: 'right', width: 80, title: '操作', toolbar: '#toolbar-col'}
         ]]
     };
@@ -60,9 +60,8 @@ layui.use(['table', 'jquery', 'layer'], function () {
 
         if (layEvent === 'del') {
             layer.confirm('确认删除该分类吗', function (index) {
-                var param = {
-                    id: data.id
-                };
+                var param = [];
+                param.push(data.id);
                 deleteCategoryAjax(param);
                 layer.close(index);
             });

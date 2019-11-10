@@ -21,6 +21,8 @@ public interface CategoryDao {
 
     Category selectById(String id);
 
+    List<Category> selectByIds(List<String> ids);
+
     int insert(Category category);
 
     int batchInsert(List<Category> list);

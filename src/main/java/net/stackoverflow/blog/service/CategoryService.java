@@ -19,6 +19,8 @@ public interface CategoryService {
 
     Category selectById(String id);
 
+    List<Category> selectByIds(List<String> ids);
+
     Category insert(Category category);
 
     int batchInsert(List<Category> categorys);
