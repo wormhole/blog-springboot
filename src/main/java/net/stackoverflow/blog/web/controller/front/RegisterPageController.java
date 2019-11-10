@@ -13,9 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,27 +55,11 @@ public class RegisterPageController extends BaseController {
      *
      * @param userVO
      * @param session
-     * @param errors
      * @return
      */
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity register(@Validated(UserVO.RegisterGroup.class) @RequestBody UserVO userVO, Errors errors, HttpSession session) {
-
-        //校验数据
-        if (errors.hasErrors()) {
-            Map<String, String> errMap = new HashMap<>(16);
-            List<ObjectError> oes = errors.getAllErrors();
-            for (ObjectError oe : oes) {
-                if (oe instanceof FieldError) {
-                    FieldError fe = (FieldError) oe;
-                    errMap.put(fe.getField(), oe.getDefaultMessage());
-                } else {
-                    errMap.put(oe.getObjectName(), oe.getDefaultMessage());
-                }
-            }
-            throw new BusinessException("字段格式错误", errMap);
-        }
+    public ResponseEntity register(@Validated(UserVO.RegisterGroup.class) @RequestBody UserVO userVO, HttpSession session) {
 
         //校验验证码
         String vcode = (String) session.getAttribute("vcode");

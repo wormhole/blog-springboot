@@ -16,16 +16,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 
 import javax.servlet.http.HttpSession;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * 文章详情页Controller
@@ -119,27 +119,11 @@ public class ArticlePageController extends BaseController {
      * 评论接口
      *
      * @param commentVO
-     * @param errors
      * @return
      */
     @RequestMapping(value = "/comment", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity insertComment(@Validated(CommentVO.InsertGroup.class) @RequestBody CommentVO commentVO, Errors errors) {
-
-        //校验数据
-        if (errors.hasErrors()) {
-            Map<String, String> errMap = new HashMap<>();
-            List<ObjectError> oes = errors.getAllErrors();
-            for (ObjectError oe : oes) {
-                if (oe instanceof FieldError) {
-                    FieldError fe = (FieldError) oe;
-                    errMap.put(fe.getField(), oe.getDefaultMessage());
-                } else {
-                    errMap.put(oe.getObjectName(), oe.getDefaultMessage());
-                }
-            }
-            throw new BusinessException("字段格式错误", errMap);
-        }
+    public ResponseEntity insertComment(@Validated(CommentVO.InsertGroup.class) @RequestBody CommentVO commentVO) {
 
         //获取评论的文章
         Article article = articleService.selectByUrl(commentVO.getUrl());
@@ -166,30 +150,14 @@ public class ArticlePageController extends BaseController {
      * 点赞接口
      *
      * @param articleVO
-     * @param errors
      * @param session
      * @return
      */
     @RequestMapping(value = "/like", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity like(@Validated(ArticleVO.LikeGroup.class) @RequestBody ArticleVO articleVO, Errors errors, HttpSession session) {
+    public ResponseEntity like(@Validated(ArticleVO.LikeGroup.class) @RequestBody ArticleVO articleVO, HttpSession session) {
 
         Result result = new Result();
-
-        //校验数据
-        if (errors.hasErrors()) {
-            Map<String, String> errMap = new HashMap<>();
-            List<ObjectError> oes = errors.getAllErrors();
-            for (ObjectError oe : oes) {
-                if (oe instanceof FieldError) {
-                    FieldError fe = (FieldError) oe;
-                    errMap.put(fe.getField(), oe.getDefaultMessage());
-                } else {
-                    errMap.put(oe.getObjectName(), oe.getDefaultMessage());
-                }
-            }
-            throw new BusinessException("字段格式错误", errMap);
-        }
 
         //检验同一次会话是否重复点赞
         Boolean isLike = (Boolean) session.getAttribute(articleVO.getUrl());
