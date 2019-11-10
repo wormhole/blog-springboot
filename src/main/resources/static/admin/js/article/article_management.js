@@ -115,7 +115,7 @@ layui.use(['table', 'jquery', 'layer'], function () {
                 layer.confirm('确认删除该文章吗', function (index) {
                     var data = [];
                     for (var i = 0; i < checkStatus.data.length; i++) {
-                        data.push(data[i].id);
+                        data.push(checkStatus.data[i].id);
                     }
                     deleteArticleAjax(data);
                     layer.close(index);

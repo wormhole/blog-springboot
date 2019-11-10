@@ -131,9 +131,11 @@ public class ArticleController extends BaseController {
      * @param limit 每页数量
      * @return ResponseEntity对象
      */
+    @ApiOperation(value = "分页获取文章列表", response = Result.class)
     @RequestMapping(value = "/list_article", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity list(@RequestParam(value = "page") String page, @RequestParam(value = "limit") String limit) {
+    public ResponseEntity list(@ApiParam(name = "page", value = "当前页码,从1开始") @RequestParam(value = "page") String page,
+                               @ApiParam(name = "limit", value = "每页数量") @RequestParam(value = "limit") String limit) {
 
         Page pageParam = new Page(Integer.valueOf(page), Integer.valueOf(limit), null);
         List<Article> articles = articleService.selectByPage(pageParam);
