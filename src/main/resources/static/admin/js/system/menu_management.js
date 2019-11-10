@@ -22,7 +22,7 @@ layui.use(['table', 'jquery', 'layer'], function () {
             {field: 'id', title: 'ID'},
             {field: 'name', title: '菜单名', sort: true, edit: 'text'},
             {field: 'url', title: 'URL', sort: true, edit: 'text'},
-            {field: 'deleteTag', title: '能否删除'},
+            {field: 'deleteStr', title: '能否删除'},
             {fixed: 'right', width: 80, title: '操作', toolbar: '#toolbar-col'}
         ]]
     };
@@ -61,9 +61,8 @@ layui.use(['table', 'jquery', 'layer'], function () {
         if (layEvent === 'del') {
             layer.confirm('确认删除该菜单吗', function (index) {
 
-                var param = {
-                    id: data.id
-                };
+                var param = [];
+                param.push(data.id);
                 deleteMenuAjax(param);
                 layer.close(index);
             });

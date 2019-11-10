@@ -57,6 +57,13 @@
         select * from menu where id = #{id}
     </select>
 
+    <select id="selectByIds" resultMap="menuMap" resultType="menu">
+        select * from menu where id in
+        <foreach item="id" index="index" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
     <insert id="insert" parameterType="menu">
         <selectKey keyProperty="id" resultType="string" order="BEFORE">
             select uuid()

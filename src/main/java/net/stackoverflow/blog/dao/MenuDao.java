@@ -21,6 +21,8 @@ public interface MenuDao {
 
     Menu selectById(String id);
 
+    List<Menu> selectByIds(List<String> ids);
+
     int insert(Menu menu);
 
     int batchInsert(List<Menu> list);

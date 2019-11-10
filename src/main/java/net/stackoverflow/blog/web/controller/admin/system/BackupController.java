@@ -1,5 +1,7 @@
 package net.stackoverflow.blog.web.controller.admin.system;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import net.stackoverflow.blog.util.DBUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -22,6 +24,7 @@ import java.io.InputStream;
  *
  * @author 凉衫薄
  */
+@Api(value = "数据库备份接口")
 @Controller
 @RequestMapping(value = "/admin/system")
 @PropertySource(value = {"classpath:application.properties"})
@@ -43,6 +46,7 @@ public class BackupController {
      *
      * @return 返回ModelAndView对象
      */
+    @ApiOperation(value = "备份管理页面跳转")
     @RequestMapping(value = "/backup_management", method = RequestMethod.GET)
     public ModelAndView backup() {
         ModelAndView mv = new ModelAndView();
@@ -56,6 +60,7 @@ public class BackupController {
      * @return 返回ResponseEntity对象
      * @throws IOException
      */
+    @ApiOperation(value = "数据库备份文件导出", response = ResponseEntity.class)
     @RequestMapping(value = "/backup_db", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<byte[]> exportSql() throws IOException {

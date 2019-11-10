@@ -1,5 +1,8 @@
 package net.stackoverflow.blog.web.controller.admin.system;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import net.stackoverflow.blog.common.BaseController;
 import net.stackoverflow.blog.common.Page;
 import net.stackoverflow.blog.common.Result;
@@ -7,12 +10,12 @@ import net.stackoverflow.blog.exception.BusinessException;
 import net.stackoverflow.blog.pojo.entity.Menu;
 import net.stackoverflow.blog.pojo.vo.MenuVO;
 import net.stackoverflow.blog.service.MenuService;
+import net.stackoverflow.blog.util.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -27,6 +30,7 @@ import java.util.*;
  *
  * @author 凉衫薄
  */
+@Api(value = "菜单管理接口")
 @Controller
 @RequestMapping(value = "/admin/system")
 public class MenuController extends BaseController {
@@ -39,6 +43,7 @@ public class MenuController extends BaseController {
      *
      * @return 返回ModelAndView对象
      */
+    @ApiOperation(value = "菜单管理页面跳转")
     @RequestMapping(value = "/menu_management", method = RequestMethod.GET)
     public ModelAndView management() {
         ModelAndView mv = new ModelAndView();
@@ -49,13 +54,15 @@ public class MenuController extends BaseController {
     /**
      * 查询菜单列表接口
      *
-     * @param page  分页参数
+     * @param page  当前页码
      * @param limit 每页数量
      * @return
      */
+    @ApiOperation(value = "查询菜单列表接口", response = Result.class)
     @RequestMapping(value = "/list_menu", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity list(@RequestParam(value = "page") String page, @RequestParam(value = "limit") String limit) {
+    public ResponseEntity list(@ApiParam(name = "page", value = "当前页码") @RequestParam(value = "page") String page,
+                               @ApiParam(name = "limit", value = "每页数量") @RequestParam(value = "limit") String limit) {
 
         //分页查询
         Page pageParam = new Page(Integer.valueOf(page), Integer.valueOf(limit), null);
@@ -68,9 +75,9 @@ public class MenuController extends BaseController {
             BeanUtils.copyProperties(menu, menuVO);
             menuVO.setName(HtmlUtils.htmlEscape(menu.getName()));
             if (menu.getDeleteAble() == 0) {
-                menuVO.setDeleteTag("否");
+                menuVO.setDeleteStr("否");
             } else {
-                menuVO.setDeleteTag("是");
+                menuVO.setDeleteStr("是");
             }
             menuVOs.add(menuVO);
         }
@@ -89,33 +96,32 @@ public class MenuController extends BaseController {
     /**
      * 删除菜单接口
      *
-     * @param menuVO
-     * @param errors
+     * @param ids
      * @param request
      * @return
      */
+    @ApiOperation(value = "删除菜单接口", response = Result.class)
     @RequestMapping(value = "/delete_menu", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity delete(@Validated(MenuVO.DeleteGroup.class) @RequestBody MenuVO menuVO, Errors errors, HttpServletRequest request) {
+    public ResponseEntity delete(@ApiParam(name = "ids", value = "菜单主键列表") @RequestBody List<String> ids,
+                                 HttpServletRequest request) {
 
-        //校验数据
-        checkErrors(errors);
-
-        //判断该菜单是否可以被删除
-        Menu menu = menuService.selectById(menuVO.getId());
-        if (menu == null) {
-            throw new BusinessException("未找到该菜单或该菜单不允许删除");
-        }
-        if (menu.getDeleteAble() == 0) {
-            throw new BusinessException("该菜单不允许被删除");
+        if (CollectionUtils.isEmpty(ids)) {
+            throw new BusinessException("菜单主键不允许为空");
         }
 
-        //删除菜单，并更新ServletContext中的属性
-        menuService.delete(menuVO.getId());
+        List<Menu> menus = menuService.selectByIds(ids);
+        for (Menu menu : menus) {
+            if (menu.getDeleteAble() == 0) {
+                throw new BusinessException("包含不允许删除的菜单");
+            }
+        }
+
+        menuService.batchDelete(ids);
 
         ServletContext application = request.getServletContext();
-        List<Menu> menus = menuService.selectByCondition(new HashMap<>(16));
-        application.setAttribute("menu", menus);
+        List<Menu> menuList = menuService.selectByCondition(new HashMap<>(16));
+        application.setAttribute("menu", menuList);
 
         Result result = new Result();
         result.setStatus(Result.SUCCESS);
@@ -128,16 +134,14 @@ public class MenuController extends BaseController {
      * 新增菜单接口
      *
      * @param menuVO
-     * @param errors
      * @param request
      * @return
      */
+    @ApiOperation(value = "新增菜单", response = Result.class)
     @RequestMapping(value = "/insert_menu", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity insert(@Validated(MenuVO.InsertGroup.class) @RequestBody MenuVO menuVO, Errors errors, HttpServletRequest request) {
-
-        //校验数据
-        checkErrors(errors);
+    public ResponseEntity insert(@ApiParam(name = "menuVO", value = "菜单VO对象") @Validated(MenuVO.InsertGroup.class) @RequestBody MenuVO menuVO,
+                                 HttpServletRequest request) {
 
         Menu menu = new Menu();
         BeanUtils.copyProperties(menuVO, menu);
@@ -161,18 +165,16 @@ public class MenuController extends BaseController {
      * 更新菜单接口
      *
      * @param menuVO
-     * @param errors
      * @param request
      * @return
      */
+    @ApiOperation(value = "菜单更新接口", response = Result.class)
     @RequestMapping(value = "/update_menu", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity update(@Validated(MenuVO.UpdateGroup.class) @RequestBody MenuVO menuVO, Errors errors, HttpServletRequest request) {
+    public ResponseEntity update(@ApiParam(name = "menuVO", value = "菜单VO对象") @Validated(MenuVO.UpdateGroup.class) @RequestBody MenuVO menuVO,
+                                 HttpServletRequest request) {
 
-        //校验数据
-        checkErrors(errors);
-
-        //检查菜单是否可以被删除
+        //检查菜单是否可以被修改
         Menu menu = menuService.selectById(menuVO.getId());
         if (menu == null) {
             throw new BusinessException("未找到该菜单");

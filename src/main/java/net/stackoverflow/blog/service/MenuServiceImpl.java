@@ -65,6 +65,17 @@ public class MenuServiceImpl implements MenuService {
     }
 
     /**
+     * 根据主键列表批量查询菜单
+     *
+     * @param ids 主键列表
+     * @return 结果集
+     */
+    @Override
+    public List<Menu> selectByIds(List<String> ids) {
+        return dao.selectByIds(ids);
+    }
+
+    /**
      * 新增菜单
      *
      * @param menu 新增菜单实体对象

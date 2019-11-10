@@ -25,7 +25,7 @@ public class MenuVO {
     private Date date;
 
     //以下为扩展字段
-    private String deleteTag;
+    private String deleteStr;
 
     public interface DeleteGroup {
     }
@@ -77,11 +77,11 @@ public class MenuVO {
         this.date = date;
     }
 
-    public String getDeleteTag() {
-        return deleteTag;
+    public String getDeleteStr() {
+        return deleteStr;
     }
 
-    public void setDeleteTag(String deleteTag) {
-        this.deleteTag = deleteTag;
+    public void setDeleteStr(String deleteStr) {
+        this.deleteStr = deleteStr;
     }
 }

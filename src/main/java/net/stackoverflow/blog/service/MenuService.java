@@ -19,6 +19,8 @@ public interface MenuService {
 
     Menu selectById(String id);
 
+    List<Menu> selectByIds(List<String> ids);
+
     Menu insert(Menu menu);
 
     int batchInsert(List<Menu> menus);
