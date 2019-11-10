@@ -74,6 +74,17 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     /**
+     * 根据主键列表批量查询
+     *
+     * @param ids 主键列表
+     * @return 结果集
+     */
+    @Override
+    public List<Article> selectByIds(List<String> ids) {
+        return articleDao.selectByIds(ids);
+    }
+
+    /**
      * 根据url查询
      *
      * @param url 需要查询的url

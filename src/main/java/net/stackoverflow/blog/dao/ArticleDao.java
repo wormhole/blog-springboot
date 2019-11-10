@@ -21,6 +21,8 @@ public interface ArticleDao {
 
     Article selectById(String id);
 
+    List<Article> selectByIds(List<String> ids);
+
     Article selectByUrl(String url);
 
     int insert(Article article);

@@ -41,17 +41,13 @@ layui.use(['table', 'jquery', 'layer'], function () {
         var layEvent = obj.event;
 
         if (layEvent === 'show') {
-            var param = {
-                id: data.id,
-                visible: 1
-            };
-            showHiddenAjax(param);
+            var param = [];
+            param.push(data.id);
+            showHiddenAjax(param, 1);
         } else if (layEvent === 'hidden') {
-            var param = {
-                id: data.id,
-                visible: 0
-            };
-            showHiddenAjax(param);
+            var param = [];
+            param.push(data.id);
+            showHiddenAjax(param, 0);
         } else if (layEvent === 'export') {
             window.location.href = "/admin/article/export_article?id=" + data.id;
         } else if (layEvent === 'edit') {
@@ -154,9 +150,9 @@ layui.use(['table', 'jquery', 'layer'], function () {
         });
     }
 
-    function showHiddenAjax(param) {
+    function showHiddenAjax(param, visible) {
         $.ajax({
-            url: "/admin/article/visible_article",
+            url: "/admin/article/visible_article?visible=" + visible,
             type: "post",
             data: JSON.stringify(param),
             dataType: "json",

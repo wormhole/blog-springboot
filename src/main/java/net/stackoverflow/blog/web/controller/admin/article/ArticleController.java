@@ -21,7 +21,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -178,9 +177,10 @@ public class ArticleController extends BaseController {
      * @param ids 被删除文章主键列表
      * @return ResponseEntity对象
      */
+    @ApiOperation(value = "删除文章", response = Result.class)
     @RequestMapping(value = "/delete_article", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity delete(@RequestBody List<String> ids) {
+    public ResponseEntity delete(@ApiParam(value = "被删除文章的主键列表") @RequestBody List<String> ids) {
 
         if (CollectionUtils.isEmpty(ids)) {
             throw new BusinessException("文章主键不能为空");
@@ -196,36 +196,36 @@ public class ArticleController extends BaseController {
     }
 
     /**
-     * 设置文章是否显示
+     * 设置文章是否可见
      *
-     * @param articleVO 文章VO对象
-     * @param errors    错误信息
+     * @param ids 文章主键列表
      * @return ResponseEntity对象
      */
+    @ApiOperation(value = "设置文章是否可见")
     @RequestMapping(value = "/visible_article", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity visible(@Validated(ArticleVO.VisibleGroup.class) @RequestBody ArticleVO articleVO, Errors errors) {
+    public ResponseEntity visible(@RequestBody List<String> ids,
+                                  @ApiParam(value = "显示或隐藏,0-隐藏,1-显示") @RequestParam(name = "visible") Integer visible) {
 
-        //校验数据
-        checkErrors(errors);
+        if (CollectionUtils.isEmpty(ids)) {
+            throw new BusinessException("文章主键不能为空");
+        }
 
-        Article article = new Article();
-        BeanUtils.copyProperties(articleVO, article);
+        List<Article> articles = articleService.selectByIds(ids);
+
+        for (Article article : articles) {
+            article.setVisible(visible);
+        }
+
+        articleService.batchUpdate(articles);
 
         Result result = new Result();
-        if (articleService.update(article) != null) {
+        if (visible == 0) {
+            result.setMessage("隐藏成功");
             result.setStatus(Result.SUCCESS);
-            if (article.getVisible() == 0) {
-                result.setMessage("隐藏成功");
-            } else {
-                result.setMessage("显示成功");
-            }
         } else {
-            if (article.getVisible() == 0) {
-                throw new BusinessException("隐藏失败");
-            } else {
-                throw new BusinessException("显示失败");
-            }
+            result.setMessage("显示成功");
+            result.setStatus(Result.SUCCESS);
         }
         return new ResponseEntity(result, HttpStatus.OK);
     }
@@ -237,9 +237,10 @@ public class ArticleController extends BaseController {
      * @return ResponseEntity对象
      * @throws IOException
      */
+    @ApiOperation(value = "导出markdown格式备份文件", response = ResponseEntity.class)
     @RequestMapping(value = "/export_article", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<byte[]> export(@RequestParam("id") String id) throws IOException {
+    public ResponseEntity<byte[]> export(@ApiParam(name = "id", value = "文章主键") @RequestParam("id") String id) throws IOException {
         Article article = articleService.selectById(id);
         String filename = article.getTitle() + ".md";
         filename = new String(filename.getBytes("UTF-8"), "ISO-8859-1");

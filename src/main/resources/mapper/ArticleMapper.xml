@@ -106,6 +106,13 @@
         select * from article where id = #{id}
     </select>
 
+    <select id="selectByIds" resultMap="articleMap" resultType="article">
+        select * from article where id in
+        <foreach item="id" index="index" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
     <select id="selectByUrl" resultMap="articleMap" resultType="article">
         select * from article where url = #{url}
     </select>

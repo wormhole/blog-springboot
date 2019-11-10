@@ -19,6 +19,8 @@ public interface ArticleService {
 
     Article selectById(String id);
 
+    List<Article> selectByIds(List<String> ids);
+
     Article selectByUrl(String url);
 
     Article insert(Article article);
