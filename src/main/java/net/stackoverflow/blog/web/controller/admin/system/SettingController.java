@@ -1,5 +1,8 @@
 package net.stackoverflow.blog.web.controller.admin.system;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import net.stackoverflow.blog.common.BaseController;
 import net.stackoverflow.blog.common.Result;
 import net.stackoverflow.blog.exception.BusinessException;
@@ -35,6 +38,7 @@ import java.util.Map;
  *
  * @author 凉衫薄
  */
+@Api(value = "系统设置接口")
 @Controller
 @RequestMapping(value = "/admin/system")
 public class SettingController extends BaseController {
@@ -49,6 +53,7 @@ public class SettingController extends BaseController {
      *
      * @return
      */
+    @ApiOperation(value = "配置页面跳转")
     @RequestMapping(value = "/setting_management", method = RequestMethod.GET)
     public ModelAndView setting() {
         ModelAndView mv = new ModelAndView();
@@ -63,9 +68,11 @@ public class SettingController extends BaseController {
      * @param request
      * @return
      */
+    @ApiOperation(value = "更新基本配置接口", response = Result.class)
     @RequestMapping(value = "/update_setting", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity update(@RequestBody SettingVO[] settingVOs, HttpServletRequest request) {
+    public ResponseEntity update(@ApiParam(name = "settingVOs", value = "设置VO对象列表") @RequestBody SettingVO[] settingVOs,
+                                 HttpServletRequest request) {
 
         ServletContext application = request.getServletContext();
 
@@ -103,6 +110,7 @@ public class SettingController extends BaseController {
      * @param request HttpServletRequest对象
      * @return
      */
+    @ApiOperation(value = "更新头像接口", response = Result.class)
     @RequestMapping(value = "/update_head", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity updateHead(HttpServletRequest request) {
