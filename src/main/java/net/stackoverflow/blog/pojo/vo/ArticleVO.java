@@ -16,7 +16,7 @@ import java.util.Date;
  *
  * @author 凉衫薄
  */
-@ApiModel(value = "文章VO类")
+@ApiModel(value = "文章")
 public class ArticleVO {
 
     @ApiModelProperty(value = "文章主键")
