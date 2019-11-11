@@ -32,7 +32,7 @@ import java.util.HashMap;
  *
  * @author 凉衫薄
  */
-@Api(value = "个人信息维护接口")
+@Api(description = "个人信息维护")
 @Controller
 @RequestMapping(value = "/admin/user")
 public class PersonalController extends BaseController {

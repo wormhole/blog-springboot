@@ -12,7 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
  *
  * @author 凉衫薄
  */
-@Api(value = "后台管理系统")
+@Api(description = "后台管理")
 @Controller
 public class AdminPageController {
 

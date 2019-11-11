@@ -1,5 +1,7 @@
 package net.stackoverflow.blog.web.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,6 +23,7 @@ import java.util.Random;
  *
  * @author 凉衫薄
  */
+@Api(description = "验证码")
 @Controller
 public class VCodeController {
 
@@ -30,6 +33,7 @@ public class VCodeController {
      * @param response http响应对象
      * @param session  会话对象
      */
+    @ApiOperation(value = "获取验证码")
     @RequestMapping(value = "/vcode", method = RequestMethod.GET)
     public void vcode(HttpServletResponse response, HttpSession session) throws IOException {
 

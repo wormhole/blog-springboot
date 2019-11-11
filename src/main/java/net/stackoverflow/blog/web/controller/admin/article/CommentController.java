@@ -31,7 +31,7 @@ import java.util.Map;
  *
  * @author 凉衫薄
  */
-@Api(value = "评论管理接口")
+@Api(description = "评论管理")
 @Controller
 @RequestMapping(value = "/admin/article")
 public class CommentController extends BaseController {

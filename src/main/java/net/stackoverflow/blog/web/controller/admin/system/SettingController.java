@@ -38,7 +38,7 @@ import java.util.Map;
  *
  * @author 凉衫薄
  */
-@Api(value = "系统设置接口")
+@Api(description = "系统设置")
 @Controller
 @RequestMapping(value = "/admin/system")
 public class SettingController extends BaseController {

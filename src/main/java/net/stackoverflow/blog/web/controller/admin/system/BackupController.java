@@ -24,7 +24,7 @@ import java.io.InputStream;
  *
  * @author 凉衫薄
  */
-@Api(value = "数据库备份接口")
+@Api(description = "数据库备份")
 @Controller
 @RequestMapping(value = "/admin/system")
 @PropertySource(value = {"classpath:application.properties"})

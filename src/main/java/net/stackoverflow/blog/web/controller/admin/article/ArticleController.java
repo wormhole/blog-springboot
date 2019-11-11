@@ -36,7 +36,7 @@ import java.util.*;
  *
  * @author 凉衫薄
  */
-@Api(value = "文章管理接口")
+@Api(description = "文章管理")
 @Controller
 @RequestMapping(value = "/admin/article")
 public class ArticleController extends BaseController {

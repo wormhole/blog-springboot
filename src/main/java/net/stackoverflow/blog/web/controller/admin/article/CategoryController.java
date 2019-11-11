@@ -27,7 +27,7 @@ import java.util.*;
  *
  * @author 凉衫薄
  */
-@Api(value = "分类管理")
+@Api(description = "分类管理")
 @Controller
 @RequestMapping("/admin/article")
 public class CategoryController extends BaseController {

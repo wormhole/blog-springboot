@@ -37,7 +37,7 @@ import java.util.Map;
  *
  * @author 凉衫薄
  */
-@Api(value = "文章编辑接口")
+@Api(description = "文章编辑")
 @Controller
 @RequestMapping(value = "/admin/article")
 public class EditorController extends BaseController {

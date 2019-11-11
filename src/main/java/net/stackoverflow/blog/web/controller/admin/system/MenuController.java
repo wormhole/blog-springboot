@@ -30,7 +30,7 @@ import java.util.*;
  *
  * @author 凉衫薄
  */
-@Api(value = "菜单管理接口")
+@Api(description = "菜单管理")
 @Controller
 @RequestMapping(value = "/admin/system")
 public class MenuController extends BaseController {

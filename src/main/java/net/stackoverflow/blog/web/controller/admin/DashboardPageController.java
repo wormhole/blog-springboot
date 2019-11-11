@@ -27,7 +27,7 @@ import java.util.*;
  *
  * @author 凉衫薄
  */
-@Api(value = "仪表盘接口")
+@Api(description = "仪表盘")
 @Controller
 @RequestMapping("/admin/dashboard")
 public class DashboardPageController {

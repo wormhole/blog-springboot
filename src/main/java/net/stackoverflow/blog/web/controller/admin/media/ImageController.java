@@ -26,7 +26,7 @@ import java.util.TreeMap;
  *
  * @author 凉衫薄
  */
-@Api(value = "图片管理接口")
+@Api(description = "图片管理")
 @Controller
 @RequestMapping(value = "/admin/media")
 public class ImageController {
