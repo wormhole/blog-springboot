@@ -1,5 +1,8 @@
 package net.stackoverflow.blog.web.controller.front;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import net.stackoverflow.blog.common.BaseController;
 import net.stackoverflow.blog.common.Result;
 import net.stackoverflow.blog.exception.BusinessException;
@@ -32,6 +35,7 @@ import java.util.List;
  *
  * @author 凉衫薄
  */
+@Api(description = "文章详情页")
 @Controller
 public class ArticlePageController extends BaseController {
 
@@ -54,8 +58,13 @@ public class ArticlePageController extends BaseController {
      * @param session     会话对象
      * @return 返回ModelAndView对象
      */
+    @ApiOperation(value = "文章详情页面跳转")
     @RequestMapping(value = "/article/{year}/{month}/{day}/{articleCode}", method = RequestMethod.GET)
-    public ModelAndView article(@PathVariable("year") String year, @PathVariable("month") String month, @PathVariable("day") String day, @PathVariable("articleCode") String articleCode, HttpSession session) {
+    public ModelAndView article(@ApiParam(name = "year", value = "年") @PathVariable("year") String year,
+                                @ApiParam(name = "month", value = "月") @PathVariable("month") String month,
+                                @ApiParam(name = "day", value = "日") @PathVariable("day") String day,
+                                @ApiParam(name = "articleCode", value = "文章编码") @PathVariable("articleCode") String articleCode,
+                                HttpSession session) {
         ModelAndView mv = new ModelAndView();
         String url = "/article/" + year + "/" + month + "/" + day + "/" + articleCode;
 
@@ -121,9 +130,10 @@ public class ArticlePageController extends BaseController {
      * @param commentVO
      * @return
      */
+    @ApiOperation(value = "评论接口", response = Result.class)
     @RequestMapping(value = "/comment", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity insertComment(@Validated(CommentVO.InsertGroup.class) @RequestBody CommentVO commentVO) {
+    public ResponseEntity insertComment(@ApiParam(name = "commentVO", value = "评论VO对象") @Validated(CommentVO.InsertGroup.class) @RequestBody CommentVO commentVO) {
 
         //获取评论的文章
         Article article = articleService.selectByUrl(commentVO.getUrl());
@@ -153,9 +163,10 @@ public class ArticlePageController extends BaseController {
      * @param session
      * @return
      */
+    @ApiOperation(value = "点赞接口", response = Result.class)
     @RequestMapping(value = "/like", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity like(@Validated(ArticleVO.LikeGroup.class) @RequestBody ArticleVO articleVO, HttpSession session) {
+    public ResponseEntity like(@ApiParam(name = "articleVO", value = "文章VO对象") @Validated(ArticleVO.LikeGroup.class) @RequestBody ArticleVO articleVO, HttpSession session) {
 
         Result result = new Result();
 

@@ -1,5 +1,7 @@
 package net.stackoverflow.blog.web.controller.front;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import net.stackoverflow.blog.exception.VCodeException;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
@@ -15,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author 凉衫薄
  */
+@Api(description = "登录页")
 @Controller
 public class LoginPageController {
 
@@ -24,6 +27,7 @@ public class LoginPageController {
      * @param request HttpServletRequest对象
      * @return 返回ModelAndView
      */
+    @ApiOperation(value = "登录失败跳转")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView login(HttpServletRequest request) {
 
@@ -48,6 +52,7 @@ public class LoginPageController {
      *
      * @return 返回ModelAndView
      */
+    @ApiOperation(value = "登录页面跳转")
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public ModelAndView loginPage() {
         ModelAndView mv = new ModelAndView();

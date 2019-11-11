@@ -1,5 +1,8 @@
 package net.stackoverflow.blog.web.controller.front;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import net.stackoverflow.blog.common.Page;
 import net.stackoverflow.blog.pojo.entity.Article;
 import net.stackoverflow.blog.pojo.entity.Category;
@@ -33,6 +36,7 @@ import java.util.Map;
  *
  * @author 凉衫薄
  */
+@Api(description = "分类页")
 @Controller
 public class CategoryPageController {
 
@@ -50,6 +54,7 @@ public class CategoryPageController {
      *
      * @return 返回ModelAndView
      */
+    @ApiOperation(value = "分类页面跳转")
     @RequestMapping(value = "/category", method = RequestMethod.GET)
     public ModelAndView categoryPage() {
         ModelAndView mv = new ModelAndView();
@@ -81,8 +86,11 @@ public class CategoryPageController {
      * @param request      HttpServletRequest请求对象
      * @return 返回ModelAndView对象
      */
+    @ApiOperation(value = "具体显示某个分类页面跳转")
     @RequestMapping(value = "/category/{categoryCode}", method = RequestMethod.GET)
-    public ModelAndView categoryArticle(@PathVariable("categoryCode") String categoryCode, @RequestParam(value = "page", required = false, defaultValue = "1") String page, HttpServletRequest request) {
+    public ModelAndView categoryArticle(@ApiParam(name = "categoryCode", value = "分类编码") @PathVariable("categoryCode") String categoryCode,
+                                        @ApiParam(name = "page", value = "当前页码") @RequestParam(value = "page", required = false, defaultValue = "1") String page,
+                                        HttpServletRequest request) {
         ModelAndView mv = new ModelAndView();
         ServletContext application = request.getServletContext();
         Map<String, Object> settingMap = (Map<String, Object>) application.getAttribute("setting");

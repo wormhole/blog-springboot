@@ -1,5 +1,7 @@
 package net.stackoverflow.blog.web.controller.front;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import net.stackoverflow.blog.common.Page;
 import net.stackoverflow.blog.pojo.entity.Article;
 import net.stackoverflow.blog.pojo.vo.ArticleVO;
@@ -30,6 +32,7 @@ import java.util.Map;
  *
  * @author 凉衫薄
  */
+@Api(description = "主页")
 @Controller
 public class IndexPageController {
 
@@ -49,6 +52,7 @@ public class IndexPageController {
      * @param request HttpServletRequest对象
      * @return 返回ModelAndView对象
      */
+    @ApiOperation(value = "主页跳转")
     @RequestMapping(value = {"/index", "/"}, method = RequestMethod.GET)
     public ModelAndView index(@RequestParam(value = "page", required = false, defaultValue = "1") String page, HttpServletRequest request) {
         ModelAndView mv = new ModelAndView();

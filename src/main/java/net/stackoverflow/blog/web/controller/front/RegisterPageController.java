@@ -1,5 +1,8 @@
 package net.stackoverflow.blog.web.controller.front;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import net.stackoverflow.blog.common.BaseController;
 import net.stackoverflow.blog.common.Result;
 import net.stackoverflow.blog.exception.BusinessException;
@@ -30,6 +33,7 @@ import java.util.Map;
  *
  * @author 凉衫薄
  */
+@Api(description = "用户注册页")
 @Controller
 public class RegisterPageController extends BaseController {
 
@@ -43,6 +47,7 @@ public class RegisterPageController extends BaseController {
      *
      * @return
      */
+    @ApiOperation(value = "注册页面跳转")
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView registerPage() {
         ModelAndView mv = new ModelAndView();
@@ -57,9 +62,10 @@ public class RegisterPageController extends BaseController {
      * @param session
      * @return
      */
+    @ApiOperation(value = "用户注册接口", response = Result.class)
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity register(@Validated(UserVO.RegisterGroup.class) @RequestBody UserVO userVO, HttpSession session) {
+    public ResponseEntity register(@ApiParam(name = "userVO", value = "用户VO对象") @Validated(UserVO.RegisterGroup.class) @RequestBody UserVO userVO, HttpSession session) {
 
         //校验验证码
         String vcode = (String) session.getAttribute("vcode");
