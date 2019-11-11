@@ -11,6 +11,7 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -36,11 +37,21 @@ public class ExceptionController {
      * @param e
      * @return
      */
-    @ExceptionHandler(BindException.class)
+    @ExceptionHandler({BindException.class, MethodArgumentNotValidException.class})
     @ResponseBody
-    public ResponseEntity handleBindException(BindException e) {
-        Errors errors = e.getBindingResult();
+    public ResponseEntity handleBindException(Exception e) {
+        Errors errors = null;
         Map<String, String> errMap = new HashMap<>(16);
+        Result result = new Result();
+        result.setStatus(Result.FAILURE);
+        result.setMessage("字段校验失败");
+        if (e instanceof BindException) {
+            BindException be = (BindException) e;
+            errors = be.getBindingResult();
+        } else {
+            MethodArgumentNotValidException manv = (MethodArgumentNotValidException) e;
+            errors = manv.getBindingResult();
+        }
         List<ObjectError> oes = errors.getAllErrors();
         for (ObjectError oe : oes) {
             if (oe instanceof FieldError) {
@@ -50,7 +61,8 @@ public class ExceptionController {
                 errMap.put(oe.getObjectName(), oe.getDefaultMessage());
             }
         }
-        return new ResponseEntity(errMap, HttpStatus.OK);
+        result.setData(errMap);
+        return new ResponseEntity(result, HttpStatus.OK);
     }
 
     /**
