@@ -47,7 +47,7 @@
                                data-id="article_editor">文章编辑</a></dd>
                         <dd><a href="javascript:;" data-url="/admin/article/category_management" data-title="分类管理"
                                data-id="category_management">分类管理</a></dd>
-                        <dd><a href="javascript:;" data-url="/admin/comment/comment_management" data-title="评论管理"
+                        <dd><a href="javascript:;" data-url="/admin/article/comment_management" data-title="评论管理"
                                data-id="comment_management">评论管理</a></dd>
                     </dl>
                 </li>

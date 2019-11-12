@@ -12,7 +12,6 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -28,7 +27,7 @@ import java.util.Map;
  *
  * @author 凉衫薄
  */
-@ControllerAdvice
+//@ControllerAdvice
 public class ExceptionController {
 
     /**

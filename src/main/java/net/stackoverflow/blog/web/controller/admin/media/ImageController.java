@@ -40,7 +40,7 @@ public class ImageController {
      * @return 返回ModelAndView对象
      */
     @ApiOperation(value = "图片管理页面跳转")
-    @RequestMapping(value = "/image_manage", method = RequestMethod.GET)
+    @RequestMapping(value = "/image_management", method = RequestMethod.GET)
     public ModelAndView image() {
         ModelAndView mv = new ModelAndView();
 
@@ -49,7 +49,7 @@ public class ImageController {
         //遍历上传路径，存储在imageMap
         traverseFolder(path, imageMap);
         mv.addObject("map", imageMap);
-        mv.setViewName("/admin/media/image_manage");
+        mv.setViewName("/admin/media/image_management");
         return mv;
     }
 

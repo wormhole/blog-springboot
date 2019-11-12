@@ -6,7 +6,7 @@ layui.use(['table', 'jquery', 'layer'], function () {
     var parameter = {
         id: 'category-table',
         elem: '#category-table',
-        url: '/admin/article/list_article',
+        url: '/admin/article/list_category',
         method: 'get',
         page: true,
         toolbar: '#toolbar-head',

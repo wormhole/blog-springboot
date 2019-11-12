@@ -124,25 +124,25 @@
         update comment
         <set>
             <if test="nickname != null">
-                nickname = #{nickame},
+                nickname = #{nickname},
             </if>
             <if test="email != null">
-                email = #{email}
+                email = #{email},
             </if>
             <if test="website != null">
-                website = #{website}
+                website = #{website},
             </if>
             <if test="content != null">
-                content = #{content}
+                content = #{content},
             </if>
             <if test="articleId != null">
-                articleid = #{articleId}
+                articleid = #{articleId},
             </if>
             <if test="replyTo != null">
-                replyto = #{replyTo}
+                replyto = #{replyTo},
             </if>
             <if test="review != null">
-                review = #{review}
+                review = #{review},
             </if>
             <if test="date != null">
                 date = #{date}
@@ -156,25 +156,25 @@
             update comment
             <set>
                 <if test="item.nickname != null">
-                    nickname = #{item.nickame},
+                    nickname = #{item.nickname},
                 </if>
                 <if test="item.email != null">
-                    email = #{item.email}
+                    email = #{item.email},
                 </if>
                 <if test="item.website != null">
-                    website = #{item.website}
+                    website = #{item.website},
                 </if>
                 <if test="item.content != null">
-                    content = #{item.content}
+                    content = #{item.content},
                 </if>
                 <if test="item.articleId != null">
-                    articleid = #{item.articleId}
+                    articleid = #{item.articleId},
                 </if>
                 <if test="item.replyTo != null">
-                    replyto = #{item.replyTo}
+                    replyto = #{item.replyTo},
                 </if>
                 <if test="item.review != null">
-                    review = #{item.review}
+                    review = #{item.review},
                 </if>
                 <if test="item.date != null">
                     date = #{item.date}
