@@ -20,16 +20,12 @@ public class Page implements Serializable {
     private int page;
     private int start;
     private int limit;
-    private String order;
-    private String sort;
     private Map<String, Object> searchMap;
 
-    public Page(int page, int limit, String order, String sort, Map<String, Object> searchMap) {
+    public Page(int page, int limit, Map<String, Object> searchMap) {
         this.page = page;
         this.start = (page - 1) * limit;
         this.limit = limit;
-        this.order = order;
-        this.sort = sort;
         this.searchMap = searchMap;
     }
 }
