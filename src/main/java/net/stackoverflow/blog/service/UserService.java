@@ -34,9 +34,9 @@ public interface UserService {
 
     int batchUpdate(List<User> users);
 
-    UserRole grantRole(String userId, String roleCode);
+    UserRole grantRole(String userId, String roleId);
 
-    UserRole revokeRole(String userId, String roleCode);
+    UserRole revokeRole(String userId, String roleId);
 
     List<Role> getRoleByUserId(String userId);
 
