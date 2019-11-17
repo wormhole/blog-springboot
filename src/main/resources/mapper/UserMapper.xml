@@ -35,7 +35,7 @@
                 </if>
             </if>
         </where>
-        order by lower(nickname) limit #{start},#{limit}
+        order by lower(nickname) limit #{offset},#{limit}
     </select>
 
     <select id="selectByCondition" resultMap="userMap" resultType="user">

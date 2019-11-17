@@ -31,7 +31,7 @@
                 </if>
             </if>
         </where>
-        order by date limit #{start},#{limit}
+        order by date limit #{offset},#{limit}
     </select>
 
     <select id="selectByCondition" resultMap="categoryMap" resultType="category">

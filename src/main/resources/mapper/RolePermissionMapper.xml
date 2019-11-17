@@ -23,7 +23,7 @@
                 </if>
             </if>
         </where>
-        limit #{start},#{limit}
+        limit #{offset},#{limit}
     </select>
 
     <select id="selectByCondition" resultMap="rolePermissionMap" resultType="rolePermission">

@@ -18,13 +18,13 @@ import java.util.Map;
 public class Page implements Serializable {
 
     private int page;
-    private int start;
+    private int offset;
     private int limit;
     private Map<String, Object> searchMap;
 
     public Page(int page, int limit, Map<String, Object> searchMap) {
         this.page = page;
-        this.start = (page - 1) * limit;
+        this.offset = (page - 1) * limit;
         this.limit = limit;
         this.searchMap = searchMap;
     }

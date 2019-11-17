@@ -39,7 +39,7 @@
                 </if>
             </if>
         </where>
-        order by date desc limit #{start},#{limit}
+        order by date desc limit #{offset},#{limit}
     </select>
 
     <select id="selectByCondition" resultMap="visitMap" resultType="visit">

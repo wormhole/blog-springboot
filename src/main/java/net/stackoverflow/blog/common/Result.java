@@ -20,7 +20,6 @@ public class Result implements Serializable {
 
     public final static Integer SUCCESS = 0;
     public final static Integer FAILURE = 1;
-    public final static Integer SERVER_ERROR = -1;
 
     private Integer status;
     private String message;

@@ -23,7 +23,7 @@
                 </if>
             </if>
         </where>
-        order by lower(code) limit #{start},#{limit}
+        order by lower(code) limit #{offset},#{limit}
     </select>
 
     <select id="selectByCondition" resultMap="permissionMap" resultType="permission">

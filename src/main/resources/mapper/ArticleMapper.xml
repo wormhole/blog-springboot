@@ -59,7 +59,7 @@
                 </if>
             </if>
         </where>
-        order by createdate desc limit #{start},#{limit}
+        order by createdate desc limit #{offset},#{limit}
     </select>
 
     <select id="selectByCondition" resultMap="articleMap" resultType="article">
