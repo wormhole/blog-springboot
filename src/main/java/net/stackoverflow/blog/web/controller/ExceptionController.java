@@ -134,7 +134,7 @@ public class ExceptionController {
     public ResponseEntity handleException(Exception e, HttpServletRequest request) {
         if (isAjaxRequest(request)) {
             Result result = new Result();
-            result.setStatus(Result.SERVER_ERROR);
+            result.setStatus(Result.FAILURE);
             result.setMessage(e.getMessage());
             result.setData(e.getStackTrace());
             return new ResponseEntity(result, HttpStatus.OK);
